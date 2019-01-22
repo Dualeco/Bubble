@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Bubble</string>
+    <string name="email_field_default">Email...</string>
+    <string name="password_field_default">Password...</string>
+    <string name="get_started">Get started</string>
+    <string name="or_instead">or instead:</string>
 </resources>
