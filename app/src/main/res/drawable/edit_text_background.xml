@@ -10,4 +10,9 @@
     <stroke
         android:width="1dp"
         android:color="@color/colorTextHintRed" />
+    <padding
+        android:top="8dp"
+        android:bottom="8dp"
+        android:left="16dp"
+        android:right="16dp"/>
 </shape>

@@ -20,17 +20,17 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login_screen)
 
         emailEditText.setOnTouchListener { _, _ ->
-            scrollTo(scroll)
+            scrollTo(scrollView)
             false
         }
 
         passwordEditText.setOnTouchListener { _, _ ->
-            scrollTo(scroll)
+            scrollTo(scrollView)
             false
         }
 
         getStartedButton.setOnClickListener {
-            root.progress("Message")
+            progressLayout.progress("Message")
         }
     }
 
@@ -38,10 +38,10 @@ class LoginActivity : AppCompatActivity() {
         val rect = Rect()
         view.getGlobalVisibleRect(rect)
 
-        ValueAnimator.ofInt(scroll.scrollY, rect.bottom + scroll.scrollY)
+        ValueAnimator.ofInt(scrollView.scrollY, rect.bottom + scrollView.scrollY)
             .apply {
                 addUpdateListener {
-                    scroll.scrollTo(0, it.animatedValue as Int)
+                    scrollView.scrollTo(0, it.animatedValue as Int)
                 }
 
                 interpolator = AccelerateDecelerateInterpolator()

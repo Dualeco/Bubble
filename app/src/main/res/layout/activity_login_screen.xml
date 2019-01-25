@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kpiroom.bubble.os.ProgressLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progressLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,6 +11,7 @@
         android:background="@color/colorAccent" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -44,6 +47,7 @@
 
                 <EditText
                     style="@style/LoginScreen_EditTextStyle"
+                    android:id="@+id/emailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -55,6 +59,7 @@
 
                 <EditText
                     style="@style/LoginScreen_EditTextStyle"
+                    android:id="@+id/passwordEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -65,6 +70,7 @@
                     android:inputType="textPassword" />
 
                 <Button
+                    android:id="@+id/getStartedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -82,4 +88,4 @@
         </FrameLayout>
 
     </ScrollView>
-</FrameLayout>
+</com.kpiroom.bubble.os.ProgressLayout>
