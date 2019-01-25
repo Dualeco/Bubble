@@ -2,14 +2,14 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@android:color/black</item>
     </style>
+
     <style name="LoginScreen_EditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:singleLine">true</item>
-        <item name="android:layout_width">320dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:background">@drawable/edit_text_background</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -17,6 +17,9 @@
         <item name="android:textAlignment">center</item>
         <item name="android:textColorHint">@color/colorTextHintRed</item>
         <item name="android:textColor">@color/colorTextRed</item>
+    </style>
 
+    <style name="AppTheme.Translucent">
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

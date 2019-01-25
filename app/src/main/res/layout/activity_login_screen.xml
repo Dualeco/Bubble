@@ -1,70 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.kpiroom.bubble.os.ProgressLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/background_image"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/background_blurred"
-        android:scaleType="centerCrop" />
-    <View
-        android:id="@+id/background_gradient"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_gradient" />
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:isScrollContainer="false"
-        android:layout_centerVertical="true">
-        <LinearLayout
-            android:id="@+id/login_layout"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/bubble_logo"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
-                android:src="@drawable/icon_with_text"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="80dp"/>
-            <EditText
-                android:id="@+id/email_field"
-                android:hint="@string/email_field_default"
-                android:inputType="textEmailAddress"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                style="@style/LoginScreen_EditTextStyle"
-                android:layout_below="@id/bubble_logo"/>
-            <EditText
-                android:id="@+id/password_field"
-                android:hint="@string/password_field_default"
-                android:inputType="textPassword"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                style="@style/LoginScreen_EditTextStyle"
-                android:layout_below="@id/email_field"/>
-            <Button
-                android:id="@+id/get_started_button"
-                android:layout_width="320dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:text="@string/get_started"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/get_started_button"
-                android:layout_below="@id/password_field"/>
-            <!--><TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/or_instead"
-                android:textColor="#FFFFFF"
-                android:layout_gravity="center_horizontal"/><!-->
-        </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+            android:scaleType="centerCrop"
+            android:src="@drawable/background_blurred" />
+
+        <View
+            android:id="@+id/background_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_gradient" />
+
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="false">
+
+            <LinearLayout
+                android:id="@+id/login_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="8dp"
+                    android:src="@drawable/icon_with_text" />
+
+                <EditText
+                    android:id="@+id/emailEditText"
+                    style="@style/LoginScreen_EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/email_field_default"
+                    android:inputType="textEmailAddress" />
+
+                <EditText
+                    android:id="@+id/passwordEditText"
+                    style="@style/LoginScreen_EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/password_field_default"
+                    android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/getStartedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/get_started_button"
+                    android:text="@string/get_started"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/or_instead"
+                    android:textColor="#FFFFFF"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginVertical="8dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />
+            </LinearLayout>
+
+        </ScrollView>
+
+    </FrameLayout>
+
+</com.kpiroom.bubble.os.ProgressLayout>
