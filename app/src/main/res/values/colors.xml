@@ -9,6 +9,8 @@
 
     <color name="dimColor">#CB000000</color>
 
+    <color name="rippleColor">#33000000</color>
+
     <!--Common-->
     <string name="common_ok">OK</string>
     <string name="common_none">None</string>
