@@ -45,7 +45,7 @@
                     android:layout_margin="12dp"
                     android:layout_weight="1"
                     android:background="@drawable/background_button_dialog"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="12sp"
                     android:visibility="gone" />
 
@@ -56,7 +56,7 @@
                     android:layout_margin="12dp"
                     android:layout_weight="1"
                     android:background="@drawable/background_button_dialog"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="12sp" />
 
             </LinearLayout>
