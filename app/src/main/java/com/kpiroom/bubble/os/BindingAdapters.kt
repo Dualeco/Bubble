@@ -9,5 +9,4 @@ import androidx.databinding.BindingAdapter
 @BindingAdapter("android:layout_height")
 fun setLayoutHeight(view: View, height: Float) {
     view.layoutParams = view.layoutParams.apply { this.height = height.toInt() }
-    Log.d("SEE", "FGHJKL")
 }
