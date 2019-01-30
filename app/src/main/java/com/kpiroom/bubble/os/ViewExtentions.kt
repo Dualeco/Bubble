@@ -10,11 +10,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 
 fun Context.displayDialog(
-    titleRes: Int = 0, messageRes: Int = 0,
-    negativeButtonRes: Int = 0,
-    negativeButtonCallback: ((DialogInterface, Int) -> Unit)? = null,
-    positiveButtonRes: Int = 0,
-    positiveButtonCallback: ((DialogInterface, Int) -> Unit)? = null
+        titleRes: Int = 0, messageRes: Int = 0,
+        negativeButtonRes: Int = 0,
+        negativeButtonCallback: ((DialogInterface, Int) -> Unit)? = null,
+        positiveButtonRes: Int = 0,
+        positiveButtonCallback: ((DialogInterface, Int) -> Unit)? = null
 ) {
     val builder = AlertDialog.Builder(this)
     if (titleRes != 0) builder.setTitle(titleRes)

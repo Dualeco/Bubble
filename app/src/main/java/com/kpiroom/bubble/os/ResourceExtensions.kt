@@ -17,7 +17,7 @@ fun bindString(@StringRes res: Int, arg1: Int): String = BubbleApp.app.getString
 fun bindString(@StringRes res: Int, arg1: String, arg2: String): String = BubbleApp.app.getString(res, arg1, arg2)
 
 fun bindPlural(@PluralsRes res: Int, amount: Int, param: Int = amount): String =
-    BubbleApp.app.resources.getQuantityString(res, amount, param)
+        BubbleApp.app.resources.getQuantityString(res, amount, param)
 
 fun bindInt(@IntegerRes res: Int): Int = BubbleApp.app.resources.getInteger(res)
 
@@ -25,15 +25,16 @@ fun bindDimen(@DimenRes res: Int): Float = BubbleApp.app.resources.getDimension(
 
 fun bindColor(@ColorRes res: Int): Int = ContextCompat.getColor(BubbleApp.app, res)
 
-fun bindDrawable(@DrawableRes res: Int): Drawable = ContextCompat.getDrawable(BubbleApp.app, res) ?: ShapeDrawable()
+fun bindDrawable(@DrawableRes res: Int): Drawable = ContextCompat.getDrawable(BubbleApp.app, res)
+        ?: ShapeDrawable()
 
 fun dpToPx(dp: Int): Int = dpToPx(dp.toFloat())
 
 fun dpToPx(dp: Float): Int = Math.round(dp * BubbleApp.app.resources.displayMetrics.density)
 
 fun spToPx(sp: Int): Float = TypedValue.applyDimension(
-    TypedValue.COMPLEX_UNIT_SP,
-    sp.toFloat(), BubbleApp.app.resources.displayMetrics
+        TypedValue.COMPLEX_UNIT_SP,
+        sp.toFloat(), BubbleApp.app.resources.displayMetrics
 )
 
 fun displayMetrics() = BubbleApp.app.resources.displayMetrics
