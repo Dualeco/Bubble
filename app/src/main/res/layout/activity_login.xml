@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
+        <variable
+            name="logic"
+            type="com.kpiroom.bubble.ui.login.LoginLogic" />
+
         <import type="com.kpiroom.bubble.util.constant.ConstantsKt" />
     </data>
 
@@ -55,6 +59,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="16dp"
+                        android:text="@{logic.login}"
                         android:hint="@string/login_email_field_default"
                         android:inputType="textEmailAddress" />
 
@@ -67,6 +72,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
+                        android:text="@{logic.password}"
                         android:hint="@string/login_password_field_default"
                         android:inputType="textPassword" />
 
@@ -81,6 +87,7 @@
                         android:layout_marginBottom="32dp"
                         android:background="@drawable/get_started_button"
                         android:text="@string/login_get_started"
+                        android:onClick="@{() -> logic.onGetStarted()}"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />

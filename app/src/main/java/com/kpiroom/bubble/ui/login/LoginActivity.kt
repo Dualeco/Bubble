@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.ui.login
 
 import android.animation.Animator
 import android.animation.ValueAnimator
@@ -8,21 +8,20 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
+import com.kpiroom.bubble.databinding.ActivityLoginBinding
+import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.databinding.ActivityLoginScreenBinding
 import com.kpiroom.bubble.util.view.hideKeyboard
-import kotlinx.android.synthetic.main.activity_login_screen.*
+import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
 
     private val animatorCollector = LinkedList<Animator>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataBindingUtil.setContentView<ActivityLoginScreenBinding>(this, R.layout.activity_login_screen)
 
         val everyEditText = listOf<EditText>(emailEditText, passwordEditText)
         everyEditText.forEach {
@@ -77,12 +76,16 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 .start()
-
-
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         animatorCollector.forEach { it.cancel() }
+    }
+
+    override fun provideLogic() = ViewModelProviders.of(this).get(LoginLogic::class.java)
+
+    override fun provideLayout() = LayoutBuilder(R.layout.activity_login) {
+        logic = this@LoginActivity.logic
     }
 }
