@@ -1,27 +1,30 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
 
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
 
-    ext.lifeCycleVersion =
-
-            defaultConfig {
-                applicationId "com.kpiroom.bubble"
-                minSdkVersion 19
-                targetSdkVersion 28
-                versionCode 1
-                versionName "1.0"
-                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-            }
+    defaultConfig {
+        applicationId "com.kpiroom.bubble"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -34,6 +37,7 @@ dependencies {
 
     //Design
     implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation 'com.android.support:design:28.0.0'
 
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -46,6 +50,13 @@ dependencies {
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    //Navigation
+    implementation "android.arch.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "android.arch.navigation:navigation-ui-ktx:$navigation_version"
+
+    //??
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

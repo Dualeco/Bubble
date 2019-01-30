@@ -18,10 +18,13 @@ buildscript {
     //Firebase
     ext.firebase_version = '16.0.5'
 
+    //Navigation
+    ext.navigation_version = '1.0.0-alpha11'
+
     repositories {
         google()
         jcenter()
-        
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.0-alpha07'
@@ -34,7 +37,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+
     }
 }
 
