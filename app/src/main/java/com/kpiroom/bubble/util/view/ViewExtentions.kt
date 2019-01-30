@@ -1,28 +1,13 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.util.view
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-
-fun Context.displayDialog(
-        titleRes: Int = 0, messageRes: Int = 0,
-        negativeButtonRes: Int = 0,
-        negativeButtonCallback: ((DialogInterface, Int) -> Unit)? = null,
-        positiveButtonRes: Int = 0,
-        positiveButtonCallback: ((DialogInterface, Int) -> Unit)? = null
-) {
-    val builder = AlertDialog.Builder(this)
-    if (titleRes != 0) builder.setTitle(titleRes)
-    if (messageRes != 0) builder.setMessage(messageRes)
-    if (negativeButtonRes != 0) builder.setNegativeButton(negativeButtonRes, negativeButtonCallback)
-    if (positiveButtonRes != 0) builder.setPositiveButton(positiveButtonRes, positiveButtonCallback)
-    builder.show()
-}
+import com.kpiroom.bubble.os.BubbleApp
+import com.kpiroom.bubble.util.constant.dpToPx
 
 fun Context.getStatusBarHeight(): Int {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

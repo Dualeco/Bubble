@@ -1,9 +1,6 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.util.databinding
 
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.marginTop
 import androidx.databinding.BindingAdapter
 
 @BindingAdapter("android:layout_height")

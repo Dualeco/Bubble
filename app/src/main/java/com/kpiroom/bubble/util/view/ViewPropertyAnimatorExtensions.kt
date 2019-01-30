@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.util.view
 
 import android.view.ViewPropertyAnimator
 

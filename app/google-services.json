@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "707392114406",
+    "firebase_url": "https://bubble-kpiroom.firebaseio.com",
+    "project_id": "bubble-kpiroom",
+    "storage_bucket": "bubble-kpiroom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707392114406:android:37d40e012049479e",
+        "android_client_info": {
+          "package_name": "com.kpiroom.bubble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707392114406-pfquuso2383h66n8ub4fvav73dcj5hqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kpiroom.bubble",
+            "certificate_hash": "10267a38a49a7f78aa339cab1934e1ab65cfaf9e"
+          }
+        },
+        {
+          "client_id": "707392114406-9odu087j1f2qsi7k81epk9h6t6eaqsau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA9dC63BGTnob3ceChnjn5M5_V-YrUAtA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707392114406-9odu087j1f2qsi7k81epk9h6t6eaqsau.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

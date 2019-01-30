@@ -4,16 +4,15 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.FocusFinder
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityLoginScreenBinding
+import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.activity_login_screen.*
 import java.util.*
 

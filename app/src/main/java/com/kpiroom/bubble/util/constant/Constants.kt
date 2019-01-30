@@ -1,7 +1,11 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.util.constant
 
 import android.content.res.Resources
 import android.os.Build
+import com.kpiroom.bubble.os.BubbleApp
+import com.kpiroom.bubble.util.view.getNavBarHeight
+import com.kpiroom.bubble.util.view.getStatusBarHeight
+import com.kpiroom.bubble.util.view.getToolbarHeight
 
 
 val DISPLAY_WIDTH: Int = Resources.getSystem().displayMetrics.widthPixels

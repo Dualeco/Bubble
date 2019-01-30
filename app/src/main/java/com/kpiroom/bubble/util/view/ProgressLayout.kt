@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.os
+package com.kpiroom.bubble.util.view
 
 import android.content.Context
 import android.os.Handler
@@ -12,7 +12,9 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kpiroom.bubble.R
-import kotlinx.android.synthetic.main.layout_dialog.view.*
+import com.kpiroom.bubble.util.constant.DISPLAY_HEIGHT
+import com.kpiroom.bubble.util.constant.col
+import com.kpiroom.bubble.util.constant.str
 import java.util.*
 
 class ProgressLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
@@ -51,7 +53,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     private val dimmingView = View(context).apply {
-        setBackgroundColor(bindColor(R.color.dimColor))
+        setBackgroundColor(col(R.color.dimColor))
         layoutParams =
                 FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F
@@ -74,7 +76,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         addView(alert)
     }
 
-    fun progress(message: String = bindString(R.string.common_loading)) {
+    fun progress(message: String = str(R.string.common_loading)) {
         isLoading = true
         dimmingView.isClickable = true
 
@@ -120,17 +122,17 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
                 findViewById<TextView>(R.id.text).text = message
                 if (callback != null) {
                     findViewById<Button>(R.id.firstButton).apply {
-                        text = bindString(R.string.common_yes)
+                        text = str(R.string.common_yes)
                         setOnClickListener { callback(true) }
                     }
                     findViewById<Button>(R.id.secondButton).apply {
-                        text = bindString(R.string.common_no)
+                        text = str(R.string.common_no)
                         visibility = View.VISIBLE
                         setOnClickListener { callback(false) }
                     }
                 } else {
                     findViewById<Button>(R.id.firstButton).apply {
-                        text = bindString(R.string.common_ok)
+                        text = str(R.string.common_ok)
                         setOnClickListener { content() }
                     }
                 }
@@ -146,11 +148,10 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private fun updateStaticBack(show: Boolean) {
         staticBackground.animate()
-                .addTo(animatorCollector)
-                .alpha(if (show) 1F else 0F)
-                .translationY(if (show) 0F else staticBackground.height.toFloat())
-                .setDuration(ANIMATION_TIME)
-                .setInterpolator(if (show) DecelerateInterpolator() else AccelerateInterpolator())
+            .addTo(animatorCollector)
+            .alpha(if (show) 1F else 0F)
+            .translationY(if (show) 0F else staticBackground.height.toFloat())
+            .setDuration(ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
     }
 
     private fun updateLoading(show: Boolean, message: String = "") {
@@ -164,10 +165,9 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private fun updateDimming(show: Boolean) {
         dimmingView.animate()
-                .addTo(animatorCollector)
-                .alpha(if (show) 0.5F else 0F)
-                .setDuration(ANIMATION_TIME)
-                .setInterpolator(AccelerateDecelerateInterpolator())
+            .addTo(animatorCollector)
+            .alpha(if (show) 0.5F else 0F)
+            .setDuration(ANIMATION_TIME).interpolator = AccelerateDecelerateInterpolator()
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
