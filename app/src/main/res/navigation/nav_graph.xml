@@ -7,6 +7,6 @@
     <activity
         android:id="@+id/loginActivity3"
         android:name="com.kpiroom.bubble.os.LoginActivity"
-        tools:layout="@layout/activity_login_screen"
+        tools:layout="@layout/activity_login"
         android:label="LoginActivity" />
 </navigation>
