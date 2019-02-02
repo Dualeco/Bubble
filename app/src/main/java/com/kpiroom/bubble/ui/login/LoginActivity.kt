@@ -2,6 +2,8 @@ package com.kpiroom.bubble.ui.login
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
@@ -17,6 +19,11 @@ import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
 class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
+
+    companion object {
+
+        fun getIntent(context: Context) = Intent(context, LoginActivity::class.java)
+    }
 
     private val animatorCollector = LinkedList<Animator>()
 
