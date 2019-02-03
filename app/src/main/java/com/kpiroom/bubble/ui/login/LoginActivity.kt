@@ -1,6 +1,8 @@
 package com.kpiroom.bubble.ui.login
 
 import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
@@ -26,6 +28,7 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
 
     companion object {
         const val TAG = "LoginActivity"
+        fun getIntent(context: Context) = Intent(context, LoginActivity::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

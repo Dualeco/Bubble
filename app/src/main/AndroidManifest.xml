@@ -10,9 +10,9 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.login.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Translucent">
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +20,12 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Translucent"
+            android:windowSoftInputMode="stateHidden"/>
 
     </application>
 
