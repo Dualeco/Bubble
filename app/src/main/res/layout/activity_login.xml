@@ -1,106 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name="logic"
-            type="com.kpiroom.bubble.ui.login.LoginLogic" />
+                name="logic"
+                type="com.kpiroom.bubble.ui.login.LoginLogic"/>
+        <variable
+                name="imeOption"
+                type="android.view.inputmethod.EditorInfo"/>
 
-        <import type="com.kpiroom.bubble.util.constant.ConstantsKt" />
+        <import type="com.kpiroom.bubble.util.constant.ConstantsKt"/>
     </data>
 
     <com.kpiroom.bubble.util.view.ProgressLayout
-        android:id="@+id/progressLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:id="@+id/scrollView"
+            android:id="@+id/progressLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            app:progressState="@{logic.authProgressState}">
+        <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
             <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/background_blurred" />
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/background_blurred"/>
 
                 <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_gradient" />
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/background_gradient"/>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fitsSystemWindows="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="240dp"
-                        android:layout_height="240dp"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/icon_with_text" />
+                            android:layout_width="240dp"
+                            android:layout_height="240dp"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/icon_with_text"/>
+                    <LinearLayout
+                            android:id="@+id/editTextArea"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        <EditText
+                                android:id="@+id/emailEditText"
+                                style="@style/Login.EditTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginBottom="4dp"
+                                android:text="@={logic.email}"
+                                android:hint="@string/login_email_field_default"
+                                android:inputType="textEmailAddress"
+                                android:nextFocusDown="@id/passwordEditText"/>
 
-                    <EditText
-                        android:id="@+id/emailEditText"
-                        style="@style/LoginScreen_EditTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginEnd="16dp"
-                        android:text="@{logic.login}"
-                        android:hint="@string/login_email_field_default"
-                        android:inputType="textEmailAddress" />
-
-                    <EditText
-                        android:id="@+id/passwordEditText"
-                        style="@style/LoginScreen_EditTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
-                        android:text="@{logic.password}"
-                        android:hint="@string/login_password_field_default"
-                        android:inputType="textPassword" />
-
+                        <EditText
+                                android:id="@+id/passwordEditText"
+                                style="@style/Login.EditTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:text="@={logic.password}"
+                                android:hint="@string/login_password_field_default"
+                                android:inputType="textPassword"
+                                android:nextFocusForward="@id/confirmPasswordEditText"
+                                app:imeActionDone="@{logic.isNewAccount != true}" />
+                        <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp">
+                            <TextView
+                                    android:id="@+id/confirmPasswordBackground"
+                                    style="@style/Login.EditTextStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_gravity="top|center_horizontal"
+                                    android:animateLayoutChanges="true"/>
+                            <EditText
+                                    android:focusableInTouchMode="false"
+                                    android:alpha="0"
+                                    android:id="@+id/confirmPasswordEditText"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"
+                                    style="@style/Login.EditTextStyle.Transparent"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="@={logic.confirmPassword}"
+                                    android:hint="@string/login_confirm_password_field_default"
+                                    android:inputType="textPassword"/>
+                            <TextView
+                                    android:id="@+id/forgotPasswordTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/login_forgot_password"
+                                    android:layout_gravity="center_horizontal"
+                                    android:textSize="14sp"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textColor="@color/textColorPrimary"
+                                    android:onClick="@{() -> logic.onForgotPassword()}"/>
+                        </FrameLayout>
+                    </LinearLayout>
                     <Button
-                        android:id="@+id/getStartedButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="32dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="32dp"
-                        android:background="@drawable/get_started_button"
-                        android:text="@string/login_get_started"
-                        android:onClick="@{() -> logic.onGetStarted()}"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
+                            android:id="@+id/authButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@drawable/get_started_button"
+                            android:text="@{logic.authButtonText}"
+                            android:onClick="@{() -> logic.onAuthClicked()}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+                    <TextView
+                            android:id="@+id/changeAuthButton"
+                            android:padding="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:textSize="14sp"
+                            android:text="@{logic.changeAuthButtonText}"
+                            android:textColor="@color/textColorPrimary"
+                            android:onClick="@{() -> logic.toggleNewAccount()}"
+                            android:layout_marginBottom="32dp"/>
                 </LinearLayout>
             </FrameLayout>
 
         </ScrollView>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@{ConstantsKt.STATUS_BAR_SIZE, default=match_parent}"
-            android:background="@color/toolbarColor" />
+                android:layout_width="match_parent"
+                android:layout_height="@{ConstantsKt.STATUS_BAR_SIZE, default=match_parent}"
+                android:background="@color/toolbarColor"/>
 
     </com.kpiroom.bubble.util.view.ProgressLayout>
 </layout>

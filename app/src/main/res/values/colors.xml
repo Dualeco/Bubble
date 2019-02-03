@@ -5,6 +5,7 @@
     <color name="colorAccent">#DA0606</color>
     <color name="colorTextHintRed">#80950000</color>
     <color name="colorTextRed">#CC950000</color>
+    <color name="colorTransparent">#00000000</color>
 
     <color name="toolbarColor">#4D000000</color>
 

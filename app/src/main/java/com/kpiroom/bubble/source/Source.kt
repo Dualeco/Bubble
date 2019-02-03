@@ -4,6 +4,7 @@ import com.kpiroom.bubble.source.api.ApiInterface
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseApi
 import com.kpiroom.bubble.source.db.DbInterface
 import com.kpiroom.bubble.source.db.impl.room.RoomDb
+import com.kpiroom.bubble.source.pref.UserPrefs
 
 object Source {
 
@@ -11,5 +12,5 @@ object Source {
 
     val db: DbInterface = RoomDb()
 
-    //val userPrefs = UserPrefs()
+    val userPrefs = UserPrefs()
 }
