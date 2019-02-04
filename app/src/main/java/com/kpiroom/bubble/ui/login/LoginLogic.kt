@@ -33,8 +33,6 @@ class LoginLogic : CoreLogic() {
 
     val api = Source.api
 
-    val asyncJobs = AsyncBag()
-
     fun onAuthClicked() {
         clickThrottler.next {
             delayedAction.value = DelayedAction({
@@ -61,7 +59,7 @@ class LoginLogic : CoreLogic() {
                 )
             }.handleError {
                 authProgressState.postValue(ALERT, "${str(R.string.message_forgot_password_error)}: $it")
-            }.run(asyncJobs)
+            }.run(bag)
         }
     }
 
@@ -107,7 +105,7 @@ class LoginLogic : CoreLogic() {
         }.handleError {
             authProgressState.postValue(ALERT, FirebaseExceptionHelper().interpretException(it))
             Log.d(FirebaseAuthUtil.TAG, it.toString())
-        }.run(asyncJobs)
+        }.run(bag)
     }
 }
 
