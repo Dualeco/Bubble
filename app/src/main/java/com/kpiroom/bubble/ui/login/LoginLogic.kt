@@ -3,18 +3,17 @@ package com.kpiroom.bubble.ui.login
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.source.Source
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseApi
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseAuthUtil
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseExceptionHelper
 import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.util.async.AsyncBag
+import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constant.str
 import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.databinding.ProgressState.*
 import com.kpiroom.bubble.util.databinding.ProgressStateContainer
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.kpiroom.bubble.R
 
-class DelayedAction(val action: () -> Unit, val delay: Long)
 class LoginLogic : CoreLogic() {
 
     companion object {
@@ -32,38 +31,43 @@ class LoginLogic : CoreLogic() {
     val delayedAction = MutableLiveData<DelayedAction>()
     val authProgressState = MutableLiveData<ProgressStateContainer>()
 
-    val api = FirebaseApi()
+    val api = Source.api
 
+    val asyncJobs = AsyncBag()
 
     fun onAuthClicked() {
-        delayedAction.value = DelayedAction(onAuth, 300)
+        clickThrottler.next {
+            delayedAction.value = DelayedAction({
+                signUpOrSignIn()
+            }, 300)
+        }
     }
 
     fun onForgotPassword() {
-        val email = email.value
+        clickThrottler.next {
+            val email = email.value
 
-        if (email.isNullOrEmpty()) {
-            authProgressState.setValue(ALERT, "To reset your password, please specify the email")
-            return
-        }
+            if (email.isNullOrEmpty()) {
+                authProgressState.setValue(ALERT, str(R.string.message_forgot_password_no_email))
+                return@next
+            }
 
 
-        GlobalScope.launch {
-            try {
+            AsyncProcessor {
                 api.sendPasswordResetEmail(email)
                 authProgressState.postValue(
                     ALERT,
-                    "Instructions have been sent to your email address. Please, check your inbox to reset the password"
+                    str(R.string.message_forgot_password_instructions_sent)
                 )
-            } catch (ex: Exception) {
-                authProgressState.postValue(ALERT, "Error sending the instructions by email: $ex")
-            }
+            }.handleError {
+                authProgressState.postValue(ALERT, "${str(R.string.message_forgot_password_error)}: $it")
+            }.run(asyncJobs)
         }
-
-
     }
 
     fun toggleNewAccount() {
+        swapValues(authButtonText, changeAuthButtonText)
+
         val newValue = isNewAccount.value != true
         if (!newValue) {
             delayedAction.value = DelayedAction({ confirmPassword.value = "" }, 300)
@@ -82,48 +86,40 @@ class LoginLogic : CoreLogic() {
         val isNewAccount = isNewAccount.value
 
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
-            authProgressState.setValue(ALERT, "Email and password fields must not be empty")
+            authProgressState.setValue(ALERT, str(R.string.message_auth_fields_empty))
             return
 
         } else if (isNewAccount == true && confirmPassword.isNullOrEmpty()) {
-            authProgressState.setValue(ALERT, "Please, confirm your password")
+            authProgressState.setValue(ALERT, str(R.string.message_auth_confirm_password))
             return
         } else if (isNewAccount == true && confirmPassword != password) {
-            authProgressState.setValue(ALERT, "Entered passwords do not match")
+            authProgressState.setValue(ALERT, str(R.string.message_auth_passwords_do_not_match))
             return
         }
 
-        fun interpretException(ex: Exception): String? {
-            val helper = FirebaseExceptionHelper()
-
-            return helper.interpretException(ex)
-        }
-
-        GlobalScope.launch {
-            try {
-                if (isNewAccount == true) {
-                    Source.userPrefs.uuid = api.signUp(email, password)
-                } else {
-                    Source.userPrefs.uuid = api.signIn(email, password)
-                }
-                authProgressState.postValue(FINISHED)
-            } catch (ex: Exception) {
-                authProgressState.postValue(ALERT, interpretException(ex))
-                Log.d(FirebaseAuthUtil.TAG, ex.toString())
+        AsyncProcessor {
+            if (isNewAccount == true) {
+                Source.userPrefs.uuid = api.signUp(email, password)
+            } else {
+                Source.userPrefs.uuid = api.signIn(email, password)
             }
-        }
-
-    }
-
-    val onAuth: () -> Unit = {
-        clickThrottler.next {
-            signUpOrSignIn()
-        }
+            authProgressState.postValue(FINISHED)
+        }.handleError {
+            authProgressState.postValue(ALERT, FirebaseExceptionHelper().interpretException(it))
+            Log.d(FirebaseAuthUtil.TAG, it.toString())
+        }.run(asyncJobs)
     }
 }
 
+class DelayedAction(val action: () -> Unit, val delay: Long)
 
 fun <T : Any?> MutableLiveData<T>.setDefault(default: T) = apply { value = default }
+fun <T : Any?> swapValues(liveData1: MutableLiveData<T>, liveData2: MutableLiveData<T>) {
+    val temp: T? = liveData1.value
+    liveData1.value = liveData2.value
+    liveData2.value = temp
+}
+
 
 fun MutableLiveData<ProgressStateContainer>.setValue(
     state: ProgressState,

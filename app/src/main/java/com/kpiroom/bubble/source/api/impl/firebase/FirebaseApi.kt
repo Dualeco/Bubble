@@ -10,24 +10,21 @@ class FirebaseApi : ApiInterface {
         setPersistenceEnabled(true)
     })
 
-    val auth = FirebaseAuth.getInstance()
-    private val authUtil = FirebaseAuthUtil(auth)
+    private val authUtil = FirebaseAuthUtil(FirebaseAuth.getInstance())
 
     override suspend fun getServerVersion(): String = dbUtil.read(FirebaseStructure.VERSION, String::class.java)
 
     override suspend fun setServerVersion(version: String) = dbUtil.write(FirebaseStructure.VERSION, version)
 
-    suspend fun signUp(email: String, password: String): String? {
+    override suspend fun signUp(email: String, password: String): String? {
         val id = authUtil.signUp(email, password)
         if (id != null) {
-            dbUtil.write("user/$id", id)
+            dbUtil.write(FirebaseStructure.USER.getUser(id), id)
         }
         return id
     }
 
-    suspend fun signIn(email: String, password: String) = authUtil.signIn(email, password)
+    override suspend fun signIn(email: String, password: String): String? = authUtil.signIn(email, password)
 
-    suspend fun doesEmailExist(email: String) = authUtil.doesEmailExist(email)
-
-    suspend fun sendPasswordResetEmail(email: String) = authUtil.sendPasswordResetEmail(email)
+    override suspend fun sendPasswordResetEmail(email: String) = authUtil.sendPasswordResetEmail(email)
 }

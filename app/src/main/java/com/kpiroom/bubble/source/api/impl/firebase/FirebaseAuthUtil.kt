@@ -11,27 +11,6 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         const val TAG = "FirebaseAuthUtil"
     }
 
-    suspend fun doesEmailExist(
-        email: String
-    ): Boolean = suspendCancellableCoroutine { continuation ->
-        Log.d(TAG, "Checking")
-        auth.fetchSignInMethodsForEmail(email)
-            .addOnSuccessListener {
-                Log.d(TAG, "Check successfull")
-                val found = !(it.signInMethods?.isEmpty() ?: true)
-                continuation.resume(found)
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "Check failed")
-                continuation.cancel(it)
-            }
-            .addOnCanceledListener {
-                Log.d(TAG, "Check cancelled")
-                continuation.cancel()
-            }
-    }
-
-
     suspend fun signUp(
         email: String,
         password: String
@@ -39,7 +18,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign up successful")
+                Log.d(TAG, "Sign up successful for user $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {
@@ -47,7 +26,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
                 continuation.resumeWithException(it)
             }
             .addOnCanceledListener {
-                Log.d(TAG, "Sign up cancelled")
+                Log.d(TAG, "Sign up cancelled ")
                 continuation.cancel()
             }
     }
@@ -59,7 +38,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign in successful $id")
+                Log.d(TAG, "Sign in successful for user $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {
@@ -77,7 +56,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
     ): Unit = suspendCancellableCoroutine { continuation ->
         auth.sendPasswordResetEmail(email)
             .addOnSuccessListener {
-                Log.d(TAG, "Email sent successfully")
+                Log.d(TAG, "Email sent successfully to email $email")
                 continuation.resume(Unit)
             }
             .addOnFailureListener {

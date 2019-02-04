@@ -1,5 +1,7 @@
 package com.kpiroom.bubble.ui.login
 
+
+import com.kpiroom.bubble.R
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
@@ -73,14 +75,8 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
 
             if (isNew) {
                 toggleAuthAnimation.forEach { it.start() }
-
-                logic.authButtonText.value = str(R.string.login_sign_up)
-                logic.changeAuthButtonText.value = str(R.string.login_sign_in)
             } else {
                 toggleAuthAnimation.forEach { it.reverse() }
-
-                logic.authButtonText.value = str(R.string.login_sign_in)
-                logic.changeAuthButtonText.value = str(R.string.login_sign_up)
             }
         })
 
@@ -103,7 +99,7 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
     }
 
     private fun MotionEvent.isWithinView(view: View): Boolean {
-        if (action in listOf(MotionEvent.ACTION_UP)) {
+        if (action == MotionEvent.ACTION_UP) {
 
             val srcCoords = IntArray(2)
             view.getLocationOnScreen(srcCoords)
@@ -122,6 +118,8 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         super.onDestroy()
         confirmPasswordEditText.viewTreeObserver
             .removeOnGlobalLayoutListener(onGlobalLayoutListener)
+
+        logic.asyncJobs.cancel()
         toggleAuthAnimation.forEach { it.cancel() }
     }
 

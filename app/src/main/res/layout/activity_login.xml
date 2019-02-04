@@ -83,7 +83,7 @@
                                 android:hint="@string/login_password_field_default"
                                 android:inputType="textPassword"
                                 android:nextFocusForward="@id/confirmPasswordEditText"
-                                app:imeActionDone="@{logic.isNewAccount != true}" />
+                                app:imeActionDone="@{logic.isNewAccount() != true}" />
                         <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -119,7 +119,8 @@
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
                                     android:textColor="@color/textColorPrimary"
-                                    android:onClick="@{() -> logic.onForgotPassword()}"/>
+                                    android:onClick="@{() -> logic.onForgotPassword()}"
+                                    android:clickable="@{!logic.isNewAccount()}"/>
                         </FrameLayout>
                     </LinearLayout>
                     <Button

@@ -13,6 +13,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.kpiroom.bubble.util.constant.col
+import com.kpiroom.bubble.R
 
 class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
 
@@ -41,7 +42,7 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
             scaleEnd = 1.14f
         ).addTo(storage)
 
-    fun transformAlpha(view: View, isIncreasing: Boolean, duration: Long = 300L) =
+    fun transformAlpha(view: View, isIncreasing: Boolean = true, duration: Long = 300L) =
         if (isIncreasing) {
             animUtils.transformAlpha(
                 view,
