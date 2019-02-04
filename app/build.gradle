@@ -49,7 +49,7 @@ dependencies {
     implementation "com.google.firebase:firebase-database:$firebase_version"
 
     //AuthUI
-    implementation "com.firebaseui:firebase-ui-auth:4.2.1"
+    implementation "com.firebaseui:firebase-ui-auth:$firebase_auth_version"
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

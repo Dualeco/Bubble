@@ -19,6 +19,7 @@ buildscript {
 
     //Firebase
     ext.firebase_version = '16.0.5'
+    ext.firebase_auth_version = '4.2.1'
 
     //Navigation
     ext.navigation_version = '1.0.0-alpha11'
