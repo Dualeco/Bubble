@@ -7,7 +7,7 @@ import com.kpiroom.bubble.util.pref.addString
 
 class UserPrefs {
     companion object {
-        const val UUID = "uuid"
+        private const val UUID = "uuid"
     }
 
     private val prefs = PreferenceManager.getDefaultSharedPreferences(app)

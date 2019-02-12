@@ -1,13 +1,14 @@
 package com.kpiroom.bubble.ui.login
 
+
+import com.kpiroom.bubble.R
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.source.Source
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseExceptionHelper
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constant.str
 import com.kpiroom.bubble.util.databinding.ProgressState
-import com.kpiroom.bubble.R
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseExceptionHelper
 import com.kpiroom.bubble.util.event.DelayedAction
 import com.kpiroom.bubble.util.livedata.*
 
@@ -41,7 +42,7 @@ class LoginLogic : CoreLogic() {
                         str(R.string.message_forgot_password_instructions_sent)
                     )
                 }.handleError {
-                    progress.alert( "${str(R.string.message_forgot_password_error)}: $it")
+                    progress.alert("${str(R.string.message_forgot_password_error)}: $it")
                 }.run(bag)
             } ?: run {
                 progress.alert(

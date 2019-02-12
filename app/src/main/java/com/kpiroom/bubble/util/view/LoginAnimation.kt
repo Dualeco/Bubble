@@ -3,7 +3,6 @@ package com.kpiroom.bubble.util.view
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator

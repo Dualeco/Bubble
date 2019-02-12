@@ -16,6 +16,6 @@ object FirebaseStructure {
     }
 
     class USER(private val uuid: String) {
-        override fun toString()= "/$USER_KEY/$uuid"
+        override fun toString() = "/$USER_KEY/$uuid"
     }
 }

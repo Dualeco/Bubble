@@ -16,17 +16,21 @@ fun MutableLiveData<ProgressState>.alert(message: String? = null, callback: ((Bo
 }
 
 fun MutableLiveData<ProgressState>.alertAsync(message: String? = null, callback: ((Boolean) -> Unit)? = null) {
-    postValue(ProgressState(
-        ProgressState.ALERT,
-        message,
-        callback
-    ))
+    postValue(
+        ProgressState(
+            ProgressState.ALERT,
+            message,
+            callback
+        )
+    )
 }
 
 fun MutableLiveData<ProgressState>.finishAsync() {
-    postValue(ProgressState(
-        ProgressState.FINISHED
-    ))
+    postValue(
+        ProgressState(
+            ProgressState.FINISHED
+        )
+    )
 }
 
 fun MutableLiveData<ProgressState>.load(message: String? = null) {
@@ -34,9 +38,11 @@ fun MutableLiveData<ProgressState>.load(message: String? = null) {
 }
 
 fun MutableLiveData<ProgressState>.loadAsync(message: String? = null) {
-    postValue(ProgressState(
-        ProgressState.LOADING,
-        message
-    ))
+    postValue(
+        ProgressState(
+            ProgressState.LOADING,
+            message
+        )
+    )
 }
 
