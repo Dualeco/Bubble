@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.kpiroom.bubble.util.constant.str
 import com.kpiroom.bubble.R
 
-class FirebaseExceptionHelper {
+object FirebaseExceptionHelper {
     fun interpretException(exception: Throwable): String? {
         return when (exception) {
             is FirebaseAuthInvalidCredentialsException -> str(R.string.message_firebase_invalid_email_or_pwd)

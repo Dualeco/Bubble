@@ -29,7 +29,7 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
     private lateinit var onGlobalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener
 
     companion object {
-        const val TAG = "LoginActivity"
+        private const val TAG = "LoginActivity"
         fun getIntent(context: Context) = Intent(context, LoginActivity::class.java)
     }
 
@@ -41,59 +41,60 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         everyEditText.forEach {
             it.setOnTouchListener { _, _ ->
                 if (it.isFocusableInTouchMode) {
-                    anim.smoothScrollToBottom(scrollView, scrollView).start()
+                    anim.smoothScrollToBottom(progressLayout, scrollView).start()
                 }
                 false
             }
         }
         changeAuthButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
-        anim.transformEditTextAlpha(confirmPasswordEditText, true)
-        anim.transformAlpha(confirmPasswordBackground, true)
-        onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-            anim.transformHeight(
-                confirmPasswordBackground,
-                forgotPasswordTextView.measuredHeight,
-                emailEditText.measuredHeight
+        anim.apply {
+         transformEditTextAlpha(confirmPasswordEditText, true)
+         transformAlpha(confirmPasswordBackground, true)
+            onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+                transformHeight(
+                    confirmPasswordBackground,
+                    forgotPasswordTextView.measuredHeight,
+                    emailEditText.measuredHeight
+                )
+            }
+            confirmPasswordEditText.viewTreeObserver
+                .addOnGlobalLayoutListener(onGlobalLayoutListener)
+
+            transformTextColor(forgotPasswordTextView, 250L, DecelerateInterpolator())
+            transformAlpha(forgotPasswordTextView, false)
+            scaleXY(forgotPasswordTextView)
+            translateY(
+                forgotPasswordTextView,
+                forgotPasswordTextView.y,
+                forgotPasswordTextView.y + confirmPasswordEditText.paddingTop
             )
         }
-        confirmPasswordEditText.viewTreeObserver
-            .addOnGlobalLayoutListener(onGlobalLayoutListener)
-        anim.transformTextColor(forgotPasswordTextView, 250L, DecelerateInterpolator())
-        anim.transformAlpha(forgotPasswordTextView, false)
-        anim.scaleXY(forgotPasswordTextView)
-        anim.translateY(
-            forgotPasswordTextView,
-            forgotPasswordTextView.y,
-            forgotPasswordTextView.y + confirmPasswordEditText.paddingTop
-        )
+
+
 
         logic.isNewAccount.observe(this, Observer { isNew ->
-            if (isNew == null) {
-                return@Observer
-            }
-
-            if (isNew) {
-                toggleAuthAnimation.forEach { it.start() }
-            } else {
-                toggleAuthAnimation.forEach { it.reverse() }
+            isNew?.let {
+                if (isNew) {
+                    toggleAuthAnimation.forEach { it.start() }
+                } else {
+                    toggleAuthAnimation.forEach { it.reverse() }
+                }
             }
         })
 
         logic.delayedAction.observe(this, Observer { action ->
-            if (action == null) {
-                return@Observer
+            action?.apply {
+                Handler().postDelayed({ doAction }, delay)
             }
-            Handler().postDelayed({ action.action() }, action.delay)
         })
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev == null) {
-            return false
-        }
-        if (!(ev.isWithinView(editTextArea) || ev.isWithinView(changeAuthButton))) {
-            hideKeyboard()
+        ev?.let {
+            if (!it.isWithinView(editTextArea) && !it.isWithinView(changeAuthButton)) {
+                hideKeyboard()
+            }
         }
         return super.dispatchTouchEvent(ev)
     }
@@ -118,8 +119,6 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         super.onDestroy()
         confirmPasswordEditText.viewTreeObserver
             .removeOnGlobalLayoutListener(onGlobalLayoutListener)
-
-        logic.asyncJobs.cancel()
         toggleAuthAnimation.forEach { it.cancel() }
     }
 

@@ -8,13 +8,16 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 
-class AnimationUtils {
+object AnimationUtils {
+
+    const val DURATION = 300L
+
     fun transformTextColor(
         view: TextView,
         evaluator: TypeEvaluator<Int>,
         colorBegin: Int,
         colorEnd: Int,
-        duration: Long = 300L,
+        duration: Long = DURATION,
         interpolator: TimeInterpolator = AccelerateInterpolator()
     ) = ValueAnimator.ofObject(evaluator, colorBegin, colorEnd)
         .apply {
@@ -29,7 +32,7 @@ class AnimationUtils {
         view: View,
         alphaBegin: Float,
         alphaEnd: Float,
-        duration: Long = 300L
+        duration: Long = DURATION
     ) = ValueAnimator.ofFloat(alphaBegin, alphaEnd)
         .apply {
             this.duration = duration
@@ -59,8 +62,8 @@ class AnimationUtils {
         view: View,
         scaleBegin: Float = 1f,
         scaleEnd: Float,
-        duration: Long = 300L
-    ) = ValueAnimator.ofFloat(scaleBegin, 1.14f)
+        duration: Long = DURATION
+    ) = ValueAnimator.ofFloat(scaleBegin, scaleEnd)
         .apply {
             this.duration = duration
             interpolator = DecelerateInterpolator()
@@ -74,7 +77,7 @@ class AnimationUtils {
         view: View,
         positionBegin: Float,
         positionEnd: Float,
-        duration: Long = 300L
+        duration: Long = DURATION
     ) = ValueAnimator.ofFloat(positionBegin, positionEnd)
         .apply {
             this.duration = duration

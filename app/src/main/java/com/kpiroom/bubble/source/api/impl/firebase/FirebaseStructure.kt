@@ -15,8 +15,7 @@ object FirebaseStructure {
         val SERVER_TIME = "/$META_KEY/$SERVER_TIME_KEY"
     }
 
-    object USER {
-
-        fun getUser(uuid: String) = "/$USER_KEY/$uuid"
+    class USER(private val uuid: String) {
+        override fun toString()= "/$USER_KEY/$uuid"
     }
 }

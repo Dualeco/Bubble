@@ -7,7 +7,7 @@ import com.kpiroom.bubble.source.api.ApiInterface
 class FirebaseApi : ApiInterface {
 
     private val dbUtil = FirebaseDbUtil(FirebaseDatabase.getInstance().apply {
-        setPersistenceEnabled(true)
+        setPersistenceEnabled(false)
     })
 
     private val authUtil = FirebaseAuthUtil(FirebaseAuth.getInstance())
@@ -19,7 +19,7 @@ class FirebaseApi : ApiInterface {
     override suspend fun signUp(email: String, password: String): String? {
         val id = authUtil.signUp(email, password)
         if (id != null) {
-            dbUtil.write(FirebaseStructure.USER.getUser(id), id)
+            dbUtil.write("${FirebaseStructure.USER(id)}", id)
         }
         return id
     }

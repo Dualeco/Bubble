@@ -1,54 +1,45 @@
 package com.kpiroom.bubble.util.databinding
 
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.databinding.BindingAdapter
-import com.kpiroom.bubble.util.databinding.ProgressState.*
+import com.kpiroom.bubble.util.databinding.ProgressState.Companion.ALERT
+import com.kpiroom.bubble.util.databinding.ProgressState.Companion.FINISHED
+import com.kpiroom.bubble.util.databinding.ProgressState.Companion.LOADING
 import com.kpiroom.bubble.util.view.ProgressLayout
 
 @BindingAdapter("android:layout_height")
-fun setLayoutHeight(view: View, height: Float) {
-    view.layoutParams = view.layoutParams.apply { this.height = height.toInt() }
+fun setLayoutHeight(view: View, newHeight: Float) {
+    view.layoutParams = view.layoutParams.apply { height = newHeight.toInt() }
 }
 
 @BindingAdapter("app:imeActionDone")
 fun isImeActionDone(editText: EditText, isActionDone: Boolean) {
-    Log.d("Adapter", isActionDone.toString())
-    if (isActionDone) {
-        editText.imeOptions = EditorInfo.IME_ACTION_DONE
+    editText.imeOptions = if (isActionDone) {
+        EditorInfo.IME_ACTION_DONE
     } else {
-        editText.imeOptions = EditorInfo.IME_ACTION_NEXT
+        EditorInfo.IME_ACTION_NEXT
     }
     editText.clearFocus()
 }
 
 @BindingAdapter("app:progressState")
-fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressStateContainer?) {
-
-    if (stateContainer == null) {
-        return
-    }
-
-    val state = stateContainer.state
-    val loadingMessage = stateContainer.message
-    val alertMessage = stateContainer.message ?: "ERROR: MESSAGE MUST BE SPECIFIED"
-    val callback = stateContainer.callback
+fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressState?) {
 
     fun onLoading(message: String?) {
-        if (message != null) {
-            progressLayout.progress(message)
-        } else {
+        message?.let {
+            progressLayout.progress(it)
+        } ?: run {
             progressLayout.progress()
         }
     }
 
     fun onAlert(message: String, callback: ((Boolean) -> Unit)?) {
-        if (callback == null) {
-            progressLayout.alert(message)
-        } else {
+        callback?.let {
             progressLayout.alert(message, callback)
+        } ?: run {
+            progressLayout.alert(message)
         }
     }
 
@@ -56,9 +47,16 @@ fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressSta
         progressLayout.dismiss()
     }
 
-    when (state) {
-        LOADING -> onLoading(loadingMessage)
-        ALERT -> onAlert(alertMessage, callback)
-        FINISHED -> onDismissed()
+    stateContainer?.let {
+        val state = it.state
+        val loadingMessage = it.message
+        val alertMessage = it.message ?: ""
+        val callback = it.callback
+
+        when (state) {
+            LOADING -> onLoading(loadingMessage)
+            ALERT -> onAlert(alertMessage, callback)
+            FINISHED -> onDismissed()
+        }
     }
 }

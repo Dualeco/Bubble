@@ -18,13 +18,13 @@ import com.kpiroom.bubble.R
 class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
 
     companion object {
-        val TAG = "LoginAnimation"
+        const val DURATION = 300L
     }
 
-    private val animUtils = AnimationUtils()
+    private val animUtils = AnimationUtils
     fun transformTextColor(
         view: TextView,
-        duration: Long = 300L,
+        duration: Long = DURATION,
         interpolator: TimeInterpolator = AccelerateInterpolator()
     ) =
         animUtils.transformTextColor(
@@ -42,7 +42,7 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
             scaleEnd = 1.14f
         ).addTo(storage)
 
-    fun transformAlpha(view: View, isIncreasing: Boolean = true, duration: Long = 300L) =
+    fun transformAlpha(view: View, isIncreasing: Boolean = true, duration: Long = DURATION) =
         if (isIncreasing) {
             animUtils.transformAlpha(
                 view,
@@ -60,7 +60,7 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
             ).addTo(storage)
         }
 
-    fun transformEditTextAlpha(view: View, isIncreasing: Boolean, duration: Long = 300L): ValueAnimator {
+    fun transformEditTextAlpha(view: View, isIncreasing: Boolean, duration: Long = DURATION): ValueAnimator {
         if (isIncreasing) {
             val animator = animUtils.transformAlpha(
                 view,
@@ -69,7 +69,6 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
                 duration
             ).addTo(storage)
             animator.doOnStart {
-                Log.d(TAG, "str")
                 val focusable = view.isFocusableInTouchMode
                 if (!focusable) {
                     view.isFocusableInTouchMode = true

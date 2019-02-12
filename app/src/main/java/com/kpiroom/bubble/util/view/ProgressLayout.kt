@@ -83,16 +83,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         updateDimming(true)
         updateLoading(true, message)
         updateAlert(false)
-
-        /*Handler().postDelayed({
-            alert("Are you ready to do this?") {
-                if (it) {
-                    progress()
-                } else {
-                    content()
-                }
-            }
-        }, 3000L)*/
     }
 
     fun dismiss() {

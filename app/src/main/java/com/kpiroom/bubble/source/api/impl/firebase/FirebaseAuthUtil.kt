@@ -8,7 +8,7 @@ import kotlin.coroutines.resumeWithException
 
 class FirebaseAuthUtil(val auth: FirebaseAuth) {
     companion object {
-        const val TAG = "FirebaseAuthUtil"
+        private const val TAG = "FirebaseAuthUtil"
     }
 
     suspend fun signUp(
@@ -18,15 +18,15 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign up successful for user $id")
+                Log.d(TAG, "Sign up successful for $email, id: $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {
-                Log.d(TAG, "Sign up unsuccessful, $it")
+                Log.d(TAG, "Sign up unsuccessful for $email, exception: $it")
                 continuation.resumeWithException(it)
             }
             .addOnCanceledListener {
-                Log.d(TAG, "Sign up cancelled ")
+                Log.d(TAG, "Sign up cancelled for $email")
                 continuation.cancel()
             }
     }
@@ -38,15 +38,15 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign in successful for user $id")
+                Log.d(TAG, "Sign in successful for $email, id: $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {
-                Log.d(TAG, "Sign in failed, $it")
+                Log.d(TAG, "Sign in unsuccessful for $email, exception: $it")
                 continuation.resumeWithException(it)
             }
             .addOnCanceledListener {
-                Log.d(TAG, "Sign in cancelled")
+                Log.d(TAG, "Sign in cancelled for $email")
                 continuation.cancel()
             }
     }
@@ -60,11 +60,11 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
                 continuation.resume(Unit)
             }
             .addOnFailureListener {
-                Log.d(TAG, "Email sending failed")
+                Log.d(TAG, "Email sending failed $email, exception: $it")
                 continuation.resumeWithException(it)
             }
             .addOnCanceledListener {
-                Log.d(TAG, "Email sending canceled")
+                Log.d(TAG, "Email sending canceled $email")
                 continuation.cancel()
             }
     }

@@ -3,6 +3,7 @@ package com.kpiroom.bubble.source.pref
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
+import com.kpiroom.bubble.util.pref.addString
 
 class UserPrefs {
     companion object {
@@ -12,14 +13,6 @@ class UserPrefs {
     private val prefs = PreferenceManager.getDefaultSharedPreferences(app)
     var uuid: String?
         get() = prefs.getString(UUID, null)
-        set(value) {
-            prefs.addString(UUID, value)
-        }
-}
+        set(value) = prefs.addString(UUID, value)
 
-fun SharedPreferences.addString(key: String?, value: String?) {
-
-    this.edit()
-        .putString(key, value)
-        .apply()
 }
