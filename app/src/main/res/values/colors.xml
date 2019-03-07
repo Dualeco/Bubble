@@ -17,12 +17,14 @@
 
     <color name="rippleColor">#4DFFFFFF</color>
 
+    <!--EditText background-->
+    <color name="edit_text_background_center">#E6EBE9E9</color>
+    <color name="edit_text_background_end">#E6BEBDBD</color>
+    <color name="edit_text_background_start">#E6FFFFFF</color>
 
-    <!--Common-->
-    <string name="common_ok">OK</string>
-    <string name="common_none">None</string>
-    <string name="common_yes">Yes</string>
-    <string name="common_no">No</string>
-    <string name="common_loading">Loading</string>
+    <!--Background gradient-->
+    <color name="background_gradient_start">#38000000</color>
+    <color name="background_gradient_center">#80000000</color>
+    <color name="background_gradient_end">#C8000000</color>
 
 </resources>

@@ -1,8 +1,10 @@
-package com.kpiroom.bubble.util.constant
+package com.kpiroom.bubble.util.constants
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
-import androidx.annotation.*
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.kpiroom.bubble.os.BubbleApp
 

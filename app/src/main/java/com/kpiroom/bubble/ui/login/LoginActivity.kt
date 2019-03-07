@@ -1,13 +1,13 @@
 package com.kpiroom.bubble.ui.login
 
 
-import com.kpiroom.bubble.R
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
@@ -15,9 +15,9 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityLoginBinding
 import com.kpiroom.bubble.ui.core.CoreActivity
-import com.kpiroom.bubble.util.constant.str
 import com.kpiroom.bubble.util.view.LoginAnimation
 import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.activity_login.*
@@ -37,20 +37,20 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         super.onCreate(savedInstanceState)
         val anim = LoginAnimation(storage = toggleAuthAnimation)
 
-        val everyEditText = listOf<EditText>(emailEditText, passwordEditText, confirmPasswordEditText)
-        everyEditText.forEach {
-            it.setOnTouchListener { _, _ ->
-                if (it.isFocusableInTouchMode) {
-                    anim.smoothScrollToBottom(progressLayout, scrollView).start()
+        listOf<EditText>(emailEditText, passwordEditText, confirmPasswordEditText)
+            .forEach {
+                it.setOnTouchListener { _, _ ->
+                    if (it.isFocusableInTouchMode) {
+                        anim.smoothScrollToBottom(progressLayout, scrollView).start()
+                    }
+                    false
                 }
-                false
             }
-        }
         changeAuthButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
         anim.apply {
-         transformEditTextAlpha(confirmPasswordEditText, true)
-         transformAlpha(confirmPasswordBackground, true)
+            transformEditTextAlpha(confirmPasswordEditText, true)
+            transformAlpha(confirmPasswordBackground, true)
             onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
                 transformHeight(
                     confirmPasswordBackground,
@@ -71,37 +71,35 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
             )
         }
 
-
-
         logic.isNewAccount.observe(this, Observer { isNew ->
             isNew?.let {
-                if (isNew) {
-                    toggleAuthAnimation.forEach { it.start() }
-                } else {
-                    toggleAuthAnimation.forEach { it.reverse() }
+                toggleAuthAnimation.forEach {
+                    if (isNew) {
+                        it.start()
+                    } else {
+                        it.reverse()
+                    }
                 }
             }
         })
 
         logic.delayedAction.observe(this, Observer { action ->
             action?.apply {
-                Handler().postDelayed({ doAction }, delay)
+                Handler().postDelayed(::start, delay)
             }
         })
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ev?.let {
-            if (!it.isWithinView(editTextArea) && !it.isWithinView(changeAuthButton)) {
+            if (!it.isWithinView(editTextArea) && !it.isWithinView(changeAuthButton))
                 hideKeyboard()
-            }
         }
         return super.dispatchTouchEvent(ev)
     }
 
-    private fun MotionEvent.isWithinView(view: View): Boolean {
-        if (action == MotionEvent.ACTION_UP) {
-
+    private fun MotionEvent.isWithinView(view: View): Boolean =
+        (action == MotionEvent.ACTION_UP).let {
             val srcCoords = IntArray(2)
             view.getLocationOnScreen(srcCoords)
 
@@ -111,9 +109,8 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
             if (x < view.left || x > view.right || y < view.top || y > view.bottom) {
                 return false
             }
+            return true
         }
-        return true
-    }
 
     override fun onDestroy() {
         super.onDestroy()

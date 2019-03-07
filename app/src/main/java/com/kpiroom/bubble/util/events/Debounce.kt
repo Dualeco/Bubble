@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.util.event
+package com.kpiroom.bubble.util.events
 
 import android.os.Handler
 

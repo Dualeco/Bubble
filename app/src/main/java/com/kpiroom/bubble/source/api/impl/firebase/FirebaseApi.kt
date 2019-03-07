@@ -16,12 +16,10 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun setServerVersion(version: String) = dbUtil.write(FirebaseStructure.VERSION, version)
 
-    override suspend fun signUp(email: String, password: String): String? {
-        val id = authUtil.signUp(email, password)
-        if (id != null) {
+    override suspend fun signUp(email: String, password: String) = authUtil.signUp(email, password).also {
+        it?.let { id ->
             dbUtil.write("${FirebaseStructure.USER(id)}", id)
         }
-        return id
     }
 
     override suspend fun signIn(email: String, password: String): String? = authUtil.signIn(email, password)

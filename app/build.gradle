@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.kpiroom.bubble"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -58,6 +58,10 @@ dependencies {
     //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "android.arch.navigation:navigation-ui-ktx:$navigation_version"
+
+    //ProfileBar
+    implementation "com.github.DichotoMe.ProfileBar:profilebar:$profilebar_version"
+    implementation "com.github.DichotoMe.ProfileBar:profilebarBinding:$profilebar_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

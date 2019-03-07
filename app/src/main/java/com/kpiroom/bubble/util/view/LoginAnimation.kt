@@ -11,8 +11,8 @@ import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.animation.ArgbEvaluatorCompat
-import com.kpiroom.bubble.util.constant.col
 import com.kpiroom.bubble.R
+import com.kpiroom.bubble.util.constants.col
 
 class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
 
@@ -22,50 +22,50 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
 
     private val animUtils = AnimationUtils
     fun transformTextColor(
-        view: TextView,
-        duration: Long = DURATION,
-        interpolator: TimeInterpolator = AccelerateInterpolator()
+            view: TextView,
+            duration: Long = DURATION,
+            interpolator: TimeInterpolator = AccelerateInterpolator()
     ) =
-        animUtils.transformTextColor(
-            view,
-            ArgbEvaluatorCompat(),
-            col(R.color.colorPrimary),
-            col(R.color.colorTextRed),
-            duration,
-            interpolator
-        ).addTo(storage)
+            animUtils.transformTextColor(
+                    view,
+                    ArgbEvaluatorCompat(),
+                    col(R.color.colorPrimary),
+                    col(R.color.colorTextRed),
+                    duration,
+                    interpolator
+            ).addTo(storage)
 
     fun scaleXY(view: View) =
-        animUtils.scaleXY(
-            view,
-            scaleEnd = 1.14f
-        ).addTo(storage)
+            animUtils.scaleXY(
+                    view,
+                    scaleEnd = 1.14f
+            ).addTo(storage)
 
     fun transformAlpha(view: View, isIncreasing: Boolean = true, duration: Long = DURATION) =
-        if (isIncreasing) {
-            animUtils.transformAlpha(
-                view,
-                0.0f,
-                1.0f,
-                duration
-            ).addTo(storage)
+            if (isIncreasing) {
+                animUtils.transformAlpha(
+                        view,
+                        0.0f,
+                        1.0f,
+                        duration
+                ).addTo(storage)
 
-        } else {
-            animUtils.transformAlpha(
-                view,
-                1.0f,
-                0.0f,
-                duration
-            ).addTo(storage)
-        }
+            } else {
+                animUtils.transformAlpha(
+                        view,
+                        1.0f,
+                        0.0f,
+                        duration
+                ).addTo(storage)
+            }
 
     fun transformEditTextAlpha(view: View, isIncreasing: Boolean, duration: Long = DURATION): ValueAnimator {
         if (isIncreasing) {
             val animator = animUtils.transformAlpha(
-                view,
-                0.0f,
-                1.0f,
-                duration
+                    view,
+                    0.0f,
+                    1.0f,
+                    duration
             ).addTo(storage)
             animator.doOnStart {
                 val focusable = view.isFocusableInTouchMode
@@ -81,10 +81,10 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
 
         } else {
             val animator = animUtils.transformAlpha(
-                view,
-                1.0f,
-                0.0f,
-                duration
+                    view,
+                    1.0f,
+                    0.0f,
+                    duration
             ).addTo(storage)
             animator.doOnEnd {
                 val visibility = view.visibility
@@ -100,31 +100,31 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
     }
 
     fun transformHeight(view: TextView, heightBegin: Int, heightEnd: Int, duration: Long = 200L) =
-        animUtils.transformHeight(
-            view,
-            heightBegin,
-            heightEnd,
-            duration
-        ).addTo(storage)
+            animUtils.transformHeight(
+                    view,
+                    heightBegin,
+                    heightEnd,
+                    duration
+            ).addTo(storage)
 
     fun translateY(view: TextView, positionBegin: Float, positionEnd: Float) =
-        animUtils.translateY(
-            view,
-            positionBegin,
-            positionEnd
-        ).addTo(storage)
+            animUtils.translateY(
+                    view,
+                    positionBegin,
+                    positionEnd
+            ).addTo(storage)
 
     fun smoothScrollToTop(view: View, scrollView: ScrollView): ValueAnimator {
         val rect = Rect()
         view.getGlobalVisibleRect(rect)
 
         return ValueAnimator.ofInt(scrollView.scrollY, scrollView.scrollY - rect.top)
-            .apply {
-                interpolator = AccelerateDecelerateInterpolator()
-                addUpdateListener {
-                    scrollView.smoothScrollTo(0, it.animatedValue as Int)
-                }
-            }.addTo(storage)
+                .apply {
+                    interpolator = AccelerateDecelerateInterpolator()
+                    addUpdateListener {
+                        scrollView.smoothScrollTo(0, it.animatedValue as Int)
+                    }
+                }.addTo(storage)
     }
 
     fun smoothScrollToBottom(view: View, scrollView: ScrollView): ValueAnimator {
@@ -132,11 +132,11 @@ class LoginAnimation(private val storage: MutableCollection<ValueAnimator>) {
         view.getGlobalVisibleRect(rect)
 
         return ValueAnimator.ofInt(scrollView.scrollY, scrollView.scrollY + rect.bottom)
-            .apply {
-                interpolator = AccelerateDecelerateInterpolator()
-                addUpdateListener {
-                    scrollView.smoothScrollTo(0, it.animatedValue as Int)
-                }
-            }.addTo(storage)
+                .apply {
+                    interpolator = AccelerateDecelerateInterpolator()
+                    addUpdateListener {
+                        scrollView.smoothScrollTo(0, it.animatedValue as Int)
+                    }
+                }.addTo(storage)
     }
 }

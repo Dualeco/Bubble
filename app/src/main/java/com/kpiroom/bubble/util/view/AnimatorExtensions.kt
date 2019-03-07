@@ -6,7 +6,4 @@ import android.view.ViewPropertyAnimator
 
 fun ViewPropertyAnimator.addTo(collection: MutableCollection<ViewPropertyAnimator>) = apply { collection.add(this) }
 
-fun ValueAnimator.addTo(collection: MutableCollection<ValueAnimator>): ValueAnimator {
-    collection.add(this)
-    return this
-}
+fun ValueAnimator.addTo(collection: MutableCollection<ValueAnimator>) = also { collection.add(it) }

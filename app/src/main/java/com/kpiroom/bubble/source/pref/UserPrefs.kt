@@ -1,6 +1,5 @@
 package com.kpiroom.bubble.source.pref
 
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.util.pref.addString

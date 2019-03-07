@@ -17,18 +17,18 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     }
 
     suspend fun <T : Any> write(
-        ref: String,
-        value: T
+            ref: String,
+            value: T
     ): Unit = suspendCancellableCoroutine { continuation ->
         firebaseDb.getReference(ref).setValue(value)
-            .addOnSuccessListener { continuation.resume(Unit) }
-            .addOnFailureListener { continuation.resumeWithException(it) }
-            .addOnCanceledListener { continuation.cancel() }
+                .addOnSuccessListener { continuation.resume(Unit) }
+                .addOnFailureListener { continuation.resumeWithException(it) }
+                .addOnCanceledListener { continuation.cancel() }
     }
 
     suspend fun <T : Any> read(
-        path: String,
-        type: Class<T>
+            path: String,
+            type: Class<T>
     ): T = suspendCancellableCoroutine { continuation ->
         val ref = firebaseDb.getReference(path)
         val listener = object : ValueEventListener {

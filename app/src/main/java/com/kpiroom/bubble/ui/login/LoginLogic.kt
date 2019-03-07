@@ -1,15 +1,15 @@
 package com.kpiroom.bubble.ui.login
 
 
-import com.kpiroom.bubble.R
 import androidx.lifecycle.MutableLiveData
+import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseExceptionHelper
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
-import com.kpiroom.bubble.util.constant.str
+import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.databinding.ProgressState
-import com.kpiroom.bubble.util.event.DelayedAction
+import com.kpiroom.bubble.util.events.DelayedAction
+import com.kpiroom.bubble.util.exceptions.BubbleException.Companion.AUTH_FORGOT_PASSWORD_ERROR
 import com.kpiroom.bubble.util.livedata.*
 
 class LoginLogic : CoreLogic() {
@@ -20,46 +20,51 @@ class LoginLogic : CoreLogic() {
 
     val authButtonText = MutableLiveData<String>().setDefault(str(R.string.login_sign_in))
     val changeAuthButtonText = MutableLiveData<String>().setDefault(str(R.string.login_sign_up))
-    val isNewAccount = MutableLiveData<Boolean>()
+    val isNewAccount = MutableLiveData<Boolean>().setDefault(false)
 
     val delayedAction = MutableLiveData<DelayedAction>()
     val progress = MutableLiveData<ProgressState>()
 
     fun onAuthClicked() {
         clickThrottler.next {
-            delayedAction.value = DelayedAction({
+            delayedAction.value = DelayedAction(300L) {
                 signUpOrSignIn()
-            }, 300)
+            }
         }
     }
 
     fun onForgotPassword() {
         clickThrottler.next {
-            email.value?.let {
-                AsyncProcessor {
-                    Source.api.sendPasswordResetEmail(email.value!!)
-                    progress.alert(
-                        str(R.string.message_forgot_password_instructions_sent)
-                    )
-                }.handleError {
-                    progress.alert("${str(R.string.message_forgot_password_error)}: $it")
-                }.run(bag)
-            } ?: run {
-                progress.alert(
-                    str(R.string.message_forgot_password_no_email)
-                )
+            progress.apply {
+
+                email.value?.let { mail ->
+
+                    AsyncProcessor {
+                        Source.api.sendPasswordResetEmail(mail)
+                        alert(str(R.string.message_forgot_password_success))
+                    } handleError {
+                        it.errorId = AUTH_FORGOT_PASSWORD_ERROR
+                        alert(it.message)
+                    } runWith (bag)
+
+                } ?: run {
+                    alert(str(R.string.message_forgot_password_no_email))
+                }
             }
         }
     }
 
     fun toggleNewAccount() {
-        swapValues(authButtonText, changeAuthButtonText)
+        clickThrottler.next {
+            swapValues(authButtonText, changeAuthButtonText)
 
-        val newValue = isNewAccount.value != true
-        if (!newValue) {
-            delayedAction.value = DelayedAction({ confirmPassword.value = "" }, 300L)
+            isNewAccount.value?.let {
+                if (it) delayedAction.value = DelayedAction(300L) {
+                    confirmPassword.value = ""
+                }
+                isNewAccount.value = !it
+            }
         }
-        isNewAccount.value = newValue
     }
 
     private fun signUpOrSignIn() {
@@ -84,17 +89,26 @@ class LoginLogic : CoreLogic() {
             return
         }
 
-
         AsyncProcessor {
-            Source.userPrefs.uuid =
-                if (isNewAccount == true) {
-                    Source.api.signUp(email, password)
-                } else {
-                    Source.api.signIn(email, password)
-                }
+            Source.apply {
+                userPrefs.uuid = authenticate(
+                    if (isNewAccount == true)
+                        api::signUp
+                    else
+                        api::signIn,
+                    email,
+                    password
+                )
+            }
             progress.finishAsync()
-        }.handleError {
-            progress.alertAsync(FirebaseExceptionHelper.interpretException(it))
-        }.run(bag)
+        } handleError {
+            progress.alertAsync(it.message)
+        } runWith (bag)
     }
+
+    private suspend fun authenticate(
+        authMethod: suspend (String, String) -> String?,
+        email: String,
+        password: String
+    ): String? = authMethod(email, password)
 }

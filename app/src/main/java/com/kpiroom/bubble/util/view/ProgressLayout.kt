@@ -11,13 +11,13 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.util.constant.DISPLAY_HEIGHT
-import com.kpiroom.bubble.util.constant.col
-import com.kpiroom.bubble.util.constant.str
+import com.kpiroom.bubble.util.constants.DISPLAY_HEIGHT
+import com.kpiroom.bubble.util.constants.col
+import com.kpiroom.bubble.util.constants.str
 import java.util.*
 
 class ProgressLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-    FrameLayout(context, attrs, defStyle) {
+        FrameLayout(context, attrs, defStyle) {
 
     companion object {
 
@@ -33,20 +33,20 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private val loading = LayoutInflater.from(context).inflate(R.layout.layout_loading_background, this, false).apply {
         layoutParams =
-            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                .apply {
-                    gravity = Gravity.BOTTOM
-                }
+                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                        .apply {
+                            gravity = Gravity.BOTTOM
+                        }
         translationY = (DISPLAY_HEIGHT / 2).toFloat()
     }
 
     private val staticBackground = ImageView(context).apply {
         layoutParams =
-            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                .apply {
-                    visibility = View.INVISIBLE
-                    gravity = Gravity.BOTTOM
-                }
+                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                        .apply {
+                            visibility = View.INVISIBLE
+                            gravity = Gravity.BOTTOM
+                        }
         scaleType = ImageView.ScaleType.FIT_XY
         setImageResource(R.drawable.ic_bottom_waves)
     }
@@ -54,16 +54,16 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     private val dimmingView = View(context).apply {
         setBackgroundColor(col(R.color.dimColor))
         layoutParams =
-            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F
     }
 
     private val alert = LayoutInflater.from(context).inflate(R.layout.layout_dialog, this, false).apply {
         layoutParams =
-            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                .apply {
-                    gravity = Gravity.BOTTOM
-                }
+                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                        .apply {
+                            gravity = Gravity.BOTTOM
+                        }
         translationY = (DISPLAY_HEIGHT / 2).toFloat()
     }
 
@@ -127,36 +127,34 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
                 }
             }
         }.animate()
-            .addTo(animatorCollector)
-            .alpha(if (show) 1F else 0F)
-            .translationY(if (show) 0F else staticBackground.height.toFloat())
-            .setDuration(ANIMATION_TIME)
-            .setInterpolator(if (show) DecelerateInterpolator() else AccelerateInterpolator())
+                .addTo(animatorCollector)
+                .alpha(if (show) 1F else 0F)
+                .translationY(if (show) 0F else staticBackground.height.toFloat())
+                .setDuration(ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
 
     }
 
     private fun updateStaticBack(show: Boolean) {
         staticBackground.animate()
-            .addTo(animatorCollector)
-            .alpha(if (show) 1F else 0F)
-            .translationY(if (show) 0F else staticBackground.height.toFloat())
-            .setDuration(ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
+                .addTo(animatorCollector)
+                .alpha(if (show) 1F else 0F)
+                .translationY(if (show) 0F else staticBackground.height.toFloat())
+                .setDuration(ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
     }
 
     private fun updateLoading(show: Boolean, message: String = "") {
         if (message.isNotEmpty()) loading.findViewById<TextView>(R.id.loading).text = message
         loading.animate()
-            .addTo(animatorCollector)
-            .translationY(if (show) 0F else (DISPLAY_HEIGHT / 2).toFloat())
-            .setDuration(LOADING_ANIMATION_TIME)
-            .setInterpolator(if (show) DecelerateInterpolator() else AccelerateInterpolator())
+                .addTo(animatorCollector)
+                .translationY(if (show) 0F else (DISPLAY_HEIGHT / 2).toFloat())
+                .setDuration(LOADING_ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
     }
 
     private fun updateDimming(show: Boolean) {
         dimmingView.animate()
-            .addTo(animatorCollector)
-            .alpha(if (show) 0.5F else 0F)
-            .setDuration(ANIMATION_TIME).interpolator = AccelerateDecelerateInterpolator()
+                .addTo(animatorCollector)
+                .alpha(if (show) 0.5F else 0F)
+                .setDuration(ANIMATION_TIME).interpolator = AccelerateDecelerateInterpolator()
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
