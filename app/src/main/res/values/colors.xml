@@ -23,8 +23,8 @@
     <color name="edit_text_background_start">#E6FFFFFF</color>
 
     <!--Background gradient-->
-    <color name="background_gradient_start">#38000000</color>
-    <color name="background_gradient_center">#80000000</color>
-    <color name="background_gradient_end">#C8000000</color>
+    <color name="background_gradient_start">#2E000000</color>
+    <color name="background_gradient_center">#A1000000</color>
+    <color name="background_gradient_end">#D9000000</color>
 
 </resources>

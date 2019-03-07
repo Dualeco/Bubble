@@ -1,6 +1,6 @@
 package com.kpiroom.bubble.util.async
 
-import com.kpiroom.bubble.util.exceptions.BubbleException
+import com.kpiroom.bubble.util.exceptions.CoreException
 import com.kpiroom.bubble.util.exceptions.ErrorHelper
 import kotlinx.coroutines.*
 
@@ -11,7 +11,7 @@ class AsyncProcessor(val task: suspend CoroutineScope.() -> Unit) {
     }
     private var cancelComposite: AsyncBag = AsyncBag()
 
-    infix fun handleError(errHandler: (BubbleException) -> Unit): AsyncProcessor {
+    infix fun handleError(errHandler: (CoreException) -> Unit): AsyncProcessor {
         errorHandler = CoroutineExceptionHandler { _, e ->
             GlobalScope.launch(Dispatchers.Main) {
                 errHandler(ErrorHelper.resolve(e))

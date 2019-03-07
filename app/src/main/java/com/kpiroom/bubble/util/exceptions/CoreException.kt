@@ -3,12 +3,7 @@ package com.kpiroom.bubble.util.exceptions
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.util.constants.str
 
-class BubbleException(errId: Int) : Exception() {
-    var errorId: Int = errId
-        set(value) {
-            field = value
-            initMessage(errorId)
-        }
+class CoreException(errorId: Int) : Exception() {
     override var message: String? = ""
 
     companion object {

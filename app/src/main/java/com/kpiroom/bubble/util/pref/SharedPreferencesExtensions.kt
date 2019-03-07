@@ -5,6 +5,6 @@ import android.content.SharedPreferences
 
 fun SharedPreferences.addString(key: String?, value: String?) {
     edit()
-            .putString(key, value)
-            .apply()
+        .putString(key, value)
+        .apply()
 }

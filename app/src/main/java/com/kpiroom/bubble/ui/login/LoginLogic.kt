@@ -9,7 +9,6 @@ import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.events.DelayedAction
-import com.kpiroom.bubble.util.exceptions.BubbleException.Companion.AUTH_FORGOT_PASSWORD_ERROR
 import com.kpiroom.bubble.util.livedata.*
 
 class LoginLogic : CoreLogic() {
@@ -20,7 +19,7 @@ class LoginLogic : CoreLogic() {
 
     val authButtonText = MutableLiveData<String>().setDefault(str(R.string.login_sign_in))
     val changeAuthButtonText = MutableLiveData<String>().setDefault(str(R.string.login_sign_up))
-    val isNewAccount = MutableLiveData<Boolean>().setDefault(false)
+    val isNewAccount = MutableLiveData<Boolean>()
 
     val delayedAction = MutableLiveData<DelayedAction>()
     val progress = MutableLiveData<ProgressState>()
@@ -43,8 +42,7 @@ class LoginLogic : CoreLogic() {
                         Source.api.sendPasswordResetEmail(mail)
                         alert(str(R.string.message_forgot_password_success))
                     } handleError {
-                        it.errorId = AUTH_FORGOT_PASSWORD_ERROR
-                        alert(it.message)
+                        alert("Error resetting password: ${it.message}")
                     } runWith (bag)
 
                 } ?: run {
@@ -58,7 +56,7 @@ class LoginLogic : CoreLogic() {
         clickThrottler.next {
             swapValues(authButtonText, changeAuthButtonText)
 
-            isNewAccount.value?.let {
+            (isNewAccount.value ?: false).let {
                 if (it) delayedAction.value = DelayedAction(300L) {
                     confirmPassword.value = ""
                 }

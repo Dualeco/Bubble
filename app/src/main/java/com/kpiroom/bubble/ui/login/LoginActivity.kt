@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
@@ -26,6 +25,7 @@ import java.util.*
 class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
 
     private val toggleAuthAnimation = LinkedList<ValueAnimator>()
+    private lateinit var scrollAnimator: ValueAnimator
     private lateinit var onGlobalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener
 
     companion object {
@@ -41,7 +41,9 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
             .forEach {
                 it.setOnTouchListener { _, _ ->
                     if (it.isFocusableInTouchMode) {
-                        anim.smoothScrollToBottom(progressLayout, scrollView).start()
+                        scrollAnimator = anim.smoothScrollToBottom(progressLayout, scrollView).apply {
+                            start()
+                        }
                     }
                     false
                 }
@@ -90,11 +92,15 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         })
     }
 
+    private fun inEditArea(ev: MotionEvent?) =
+        ev != null && (ev.isWithinView(emailEditText) ||
+                ev.isWithinView(passwordEditText) || ev.isWithinView(changeAuthButton) ||
+                ev.isWithinView(editAreaEmptySpot) ||
+                (forgotPasswordTextView.alpha != 1f && ev.isWithinView(confirmPasswordEditText)))
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        ev?.let {
-            if (!it.isWithinView(editTextArea) && !it.isWithinView(changeAuthButton))
-                hideKeyboard()
-        }
+        if (!inEditArea(ev)) hideKeyboard()
+
         return super.dispatchTouchEvent(ev)
     }
 
@@ -117,6 +123,7 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         confirmPasswordEditText.viewTreeObserver
             .removeOnGlobalLayoutListener(onGlobalLayoutListener)
         toggleAuthAnimation.forEach { it.cancel() }
+        scrollAnimator.cancel()
     }
 
     override fun provideLogic() = ViewModelProviders.of(this).get(LoginLogic::class.java)

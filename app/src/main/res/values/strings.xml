@@ -5,7 +5,9 @@
     <string name="login_email_field_default">Email...</string>
     <string name="login_password_field_default">Password...</string>
     <string name="login_confirm_password_field_default">Confirm password...</string>
-    <string name="login_forgot_password"><u>Forgot password?</u></string>
+    <string name="login_forgot_password">
+        <u>Forgot password?</u>
+    </string>
     <string name="login_sign_up">Sign up</string>
     <string name="login_sign_in">Sign in</string>
     <string name="login_or_instead">or instead:</string>
@@ -19,7 +21,9 @@
 
     <!--Forgot password-->
     <string name="message_forgot_password_error">Error sending the instructions to email</string>
-    <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your inbox to reset the password</string>
+    <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your
+        inbox to reset the password
+    </string>
     <string name="message_forgot_password_no_email">To reset your password, please specify the email</string>
 
     <!--Login input errors-->

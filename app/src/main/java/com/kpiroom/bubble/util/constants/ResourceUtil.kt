@@ -16,7 +16,7 @@ fun str(@StringRes res: Int, vararg args: String): String = BubbleApp.app.getStr
 fun col(@ColorRes res: Int): Int = ContextCompat.getColor(BubbleApp.app, res)
 
 fun drw(@DrawableRes res: Int): Drawable = ContextCompat.getDrawable(BubbleApp.app, res)
-        ?: ShapeDrawable()
+    ?: ShapeDrawable()
 
 fun dpToPx(dp: Int): Int = dpToPx(dp.toFloat())
 
