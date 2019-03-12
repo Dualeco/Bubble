@@ -20,7 +20,6 @@
     <string name="message_auth_user_does_not_exist">"User with such email does not exist"</string>
 
     <!--Forgot password-->
-    <string name="message_forgot_password_error">Error sending the instructions to email</string>
     <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your
         inbox to reset the password
     </string>
@@ -42,5 +41,6 @@
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
     <string name="common_loading">Loading</string>
+    <string name="message_common_error">Oops, something went wrong</string>
 
 </resources>

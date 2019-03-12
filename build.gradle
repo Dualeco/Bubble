@@ -24,9 +24,6 @@ buildscript {
     //Navigation
     ext.navigation_version = '1.0.0-alpha11'
 
-    //ProfileBar
-    ext.profilebar_version = '1.1'
-
     repositories {
         google()
         jcenter()

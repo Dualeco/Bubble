@@ -35,18 +35,16 @@ class LoginLogic : CoreLogic() {
     fun onForgotPassword() {
         clickThrottler.next {
             progress.apply {
-
-                email.value?.let { mail ->
-
-                    AsyncProcessor {
-                        Source.api.sendPasswordResetEmail(mail)
-                        alert(str(R.string.message_forgot_password_success))
-                    } handleError {
-                        alert("Error resetting password: ${it.message}")
-                    } runWith (bag)
-
-                } ?: run {
-                    alert(str(R.string.message_forgot_password_no_email))
+                email.value.let { mail ->
+                    if (mail.isNullOrBlank())
+                        alert(str(R.string.message_forgot_password_no_email))
+                    else
+                        AsyncProcessor {
+                            Source.api.sendPasswordResetEmail(mail)
+                            alert(str(R.string.message_forgot_password_success))
+                        } handleError {
+                            alert("Error resetting password: ${it.message}")
+                        } runWith (bag)
                 }
             }
         }
