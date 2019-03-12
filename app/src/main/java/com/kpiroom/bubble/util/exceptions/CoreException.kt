@@ -3,7 +3,10 @@ package com.kpiroom.bubble.util.exceptions
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.util.constants.str
 
-data class CoreException(val errorId: Int, override val message: String = initMessage(errorId)) : Exception() {
+data class CoreException(
+    val errorId: Int = DEFAULT,
+    override val message: String = initMessage(errorId)
+) : Exception() {
 
     companion object {
         const val DEFAULT: Int = 0
@@ -18,7 +21,7 @@ data class CoreException(val errorId: Int, override val message: String = initMe
             AUTH_EMAIL_IN_USE -> str(R.string.message_auth_email_in_use)
             AUTH_USER_DOES_NOT_EXIST -> str(R.string.message_auth_user_does_not_exist)
 
-            else -> errorId.toString()
+            else -> str(R.string.common_error_message)
         }
     }
 }

@@ -41,6 +41,6 @@
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
     <string name="common_loading">Loading</string>
-    <string name="message_common_error">Oops, something went wrong</string>
+    <string name="common_error_message">Oops, something went wrong</string>
 
 </resources>
