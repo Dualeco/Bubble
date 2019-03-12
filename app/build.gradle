@@ -58,10 +58,6 @@ dependencies {
     //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "android.arch.navigation:navigation-ui-ktx:$navigation_version"
-
-    //ProfileBar
-    implementation "com.github.DichotoMe.ProfileBar:profilebar:$profilebar_version"
-    implementation "com.github.DichotoMe.ProfileBar:profilebarBinding:$profilebar_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
