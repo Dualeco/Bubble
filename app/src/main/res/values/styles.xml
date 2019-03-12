@@ -7,11 +7,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="LoginScreen_EditTextStyle" parent="@android:style/Widget.EditText">
+    <style name="Login.EditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:singleLine">true</item>
-        <item name="android:background">@drawable/edit_text_background</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/edit_text_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColorHint">@color/colorTextHintRed</item>
+        <item name="android:textColor">@color/colorTextRed</item>
+    </style>
+
+    <style name="Login.EditTextStyle.Transparent" parent="@android:style/Widget.EditText">
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@color/colorTransparent</item>
+        <item name="android:gravity">center</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textColorHint">@color/colorTextHintRed</item>
         <item name="android:textColor">@color/colorTextRed</item>

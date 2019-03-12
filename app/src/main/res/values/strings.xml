@@ -1,9 +1,46 @@
 <resources>
+
+    <!--Login-->
     <string name="login_app_name">Bubble</string>
     <string name="login_email_field_default">Email...</string>
     <string name="login_password_field_default">Password...</string>
-    <string name="login_get_started">Get started</string>
+    <string name="login_confirm_password_field_default">Confirm password...</string>
+    <string name="login_forgot_password">
+        <u>Forgot password?</u>
+    </string>
+    <string name="login_sign_up">Sign up</string>
+    <string name="login_sign_in">Sign in</string>
     <string name="login_or_instead">or instead:</string>
     <string name="login_read_now">Read now</string>
+
+    <!--Login database errors-->
+    <string name="message_auth_invalid_email_or_pwd">"Invalid email or password"</string>
+    <string name="message_auth_weak_pwd">"Password should be at least 6 characters long"</string>
+    <string name="message_auth_email_in_use">"This email address is already in use"</string>
+    <string name="message_auth_user_does_not_exist">"User with such email does not exist"</string>
+
+    <!--Forgot password-->
+    <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your
+        inbox to reset the password
+    </string>
+    <string name="message_forgot_password_no_email">To reset your password, please specify the email</string>
+
+    <!--Login input errors-->
+    <string name="message_auth_fields_empty">Email and password fields must not be empty</string>
+    <string name="message_auth_confirm_password">Please, confirm your password</string>
+    <string name="message_auth_passwords_do_not_match">Entered passwords do not match</string>
+
+    <!--Splash-->
+    <string name="splash_get">Get</string>
+    <string name="splash_set">Set</string>
+    <string name="splash_version">Version</string>
+
+    <!--Common-->
+    <string name="common_ok">OK</string>
+    <string name="common_none">None</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="common_loading">Loading</string>
+    <string name="common_error_message">Oops, something went wrong</string>
 
 </resources>

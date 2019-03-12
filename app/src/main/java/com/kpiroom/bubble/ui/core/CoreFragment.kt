@@ -23,7 +23,12 @@ abstract class CoreFragment<V : CoreLogic, B : ViewDataBinding> : Fragment() {
 
     abstract fun provideLayout(inflater: LayoutInflater, container: ViewGroup?): LayoutBuilder
 
-    inner class LayoutBuilder(private val inflater: LayoutInflater, private val container: ViewGroup?, private val layout: Int, private val editing: B.() -> Unit = {}) {
+    inner class LayoutBuilder(
+        private val inflater: LayoutInflater,
+        private val container: ViewGroup?,
+        private val layout: Int,
+        private val editing: B.() -> Unit = {}
+    ) {
 
         fun createBinding() = DataBindingUtil.inflate<B>(inflater, layout, container, false).apply {
             editing()
