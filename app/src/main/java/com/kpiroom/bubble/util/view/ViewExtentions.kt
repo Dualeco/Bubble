@@ -7,7 +7,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.kpiroom.bubble.os.BubbleApp
-import com.kpiroom.bubble.util.constant.dpToPx
+import com.kpiroom.bubble.util.constants.dpToPx
 
 fun Context.getStatusBarHeight(): Int {
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

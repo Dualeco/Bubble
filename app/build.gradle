@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.kpiroom.bubble"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -26,6 +26,7 @@ android {
     dataBinding {
         enabled = true
     }
+    buildToolsVersion = '28.0.3'
 }
 
 dependencies {
@@ -47,6 +48,9 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-database:$firebase_version"
 
+    //AuthUI
+    implementation "com.firebaseui:firebase-ui-auth:$firebase_auth_version"
+
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
@@ -54,9 +58,6 @@ dependencies {
     //Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "android.arch.navigation:navigation-ui-ktx:$navigation_version"
-
-    //??
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

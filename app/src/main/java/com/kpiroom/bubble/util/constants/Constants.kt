@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.util.constant
+package com.kpiroom.bubble.util.constants
 
 import android.content.res.Resources
 import android.os.Build

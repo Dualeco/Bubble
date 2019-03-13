@@ -1,7 +1,6 @@
 package com.kpiroom.bubble.util.view
 
 import android.content.Context
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -12,13 +11,13 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.util.constant.DISPLAY_HEIGHT
-import com.kpiroom.bubble.util.constant.col
-import com.kpiroom.bubble.util.constant.str
+import com.kpiroom.bubble.util.constants.DISPLAY_HEIGHT
+import com.kpiroom.bubble.util.constants.col
+import com.kpiroom.bubble.util.constants.str
 import java.util.*
 
 class ProgressLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-        FrameLayout(context, attrs, defStyle) {
+    FrameLayout(context, attrs, defStyle) {
 
     companion object {
 
@@ -34,20 +33,20 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private val loading = LayoutInflater.from(context).inflate(R.layout.layout_loading_background, this, false).apply {
         layoutParams =
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                        .apply {
-                            gravity = Gravity.BOTTOM
-                        }
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                .apply {
+                    gravity = Gravity.BOTTOM
+                }
         translationY = (DISPLAY_HEIGHT / 2).toFloat()
     }
 
     private val staticBackground = ImageView(context).apply {
         layoutParams =
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                        .apply {
-                            visibility = View.INVISIBLE
-                            gravity = Gravity.BOTTOM
-                        }
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                .apply {
+                    visibility = View.INVISIBLE
+                    gravity = Gravity.BOTTOM
+                }
         scaleType = ImageView.ScaleType.FIT_XY
         setImageResource(R.drawable.ic_bottom_waves)
     }
@@ -55,16 +54,16 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     private val dimmingView = View(context).apply {
         setBackgroundColor(col(R.color.dimColor))
         layoutParams =
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F
     }
 
     private val alert = LayoutInflater.from(context).inflate(R.layout.layout_dialog, this, false).apply {
         layoutParams =
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                        .apply {
-                            gravity = Gravity.BOTTOM
-                        }
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                .apply {
+                    gravity = Gravity.BOTTOM
+                }
         translationY = (DISPLAY_HEIGHT / 2).toFloat()
     }
 
@@ -84,19 +83,9 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         updateDimming(true)
         updateLoading(true, message)
         updateAlert(false)
-
-        Handler().postDelayed({
-            alert("Are you ready to do this?") {
-                if (it) {
-                    progress()
-                } else {
-                    content()
-                }
-            }
-        }, 3000L)
     }
 
-    fun content() {
+    fun dismiss() {
         isLoading = false
         dimmingView.isClickable = false
 
@@ -133,16 +122,15 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
                 } else {
                     findViewById<Button>(R.id.firstButton).apply {
                         text = str(R.string.common_ok)
-                        setOnClickListener { content() }
+                        setOnClickListener { dismiss() }
                     }
                 }
             }
         }.animate()
-                .addTo(animatorCollector)
-                .alpha(if (show) 1F else 0F)
-                .translationY(if (show) 0F else staticBackground.height.toFloat())
-                .setDuration(ANIMATION_TIME)
-                .setInterpolator(if (show) DecelerateInterpolator() else AccelerateInterpolator())
+            .addTo(animatorCollector)
+            .alpha(if (show) 1F else 0F)
+            .translationY(if (show) 0F else staticBackground.height.toFloat())
+            .setDuration(ANIMATION_TIME).interpolator = if (show) DecelerateInterpolator() else AccelerateInterpolator()
 
     }
 
@@ -157,10 +145,10 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     private fun updateLoading(show: Boolean, message: String = "") {
         if (message.isNotEmpty()) loading.findViewById<TextView>(R.id.loading).text = message
         loading.animate()
-                .addTo(animatorCollector)
-                .translationY(if (show) 0F else (DISPLAY_HEIGHT / 2).toFloat())
-                .setDuration(LOADING_ANIMATION_TIME)
-                .setInterpolator(if (show) DecelerateInterpolator() else AccelerateInterpolator())
+            .addTo(animatorCollector)
+            .translationY(if (show) 0F else (DISPLAY_HEIGHT / 2).toFloat())
+            .setDuration(LOADING_ANIMATION_TIME).interpolator =
+            if (show) DecelerateInterpolator() else AccelerateInterpolator()
     }
 
     private fun updateDimming(show: Boolean) {
