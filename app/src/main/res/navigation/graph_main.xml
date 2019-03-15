@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.kpiroom.bubble.ui.main.fragment.dashboard.DashboardFragment"
+        android:name="com.kpiroom.bubble.ui.main.fragments.dashboard.DashboardFragment"
         android:label="@string/dashboard_title"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_subscription"
-        android:name="com.kpiroom.bubble.ui.main.fragment.subscription.SubscriptionFragment"
+        android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionFragment"
         android:label="@string/subscription_title"
         tools:layout="@layout/fragment_subscription" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.kpiroom.bubble.ui.main.fragment.profile.ProfileFragment"
+        android:name="com.kpiroom.bubble.ui.main.fragments.profile.ProfileFragment"
         android:label="@string/profile_title"
         tools:layout="@layout/fragment_profile" />
 

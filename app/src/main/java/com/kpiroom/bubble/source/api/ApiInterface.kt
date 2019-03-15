@@ -10,4 +10,7 @@ interface ApiInterface {
     suspend fun signIn(email: String, password: String): String?
 
     suspend fun sendPasswordResetEmail(email: String)
+
+    suspend fun emailExists(email: String): Boolean
+    suspend fun usernameExists(username: String): Boolean
 }

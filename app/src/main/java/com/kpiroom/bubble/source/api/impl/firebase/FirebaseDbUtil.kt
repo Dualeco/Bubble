@@ -57,4 +57,6 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         }
         ref.addListenerForSingleValueEvent(listener)
     }
+
+    suspend fun usernameExists(username: String): Boolean = false
 }

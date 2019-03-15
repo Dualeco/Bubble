@@ -11,17 +11,42 @@ fun <T : Any?> swapValues(liveData1: MutableLiveData<T>, liveData2: MutableLiveD
     liveData2.value = temp
 }
 
-fun MutableLiveData<ProgressState>.alert(message: String? = null, callback: ((Boolean) -> Unit)? = null) {
-    value = ProgressState(ProgressState.ALERT, message, callback)
+fun MutableLiveData<ProgressState>.alert(
+    message: String? = null,
+    callback: ((Boolean) -> Unit)? = null,
+    firstOption: String? = null,
+    secondOption: String? = null
+) {
+
+    value = ProgressState(
+        ProgressState.ALERT,
+        message,
+        callback,
+        firstOption,
+        secondOption
+    )
 }
 
-fun MutableLiveData<ProgressState>.alertAsync(message: String? = null, callback: ((Boolean) -> Unit)? = null) {
+fun MutableLiveData<ProgressState>.alertAsync(
+    message: String? = null,
+    callback: ((Boolean) -> Unit)? = null,
+    firstOption: String? = null,
+    secondOption: String? = null
+) {
     postValue(
         ProgressState(
             ProgressState.ALERT,
             message,
-            callback
+            callback,
+            firstOption,
+            secondOption
         )
+    )
+}
+
+fun MutableLiveData<ProgressState>.finish() {
+    value = ProgressState(
+        ProgressState.FINISHED
     )
 }
 

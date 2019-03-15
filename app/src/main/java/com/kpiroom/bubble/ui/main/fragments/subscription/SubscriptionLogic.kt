@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.ui.main.fragment.subscription
+package com.kpiroom.bubble.ui.main.fragments.subscription
 
 import com.kpiroom.bubble.ui.core.CoreLogic
 

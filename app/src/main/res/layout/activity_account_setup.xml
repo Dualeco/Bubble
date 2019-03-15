@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+                name="logic"
+                type="com.kpiroom.bubble.ui.accountSetup.AccountSetupLogic"/>
+        <variable
+                name="resUtil"
+                type="com.kpiroom.bubble.util.constants.ResourceUtilKt"/>
+        <variable
+                name="R"
+                type="com.kpiroom.bubble.R"/>
+        <import type="com.kpiroom.bubble.util.constants.ConstantsKt"/>
+    </data>
+
+    <com.kpiroom.bubble.util.view.ProgressLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/account_setup_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:progressState="@{logic.progress}">
+
+        <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:fitsSystemWindows="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="320dp">
+
+                    <ImageView
+                            app:drawable="@{logic.wallpaperPhotoDrw}"
+                            android:id="@+id/wallpaperPhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/default_wallpaper"/>
+
+                    <View
+                            android:id="@+id/dim"
+                            android:clickable="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:background="@drawable/backdround_dim_gradient_dark"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/bottom_glow"/>
+
+                    <View
+                            android:id="@+id/bottom_glow"
+                            android:layout_width="0dp"
+                            android:layout_height="12dp"
+                            android:background="@drawable/bottom_glow"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                    <ImageButton
+                            android:id="@+id/option_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:padding="4dp"
+                            android:alpha="0.8"
+                            android:src="@drawable/ic_more_vert"
+                            android:background="@color/colorTransparent"
+                            app:layout_constraintBottom_toBottomOf="@id/dim"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/dim"/>
+
+                    <View
+                            android:id="@+id/popup_anchor"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toTopOf="@id/subtitle"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/photo_frame"
+                            app:layout_constraintWidth_percent="0.2"/>
+
+                    <ImageButton
+                            android:background="@color/colorTransparent"
+                            android:id="@+id/setup_back_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:src="@drawable/setup_back_button"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginStart="12dp"/>
+
+                    <FrameLayout
+                            android:id="@+id/photo_frame"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/title"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHeight_percent="0.4"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                        <com.dichotome.profileshared.views.SquareRoundedImageView
+                                android:id="@+id/photo_frame_background"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:adjustViewBounds="true"
+                                android:src="@drawable/profile_photo_stroke"
+                                android:scaleType="centerCrop"/>
+
+                        <com.dichotome.profileshared.views.SquareRoundedImageView
+                                android:id="@+id/photo"
+                                app:drawable="@{logic.photoDrw}"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_margin="2dp"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/default_avatar"/>
+
+                    </FrameLayout>
+
+                    <TextView
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:id="@+id/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:alpha="0.9"
+                            android:fontFamily="sans-serif-medium"
+                            android:text='@{logic.username ?? @string/setup_your_username}'
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/subtitle"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                    <TextView
+                            android:id="@+id/subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="24dp"
+                            android:alpha="0.8"
+                            android:fontFamily="sans-serif"
+                            android:text="@{logic.date}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimary">
+
+                    <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/setup_title"
+                            android:textAlignment="center"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:textColor="@color/colorTextBlack"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                    <EditText
+                            android:gravity="center"
+                            android:id="@+id/usernameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="20dp"
+                            android:hint="@string/setup_choose_username"
+                            android:inputType="textEmailAddress"
+                            android:text="@={logic.username}"
+                            android:nextFocusDown="@id/passwordEditText"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView"/>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            app:layout_constraintBottom_toTopOf="@+id/startButton"
+                            app:layout_constraintTop_toBottomOf="@+id/usernameEditText"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                    <Button
+                            android:onClick="@{() -> logic.onGetStarted()}"
+                            android:id="@+id/startButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="24dp"
+                            android:background="@drawable/get_started_button"
+                            android:text="@string/setup_get_started"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </ScrollView>
+    </com.kpiroom.bubble.util.view.ProgressLayout>
+</layout>

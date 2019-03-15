@@ -14,12 +14,14 @@ data class CoreException(
         const val AUTH_WEAK_PASSWORD: Int = 2
         const val AUTH_EMAIL_IN_USE: Int = 3
         const val AUTH_USER_DOES_NOT_EXIST: Int = 4
+        const val NETWORK_ERROR: Int = 5
 
         private fun initMessage(errorId: Int) = when (errorId) {
             AUTH_INVALID_CREDENTIALS -> str(R.string.message_auth_invalid_email_or_pwd)
             AUTH_WEAK_PASSWORD -> str(R.string.message_auth_weak_pwd)
             AUTH_EMAIL_IN_USE -> str(R.string.message_auth_email_in_use)
             AUTH_USER_DOES_NOT_EXIST -> str(R.string.message_auth_user_does_not_exist)
+            NETWORK_ERROR -> str(R.string.common_no_internet)
 
             else -> str(R.string.common_error_message)
         }

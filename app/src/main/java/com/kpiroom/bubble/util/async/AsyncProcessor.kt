@@ -5,7 +5,7 @@ import com.kpiroom.bubble.util.exceptions.ErrorHelper
 import kotlinx.coroutines.*
 
 class AsyncProcessor(val task: suspend CoroutineScope.() -> Unit) {
-    var context: CoroutineDispatcher = Dispatchers.Main
+    private val context = Dispatchers.Default
     private var errorHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         GlobalScope.launch(Dispatchers.Main) { throw e }
     }

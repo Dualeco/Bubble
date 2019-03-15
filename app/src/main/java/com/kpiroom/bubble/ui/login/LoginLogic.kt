@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.ui.login
 
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
@@ -10,8 +11,16 @@ import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.events.DelayedAction
 import com.kpiroom.bubble.util.livedata.*
+import kotlinx.coroutines.CoroutineScope
 
 class LoginLogic : CoreLogic() {
+
+    companion object {
+        val TAG = "LoginLogic"
+    }
+
+    val loggedIn = MutableLiveData<Boolean>()
+    val accountSetupRequested = MutableLiveData<Boolean>()
 
     val email = MutableLiveData<String>()
     val password = MutableLiveData<String>()
@@ -27,7 +36,8 @@ class LoginLogic : CoreLogic() {
     fun onAuthClicked() {
         clickThrottler.next {
             delayedAction.value = DelayedAction(300L) {
-                signUpOrSignIn()
+                Log.d(TAG, "Auth")
+                submitData()
             }
         }
     }
@@ -63,48 +73,52 @@ class LoginLogic : CoreLogic() {
         }
     }
 
-    private fun signUpOrSignIn() {
-
-        progress.load()
+    private fun submitData() {
 
         val email = email.value
         val password = password.value
         val confirmPassword = confirmPassword.value
 
-        val isNewAccount = isNewAccount.value
+        val isNewAccount = isNewAccount.value ?: false
 
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             progress.alert(str(R.string.message_auth_fields_empty))
             return
-
-        } else if (isNewAccount == true && confirmPassword.isNullOrEmpty()) {
-            progress.alert(str(R.string.message_auth_confirm_password))
-            return
-        } else if (isNewAccount == true && confirmPassword != password) {
-            progress.alert(str(R.string.message_auth_passwords_do_not_match))
-            return
+        } else if (isNewAccount) {
+            if (confirmPassword.isNullOrEmpty()) {
+                progress.alert(str(R.string.message_auth_confirm_password))
+                return
+            } else if (confirmPassword != password) {
+                progress.alert(str(R.string.message_auth_passwords_do_not_match))
+                return
+            }
         }
 
+        progress.load()
         AsyncProcessor {
-            Source.apply {
-                userPrefs.uuid = authenticate(
-                    if (isNewAccount == true)
-                        api::signUp
-                    else
-                        api::signIn,
-                    email,
-                    password
-                )
-            }
+            processAccount(
+                if (isNewAccount) ::signUp else ::signIn,
+                email,
+                password
+            )
             progress.finishAsync()
         } handleError {
             progress.alertAsync(it.message)
         } runWith (bag)
     }
 
-    private suspend fun authenticate(
-        authMethod: suspend (String, String) -> String?,
+    private suspend fun signIn(email: String, password: String) {
+        Source.userPrefs.uuid = Source.api.signIn(email, password)
+    }
+
+    suspend fun signUp(email: String, password: String) {
+        Source.userPrefs.uuid = Source.api.signUp(email, password)
+        accountSetupRequested.postValue(true)
+    }
+
+    private suspend fun processAccount(
+        method: suspend (String, String) -> Unit,
         email: String,
         password: String
-    ): String? = authMethod(email, password)
+    ) = method(email, password)
 }

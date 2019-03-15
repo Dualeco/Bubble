@@ -1,7 +1,10 @@
 package com.kpiroom.bubble.util.constants
 
+import android.content.ContentResolver
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
+import android.net.Uri
+import androidx.annotation.AnyRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -21,3 +24,12 @@ fun drw(@DrawableRes res: Int): Drawable = ContextCompat.getDrawable(BubbleApp.a
 fun dpToPx(dp: Int): Int = dpToPx(dp.toFloat())
 
 fun dpToPx(dp: Float): Int = Math.round(dp * BubbleApp.app.resources.displayMetrics.density)
+
+fun getResUri(@AnyRes resId: Int) = BubbleApp.app.resources.let {
+    Uri.parse(
+        ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + it.getResourcePackageName(resId) +
+                "/" + it.getResourceTypeName(resId) +
+                "/" + it.getResourceEntryName(resId)
+    )
+}

@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.ui.main.fragment.dashboard
+package com.kpiroom.bubble.ui.main.fragments.dashboard
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

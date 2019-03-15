@@ -25,4 +25,8 @@ class FirebaseApi : ApiInterface {
     override suspend fun signIn(email: String, password: String): String? = authUtil.signIn(email, password)
 
     override suspend fun sendPasswordResetEmail(email: String) = authUtil.sendPasswordResetEmail(email)
+
+    override suspend fun emailExists(email: String) = authUtil.emailExists(email)
+
+    override suspend fun usernameExists(username: String) = dbUtil.usernameExists(username)
 }

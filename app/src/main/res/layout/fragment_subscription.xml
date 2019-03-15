@@ -5,7 +5,7 @@
 
         <variable
             name="logic"
-            type="com.kpiroom.bubble.ui.main.fragment.subscription.SubscriptionLogic"/>
+            type="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionLogic"/>
 
     </data>
 

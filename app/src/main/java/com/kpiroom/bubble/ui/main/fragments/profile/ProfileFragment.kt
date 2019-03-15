@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.ui.main.fragment.profile
+package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
