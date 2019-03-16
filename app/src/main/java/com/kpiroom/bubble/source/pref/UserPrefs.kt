@@ -9,6 +9,7 @@ class UserPrefs {
     companion object {
         private const val UUID = "uuid"
         private const val USERNAME = "username"
+        private const val JOINED_DATE = "joinedOn"
         private const val PROFILE_PHOTO_URI = "profilePhoto"
         private const val PROFILE_WALLPAPER_URI = "profileWallpaper"
     }
@@ -21,6 +22,10 @@ class UserPrefs {
     var username: String?
         get() = prefs.getString(USERNAME, null)
         set(value) = prefs.addString(USERNAME, value)
+
+    var joinedDateString: String?
+        get() = prefs.getString(JOINED_DATE, null)
+        set(value) = prefs.addString(JOINED_DATE, value)
 
     var profilePhotoUri: Uri?
         get() = prefs.getString(PROFILE_PHOTO_URI, null)?.let {

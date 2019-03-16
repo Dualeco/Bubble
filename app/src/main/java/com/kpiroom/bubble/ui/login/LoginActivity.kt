@@ -96,18 +96,23 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         })
 
         logic.loggedIn.observe(this, Observer {
-            if (it == true) {
-                finish()
-                startActivity(MainActivity.getIntent(this@LoginActivity))
-            }
+            if (it == true)
+                switchToActivity(
+                    LoginActivity.getIntent(this@LoginActivity)
+                )
         })
 
         logic.accountSetupRequested.observe(this, Observer {
-            if (it == true) {
-                finish()
-                startActivity(AccountSetupActivity.getIntent(this@LoginActivity))
-            }
+            if (it == true)
+                switchToActivity(
+                    AccountSetupActivity.getIntent(this@LoginActivity)
+                )
         })
+    }
+
+    private fun switchToActivity(intent: Intent) {
+        finish()
+        startActivity(intent)
     }
 
     private fun inEditArea(ev: MotionEvent?) = ev?.let {

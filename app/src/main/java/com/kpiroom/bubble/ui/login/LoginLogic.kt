@@ -108,7 +108,13 @@ class LoginLogic : CoreLogic() {
     }
 
     private suspend fun signIn(email: String, password: String) {
-        Source.userPrefs.uuid = Source.api.signIn(email, password)
+        Source.userPrefs.apply {
+            uuid = Source.api.signIn(email, password)
+            username ?: run {
+                accountSetupRequested.postValue(true)
+            }
+        }
+
     }
 
     suspend fun signUp(email: String, password: String) {

@@ -27,7 +27,7 @@ class AccountSetupLogic : CoreLogic() {
     val clearUsernameFocus = MutableLiveData<Boolean>()
 
     private val dateFormat = str(R.string.date_format)
-    val date = "${str(R.string.setup_joined_on)} ${SimpleDateFormat(dateFormat).format(Date())}"
+    val dateString = "${str(R.string.setup_joined_on)} ${SimpleDateFormat(dateFormat).format(Date())}"
 
     val photoChangeRequested = MutableLiveData<Boolean>()
     val wallpaperChangeRequested = MutableLiveData<Boolean>()
@@ -117,6 +117,7 @@ class AccountSetupLogic : CoreLogic() {
     private fun saveProfileData() {
         Source.userPrefs.let {
             it.username = username.value
+            it.joinedDateString = dateString
             it.profilePhotoUri = photoUri
             it.profileWallpaperUri = wallpaperUri
         }
