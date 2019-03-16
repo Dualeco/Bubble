@@ -4,6 +4,7 @@ package com.kpiroom.bubble.ui.login
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
+import com.kpiroom.bubble.os.BubbleApp
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
@@ -11,7 +12,6 @@ import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.events.DelayedAction
 import com.kpiroom.bubble.util.livedata.*
-import kotlinx.coroutines.CoroutineScope
 
 class LoginLogic : CoreLogic() {
 
@@ -50,10 +50,12 @@ class LoginLogic : CoreLogic() {
                         alert(str(R.string.message_forgot_password_no_email))
                     else
                         AsyncProcessor {
+                            loadAsync()
                             Source.api.sendPasswordResetEmail(mail)
-                            alert(str(R.string.message_forgot_password_success))
+                            alertAsync(str(R.string.message_forgot_password_success))
                         } handleError {
-                            alert("Error resetting password: ${it.message}")
+                            val resources = BubbleApp.app.resources
+                            alert(resources.getString(R.string.login_error_resetting_password, it.message))
                         } runWith (bag)
                 }
             }
@@ -85,15 +87,19 @@ class LoginLogic : CoreLogic() {
             progress.alert(str(R.string.message_auth_fields_empty))
             return
         } else if (isNewAccount) {
-            if (confirmPassword.isNullOrEmpty()) {
-                progress.alert(str(R.string.message_auth_confirm_password))
-                return
-            } else if (confirmPassword != password) {
-                progress.alert(str(R.string.message_auth_passwords_do_not_match))
-                return
+            when {
+                confirmPassword.isNullOrEmpty() -> {
+                    progress.alert(str(R.string.message_auth_confirm_password))
+                }
+                confirmPassword != password -> {
+                    progress.alert(str(R.string.message_auth_passwords_do_not_match))
+                }
+                else -> authenticate(email, password, isNewAccount)
             }
         }
+    }
 
+    private fun authenticate(email: String, password: String, isNewAccount: Boolean) {
         progress.load()
         AsyncProcessor {
             processAccount(

@@ -14,13 +14,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityAccountSetupBinding
-import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.ui.login.LoginActivity
 import com.kpiroom.bubble.ui.main.MainActivity
 import com.kpiroom.bubble.util.constants.dpToPx
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.livedata.alert
+import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.view.ProfileOptionWindow
 import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.activity_account_setup.*
@@ -52,8 +52,8 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
                         intent?.data
 
                     uri?.let {
-                        val asProfilePhoto = photoChangeRequested.value == true
-                        loadPhoto(it, asProfilePhoto)
+                        val isProfilePhoto = photoChangeRequested.value == true
+                        dispatchUri(it, isProfilePhoto)
                     }
                 }
             }
@@ -63,22 +63,26 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupOptionMenu()
-        setupBackButton()
 
-        logic.clearUsernameFocus.observe(this, Observer {
-            if (it == true) {
-                usernameEditText.clearFocus()
-            }
+        logic.backButtonClicked.observeTrue(this, Observer {
+            finish()
+            startActivity(LoginActivity.getIntent(this))
+            overridePendingTransition(
+                R.anim.slide_back_transition,
+                R.anim.anim_none
+            )
         })
 
-        logic.photoChangeRequested.observe(this, Observer {
-            if (it == true)
-                showAlertChoosePhoto()
+        logic.clearUsernameFocus.observeTrue(this, Observer {
+            usernameEditText.clearFocus()
         })
 
-        logic.wallpaperChangeRequested.observe(this, Observer {
-            if (it == true)
-                showAlertChoosePhoto()
+        logic.photoChangeRequested.observeTrue(this, Observer {
+            showAlertChoosePhoto()
+        })
+
+        logic.wallpaperChangeRequested.observeTrue(this, Observer {
+            showAlertChoosePhoto()
         })
 
         logic.username.observe(this, Observer {
@@ -86,13 +90,11 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
                 logic.username.value = null
         })
 
-        logic.started.observe(this, Observer {
-            if (it == true) {
-                startActivity(
-                    MainActivity.getIntent(this)
-                )
-                finish()
-            }
+        logic.started.observeTrue(this, Observer {
+            startActivity(
+                MainActivity.getIntent(this)
+            )
+            finish()
         })
 
         logic.progress.observe(this, Observer {
@@ -104,7 +106,7 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
 
     private var optionWindow: ProfileOptionWindow? = null
     private fun setupOptionMenu() {
-        optionWindow = com.kpiroom.bubble.util.view.ProfileOptionWindow(
+        optionWindow = ProfileOptionWindow(
             LayoutInflater.from(this).inflate(
                 R.layout.profile_popup_window,
                 account_setup_root,
@@ -132,23 +134,9 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
         }
     }
 
-    private fun setupBackButton() {
-        setup_back_button.setOnClickListener {
-            Source.userPrefs.uuid = null
-
-            startActivity(LoginActivity.getIntent(this))
-            overridePendingTransition(
-                R.anim.slide_back_transition,
-                R.anim.anim_none
-            )
-
-            finish()
-        }
-    }
-
-    private fun useCamera(boolean: Boolean) {
-        usingCamera = boolean
-        if (boolean) {
+    private fun addPhoto(useCamera: Boolean) {
+        usingCamera = useCamera
+        if (useCamera) {
             photoCaptureUri = getFileUri(createTempFile())
 
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
@@ -173,7 +161,7 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
                     str(R.string.setup_upload_wallpaper)
                 else
                     str(R.string.setup_upload_photo),
-                ::useCamera,
+                ::addPhoto,
                 str(R.string.setup_take_photo_camera),
                 str(R.string.setup_from_gallery)
             )

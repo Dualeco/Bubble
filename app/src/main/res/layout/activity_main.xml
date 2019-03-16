@@ -36,10 +36,5 @@
                 app:menu="@menu/menu_navigation_main"
                 app:itemTextColor="@color/background_navigation_item"
                 app:itemIconTint="@color/background_navigation_item"/>
-
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="@{ConstantsKt.STATUS_BAR_SIZE, default=match_parent}"
-                android:background="@color/toolbarColor"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

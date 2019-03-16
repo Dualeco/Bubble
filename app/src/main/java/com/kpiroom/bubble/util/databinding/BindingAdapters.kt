@@ -1,13 +1,15 @@
 package com.kpiroom.bubble.util.databinding
 
-import android.graphics.drawable.Drawable
-import android.util.Log
+import android.net.Uri
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import com.kpiroom.bubble.ui.login.LoginLogic
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.dichotome.profileshared.views.CircularImageView
+import com.kpiroom.bubble.os.BubbleApp
 import com.kpiroom.bubble.util.databinding.ProgressState.Companion.ALERT
 import com.kpiroom.bubble.util.databinding.ProgressState.Companion.FINISHED
 import com.kpiroom.bubble.util.databinding.ProgressState.Companion.LOADING
@@ -73,9 +75,16 @@ fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressSta
     }
 }
 
-@BindingAdapter("app:drawable")
-fun setDrawable(view: ImageView, src: Drawable?) {
-    src?.let {
-        view.setImageDrawable(it)
+@BindingAdapter("app:uri")
+fun setUri(imageView: ImageView, uri: Uri?) {
+    uri?.let {
+        val options = RequestOptions().apply {
+            if (imageView is CircularImageView)
+                circleCrop()
+        }
+        Glide.with(BubbleApp.app)
+            .load(uri)
+            .apply(options)
+            .into(imageView)
     }
 }

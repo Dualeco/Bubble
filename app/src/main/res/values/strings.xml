@@ -16,6 +16,7 @@
     <string name="login_sign_in">Sign in</string>
     <string name="login_or_instead">or instead:</string>
     <string name="login_read_now">Read now</string>
+    <string name="login_error_resetting_password">Error resetting password: %1$s</string>
 
     <!--Account setup-->
     <string name="setup_your_username">Your username</string>
@@ -35,7 +36,10 @@
     <string name="setup_from_gallery">Gallery</string>
     <string name="setup_menu_change_photo">Photo</string>
     <string name="setup_menu_change_wallpaper">Wallpaper</string>
-    <string name="continue_with_unchanged">Continue with default %1$s ?</string>
+    <string name="setup_continue_with_unchanged">Continue with default %1$s ?</string>
+    <string name="setup_unchanged_photo_and_wallpaper">photo and wallpaper</string>
+    <string name="setup_unchanged_photo">photo</string>
+    <string name="setup_unchanged_wallpaper">wallpaper</string>
 
     <!--Login database errors-->
     <string name="message_auth_invalid_email_or_pwd">"Invalid email or password"</string>

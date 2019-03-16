@@ -1,6 +1,9 @@
 package com.kpiroom.bubble.util.livedata
 
+import androidx.annotation.NonNull
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.kpiroom.bubble.util.databinding.ProgressState
 
 
@@ -69,5 +72,12 @@ fun MutableLiveData<ProgressState>.loadAsync(message: String? = null) {
             message
         )
     )
+}
+
+fun MutableLiveData<Boolean>.observeTrue(@NonNull owner: LifecycleOwner, @NonNull observer: Observer<Boolean>) {
+    observe(owner, Observer {
+        if (it == true)
+            observer.onChanged(it)
+    })
 }
 
