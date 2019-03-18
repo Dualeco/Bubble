@@ -8,6 +8,7 @@ import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.IS_CONNECTED
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.exceptions.core.db.DbCancelledException
@@ -34,9 +35,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
             .addOnCanceledListener { continuation.cancel() }
     }
 
-    suspend fun <T : Any?> read(
-        path: String
-    ): T = suspendCancellableCoroutine { continuation ->
+    suspend fun <T : Any?> read(path: String): T = suspendCancellableCoroutine { continuation ->
         val ref = firebaseDb.getReference(path)
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -65,19 +64,16 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         ref.addListenerForSingleValueEvent(listener)
     }
 
-    private suspend fun <T : Any?> readIfConnected(
-        path: String
-    ): T = if (isConnected())
-        read(path)
-    else
-        throw FirebaseNetworkException(str(R.string.db_no_connection))
+    private suspend fun <T : Any?> readIfConnected(path: String): T =
+        if (isConnected())
+            read(path)
+        else
+            throw FirebaseNetworkException(str(R.string.db_no_connection))
 
     suspend fun setUpAccount(): Unit = Source.userPrefs.run {
-        write("$USERNAMES/$uuid", username)
-        uuid?.let { id ->
-            User(username, joinedDateString).apply {
-                write(getLocation(id), this)
-            }
+        uuid?.also { id ->
+            write("$USERS/$id", User(username, joinedDateString))
+            write("$USERNAMES/$id", username)
         }
     }
 

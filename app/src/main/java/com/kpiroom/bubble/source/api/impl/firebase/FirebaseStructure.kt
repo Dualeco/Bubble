@@ -6,8 +6,7 @@ object FirebaseStructure {
 
     private val VERSION_KEY = "version"
     private val META_KEY = "meta"
-    private val USER_KEY = "users"
-
+    val USERS = "users"
     val USERNAMES = "usernames"
     val IS_CONNECTED = ".info/connected"
 
@@ -23,11 +22,5 @@ object FirebaseStructure {
     data class User(
         val username: String?,
         val joinedDate: String?
-    ) {
-        companion object {
-            val ROOT = USER_KEY
-        }
-
-        fun getLocation(uuid: String): String = "$USER_KEY/$uuid"
-    }
+    )
 }

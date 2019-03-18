@@ -86,8 +86,8 @@ class AccountSetupLogic : CoreLogic() {
 
                         isPhotoDefault || isWallpaperDefault -> {
                             progress.alertAsync(
-                                getUnchangedDrwMessage(),
-                                ::finishSetupCondition
+                                unchangedDrwMessage,
+                                ::isSetupFinishRequested
                             )
                         }
 
@@ -103,18 +103,19 @@ class AccountSetupLogic : CoreLogic() {
         }
     }
 
-    private fun getUnchangedDrwMessage() = app.getString(
-        R.string.setup_continue_with_unchanged,
-        when {
-            isPhotoDefault && isWallpaperDefault -> str(R.string.setup_unchanged_photo_and_wallpaper)
-            isPhotoDefault -> str(R.string.setup_unchanged_photo)
-            isWallpaperDefault -> str(R.string.setup_unchanged_wallpaper)
-            else -> null
-        }
-    )
+    private val unchangedDrwMessage
+        get() = app.getString(
+            R.string.setup_continue_with_unchanged,
+            when {
+                isPhotoDefault && isWallpaperDefault -> str(R.string.setup_unchanged_photo_and_wallpaper)
+                isPhotoDefault -> str(R.string.setup_unchanged_photo)
+                isWallpaperDefault -> str(R.string.setup_unchanged_wallpaper)
+                else -> null
+            }
+        )
 
-    private fun finishSetupCondition(condition: Boolean) {
-        if (condition)
+    private fun isSetupFinishRequested(isRequested: Boolean) {
+        if (isRequested)
             finishRequested.postValue(true)
         else
             return
@@ -122,13 +123,14 @@ class AccountSetupLogic : CoreLogic() {
 
     fun finishSetup() {
         progress.apply {
-            AsyncProcessor {
-                saveProfileData()
+            saveProfileData()
 
+            AsyncProcessor {
                 loadAsync()
                 Source.api.setUpAccount()
-                started.postValue(true)
+
                 finishAsync()
+                started.postValue(true)
             } handleError {
                 alert(it.message)
             } runWith (bag)
