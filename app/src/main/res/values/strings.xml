@@ -18,6 +18,24 @@
     <string name="login_read_now">Read now</string>
     <string name="login_error_resetting_password">Error resetting password: %1$s</string>
 
+    <!--Email-->
+    <string name="message_auth_invalid_email_or_pwd">"Invalid email or password"</string>
+    <string name="message_auth_weak_pwd">"Password should be at least 6 characters long"</string>
+    <string name="message_auth_email_in_use">"This email address is already in use"</string>
+    <string name="message_auth_user_does_not_exist">"User with such email does not exist"</string>
+
+    <!--Forgot password-->
+    <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your
+        inbox to reset the password
+    </string>
+    <string name="message_forgot_password_no_email">To reset your password, please specify the email</string>
+
+    <!--Login input errors-->
+    <string name="message_auth_fields_empty">Email and password fields must not be empty</string>
+    <string name="message_auth_confirm_password">Please, confirm your password</string>
+    <string name="message_auth_passwords_do_not_match">Entered passwords do not match</string>
+
+
     <!--Account setup-->
     <string name="setup_your_username">Your username</string>
     <string name="setup_joined_on">Joined on</string>
@@ -41,22 +59,10 @@
     <string name="setup_unchanged_photo">photo</string>
     <string name="setup_unchanged_wallpaper">wallpaper</string>
 
-    <!--Login database errors-->
-    <string name="message_auth_invalid_email_or_pwd">"Invalid email or password"</string>
-    <string name="message_auth_weak_pwd">"Password should be at least 6 characters long"</string>
-    <string name="message_auth_email_in_use">"This email address is already in use"</string>
-    <string name="message_auth_user_does_not_exist">"User with such email does not exist"</string>
-
-    <!--Forgot password-->
-    <string name="message_forgot_password_success">Instructions have been sent to your email address. Please, check your
-        inbox to reset the password
-    </string>
-    <string name="message_forgot_password_no_email">To reset your password, please specify the email</string>
-
-    <!--Login input errors-->
-    <string name="message_auth_fields_empty">Email and password fields must not be empty</string>
-    <string name="message_auth_confirm_password">Please, confirm your password</string>
-    <string name="message_auth_passwords_do_not_match">Entered passwords do not match</string>
+    <!--Database-->
+    <string name="db_field_empty">This field is empty in the database</string>
+    <string name="db_call_cancelled">Database call cancelled</string>
+    <string name="db_no_connection">No connection</string>
 
     <!--Splash-->
     <string name="splash_get">Get</string>

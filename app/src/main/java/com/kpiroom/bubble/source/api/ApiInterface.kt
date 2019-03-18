@@ -8,6 +8,7 @@ interface ApiInterface {
 
     suspend fun signUp(email: String, password: String): String?
     suspend fun signIn(email: String, password: String): String?
+    suspend fun setUpAccount(): Unit
 
     suspend fun sendPasswordResetEmail(email: String)
 

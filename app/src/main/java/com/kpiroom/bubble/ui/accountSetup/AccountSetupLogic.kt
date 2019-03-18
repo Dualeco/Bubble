@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.ui.accountSetup
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
@@ -22,11 +23,13 @@ class AccountSetupLogic : CoreLogic() {
     val clearUsernameFocus = MutableLiveData<Boolean>()
 
     private val dateFormat = str(R.string.date_format)
-    val dateString = "${str(R.string.setup_joined_on)} ${SimpleDateFormat(dateFormat).format(Date())}"
+    private val dateString = SimpleDateFormat(dateFormat).format(Date()).toString()
+    val joinedOn = "${str(R.string.setup_joined_on)} $dateString"
 
     val photoChangeRequested = MutableLiveData<Boolean>()
     val wallpaperChangeRequested = MutableLiveData<Boolean>()
 
+    val finishRequested = MutableLiveData<Boolean>()
     val started = MutableLiveData<Boolean>()
 
     private val defaultPhotoUri = getResUri(R.drawable.default_avatar)
@@ -66,9 +69,10 @@ class AccountSetupLogic : CoreLogic() {
         progress.apply {
             username.value.let {
 
+                Log.d("START", "GET")
+
                 AsyncProcessor {
                     progress.loadAsync()
-
                     when {
                         it.isNullOrBlank() -> alertAsync(str(R.string.setup_username_cannot_be_empty))
 
@@ -89,7 +93,7 @@ class AccountSetupLogic : CoreLogic() {
 
                         else -> {
                             finishAsync()
-                            finishSetup()
+                            finishRequested.postValue(true)
                         }
                     }
                 }
@@ -111,14 +115,24 @@ class AccountSetupLogic : CoreLogic() {
 
     private fun finishSetupCondition(condition: Boolean) {
         if (condition)
-            finishSetup()
+            finishRequested.postValue(true)
         else
             return
     }
 
-    private fun finishSetup() {
-        saveProfileData()
-        started.postValue( true)
+    fun finishSetup() {
+        progress.apply {
+            AsyncProcessor {
+                saveProfileData()
+
+                loadAsync()
+                Source.api.setUpAccount()
+                started.postValue(true)
+                finishAsync()
+            } handleError {
+                alert(it.message)
+            } runWith (bag)
+        }
     }
 
     private fun saveProfileData() {

@@ -29,8 +29,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     private val container = FrameLayout(context)
     private val animatorCollector = LinkedList<ViewPropertyAnimator>()
 
-
-    private var isDisplayed: Boolean = false
     private var isAlertShown = false
 
     private val loading = LayoutInflater.from(context).inflate(R.layout.layout_loading_background, this, false).apply {
@@ -79,14 +77,13 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         addView(dimmingView)
         addView(loading)
         addView(alert)
-        setOnBackButtonClicked(::isDisplayed) {
+        setOnBackButtonClicked(::isAlertShown) {
             dismiss()
         }
     }
 
     fun progress(message: String = str(R.string.common_loading)) {
 
-        isDisplayed = true
         dimmingView.isClickable = true
 
         updateStaticBack(false)
@@ -96,7 +93,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun dismiss() {
-        isDisplayed = false
         dimmingView.isClickable = false
 
         updateDimming(false)
@@ -111,7 +107,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         firstOption: String? = null,
         secondOption: String? = null
     ) {
-        isDisplayed = true
         dimmingView.isClickable = true
 
         updateDimming(true)

@@ -12,17 +12,14 @@ class FirebaseApi : ApiInterface {
 
     private val authUtil = FirebaseAuthUtil(FirebaseAuth.getInstance())
 
-    override suspend fun getServerVersion(): String = dbUtil.read(FirebaseStructure.VERSION, String::class.java)
+    override suspend fun getServerVersion(): String = dbUtil.read(FirebaseStructure.VERSION)
 
     override suspend fun setServerVersion(version: String) = dbUtil.write(FirebaseStructure.VERSION, version)
 
-    override suspend fun signUp(email: String, password: String) = authUtil.signUp(email, password).also {
-        it?.let { id ->
-            dbUtil.write("${FirebaseStructure.USER(id)}", id)
-        }
-    }
-
+    override suspend fun signUp(email: String, password: String) = authUtil.signUp(email, password)
     override suspend fun signIn(email: String, password: String): String? = authUtil.signIn(email, password)
+
+    override suspend fun setUpAccount() = dbUtil.setUpAccount()
 
     override suspend fun sendPasswordResetEmail(email: String) = authUtil.sendPasswordResetEmail(email)
 

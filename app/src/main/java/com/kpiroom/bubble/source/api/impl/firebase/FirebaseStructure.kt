@@ -1,10 +1,15 @@
 package com.kpiroom.bubble.source.api.impl.firebase
 
+import java.util.*
+
 object FirebaseStructure {
 
     private val VERSION_KEY = "version"
     private val META_KEY = "meta"
-    private val USER_KEY = "user"
+    private val USER_KEY = "users"
+
+    val USERNAMES = "usernames"
+    val IS_CONNECTED = ".info/connected"
 
     val VERSION = "/$VERSION_KEY"
 
@@ -15,7 +20,14 @@ object FirebaseStructure {
         val SERVER_TIME = "/$META_KEY/$SERVER_TIME_KEY"
     }
 
-    class USER(private val uuid: String) {
-        override fun toString() = "/$USER_KEY/$uuid"
+    data class User(
+        val username: String?,
+        val joinedDate: String?
+    ) {
+        companion object {
+            val ROOT = USER_KEY
+        }
+
+        fun getLocation(uuid: String): String = "$USER_KEY/$uuid"
     }
 }

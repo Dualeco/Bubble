@@ -1,6 +1,6 @@
 package com.kpiroom.bubble.util.async
 
-import com.kpiroom.bubble.util.exceptions.CoreException
+import com.kpiroom.bubble.util.exceptions.core.CoreException
 import com.kpiroom.bubble.util.exceptions.ErrorHelper
 import kotlinx.coroutines.*
 
