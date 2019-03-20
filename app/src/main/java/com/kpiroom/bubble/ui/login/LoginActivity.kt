@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import android.view.animation.DecelerateInterpolator
@@ -17,6 +18,7 @@ import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityLoginBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreActivity
+import com.kpiroom.bubble.ui.main.MainActivity
 import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.view.LoginAnimation
 import com.kpiroom.bubble.util.view.hideKeyboard
@@ -95,14 +97,18 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
 
         logic.loggedIn.observeTrue(this, Observer {
             switchToActivity(
-                LoginActivity.getIntent(this@LoginActivity)
+                MainActivity.getIntent(this@LoginActivity)
             )
         })
 
-        logic.accountSetupRequested.observeTrue(this, Observer {
-            switchToActivity(
-                AccountSetupActivity.getIntent(this@LoginActivity)
-            )
+        logic.accountSetupRequested.observe(this, Observer {
+            if (it == true) {
+                Log.d("ErrorHelper", "Y")
+                switchToActivity(
+                    AccountSetupActivity.getIntent(this@LoginActivity)
+                )
+            } else
+                Log.d("ErrorHelper", "N")
         })
     }
 

@@ -1,7 +1,6 @@
 package com.kpiroom.bubble.ui.login
 
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp
@@ -36,7 +35,6 @@ class LoginLogic : CoreLogic() {
     fun onAuthClicked() {
         clickThrottler.next {
             delayedAction.value = DelayedAction(300L) {
-                Log.d(TAG, "Auth")
                 submitData()
             }
         }
@@ -86,7 +84,7 @@ class LoginLogic : CoreLogic() {
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             progress.alert(str(R.string.message_auth_fields_empty))
             return
-        } else if (isNewAccount) {
+        } else if (isNewAccount)
             when {
                 confirmPassword.isNullOrEmpty() -> {
                     progress.alert(str(R.string.message_auth_confirm_password))
@@ -94,14 +92,14 @@ class LoginLogic : CoreLogic() {
                 confirmPassword != password -> {
                     progress.alert(str(R.string.message_auth_passwords_do_not_match))
                 }
-                else -> authenticate(email, password, isNewAccount)
             }
-        }
+
+        authenticate(email, password, isNewAccount)
     }
 
     private fun authenticate(email: String, password: String, isNewAccount: Boolean) {
-        progress.load()
         AsyncProcessor {
+            progress.loadAsync()
             processAccount(
                 if (isNewAccount) ::signUp else ::signIn,
                 email,
@@ -114,14 +112,16 @@ class LoginLogic : CoreLogic() {
     }
 
     private suspend fun signIn(email: String, password: String) {
-        Source.userPrefs.apply {
-            uuid = Source.api.signIn(email, password)
-            username ?: run {
+        Source.apply {
+            api.signIn(email, password)
+            userPrefs.username?.let {
+                loggedIn.postValue(true)
+            } ?: run {
                 accountSetupRequested.postValue(true)
             }
         }
-
     }
+
 
     suspend fun signUp(email: String, password: String) {
         Source.userPrefs.uuid = Source.api.signUp(email, password)

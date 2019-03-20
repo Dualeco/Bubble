@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_subscription"
-        android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionFragment"
+        android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsFragment"
         android:label="@string/subscription_title"
         tools:layout="@layout/fragment_subscription" />
 

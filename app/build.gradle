@@ -48,8 +48,11 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-database:$firebase_version"
 
-    //AuthUI
+    //Firebase AuthUI
     implementation "com.firebaseui:firebase-ui-auth:$firebase_auth_version"
+
+    //Firebase CloudStorage
+    implementation "com.google.firebase:firebase-storage:$firebase_version"
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

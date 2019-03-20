@@ -68,25 +68,4 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
                 continuation.cancel()
             }
     }
-
-    suspend fun emailExists(
-        email: String
-    ): Boolean = suspendCancellableCoroutine { continuation ->
-        Log.d(TAG, "Checking")
-        auth.fetchSignInMethodsForEmail(email)
-            .addOnSuccessListener {
-                Log.d(TAG, "Check successful")
-                val found = !(it.signInMethods?.isEmpty() ?: true)
-                continuation.resume(found)
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "Check failed")
-                continuation.resumeWithException(it)
-            }
-            .addOnCanceledListener {
-                Log.d(TAG, "Check cancelled")
-                continuation.cancel()
-            }
-    }
-
 }

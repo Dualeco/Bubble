@@ -1,17 +1,18 @@
 package com.kpiroom.bubble.ui.accountSetup
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.source.Source
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.livedata.*
+import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,32 +24,29 @@ class AccountSetupLogic : CoreLogic() {
     val clearUsernameFocus = MutableLiveData<Boolean>()
 
     private val dateFormat = str(R.string.date_format)
-    private val dateString = SimpleDateFormat(dateFormat).format(Date()).toString()
-    val joinedOn = "${str(R.string.setup_joined_on)} $dateString"
+    private val currentDateString = SimpleDateFormat(dateFormat).format(Date()).toString()
+    val joinedOn = "${str(R.string.setup_joined_on)} $currentDateString"
 
     val photoChangeRequested = MutableLiveData<Boolean>()
     val wallpaperChangeRequested = MutableLiveData<Boolean>()
 
     val finishRequested = MutableLiveData<Boolean>()
-    val started = MutableLiveData<Boolean>()
+    val setupComplete = MutableLiveData<Boolean>()
 
     private val defaultPhotoUri = getResUri(R.drawable.default_avatar)
-    val photoUri = MutableLiveData<Uri>().setDefault(
-        defaultPhotoUri
-    )
-    private val isPhotoDefault
-        get() = photoUri.value == defaultPhotoUri
+    val photoUri = MutableLiveData<Uri>().setDefault(defaultPhotoUri)
 
     private val defaultWallpaperUri = getResUri(R.drawable.default_wallpaper)
-    val wallpaperUri = MutableLiveData<Uri>().setDefault(
-        defaultWallpaperUri
-    )
-    private val isWallpaperDefault
-        get() = wallpaperUri.value == defaultWallpaperUri
+    val wallpaperUri = MutableLiveData<Uri>().setDefault(defaultWallpaperUri)
+
+    private val isPhotoSet
+        get() = photoUri.value != defaultPhotoUri
+    private val isWallpaperSet
+        get() = wallpaperUri.value != defaultWallpaperUri
 
     val backButtonClicked = MutableLiveData<Boolean>()
     fun onBackButton() {
-        Source.userPrefs.uuid = null
+        Source.userPrefs.clear()
         backButtonClicked.value = true
     }
 
@@ -69,8 +67,6 @@ class AccountSetupLogic : CoreLogic() {
         progress.apply {
             username.value.let {
 
-                Log.d("START", "GET")
-
                 AsyncProcessor {
                     progress.loadAsync()
                     when {
@@ -84,16 +80,14 @@ class AccountSetupLogic : CoreLogic() {
 
                         Source.api.usernameExists(it) -> alertAsync(str(R.string.setup_username_exists))
 
-                        isPhotoDefault || isWallpaperDefault -> {
-                            progress.alertAsync(
-                                unchangedDrwMessage,
-                                ::isSetupFinishRequested
-                            )
-                        }
+                        !(isPhotoSet && isWallpaperSet) -> progress.alertAsync(
+                            warningPhotosUnchanged,
+                            ::isSetupFinishRequested
+                        )
 
                         else -> {
-                            finishAsync()
                             finishRequested.postValue(true)
+                            progress.finishAsync()
                         }
                     }
                 }
@@ -103,13 +97,13 @@ class AccountSetupLogic : CoreLogic() {
         }
     }
 
-    private val unchangedDrwMessage
+    private val warningPhotosUnchanged
         get() = app.getString(
             R.string.setup_continue_with_unchanged,
             when {
-                isPhotoDefault && isWallpaperDefault -> str(R.string.setup_unchanged_photo_and_wallpaper)
-                isPhotoDefault -> str(R.string.setup_unchanged_photo)
-                isWallpaperDefault -> str(R.string.setup_unchanged_wallpaper)
+                !(isPhotoSet || isWallpaperSet) -> str(R.string.setup_unchanged_photo_and_wallpaper)
+                !isPhotoSet -> str(R.string.setup_unchanged_photo)
+                !isWallpaperSet -> str(R.string.setup_unchanged_wallpaper)
                 else -> null
             }
         )
@@ -123,26 +117,59 @@ class AccountSetupLogic : CoreLogic() {
 
     fun finishSetup() {
         progress.apply {
-            saveProfileData()
-
-            AsyncProcessor {
+            AsyncProcessor(Dispatchers.IO) {
                 loadAsync()
-                Source.api.setUpAccount()
+
+                saveUserData()
+                uploadProfile()
+                setupComplete.postValue(true)
 
                 finishAsync()
-                started.postValue(true)
             } handleError {
                 alert(it.message)
             } runWith (bag)
         }
     }
 
-    private fun saveProfileData() {
+    private suspend fun uploadProfile() {
+        Source.userPrefs.let {
+            Source.api.uploadUserData(
+                it.uuid,
+                User(
+                    it.username,
+                    it.joinedDate,
+                    it.isPhotoSet,
+                    it.isWallpaperSet
+                )
+            )
+        }
+        uploadUserImages()
+    }
+
+    private suspend fun uploadUserImages() {
+        val photoUri = photoUri.value
+        val wallpaperUri = wallpaperUri.value
+
+        val uuid = Source.userPrefs.uuid
+        Source.api.apply {
+
+            if (isPhotoSet)
+                photoUri?.let {
+                    uploadUserPhoto(uuid, it)
+                }
+            if (isWallpaperSet)
+                wallpaperUri?.let {
+                    uploadUserWallpaper(uuid, it)
+                }
+        }
+    }
+
+    private fun saveUserData() {
         Source.userPrefs.let {
             it.username = username.value
-            it.joinedDateString = dateString
-            it.profilePhotoUri = photoUri.value
-            it.profileWallpaperUri = wallpaperUri.value
+            it.joinedDate = currentDateString
+            it.isPhotoSet = isPhotoSet
+            it.isWallpaperSet = isWallpaperSet
         }
     }
 

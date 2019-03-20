@@ -32,7 +32,7 @@ object ErrorHelper {
                 is DbEmptyFieldException -> DB_EMPTY_FIELD
                 is DbCancelledException -> DB_CALL_CANCELLED
                 else -> {
-                    Log.d(TAG, "Unresolved error: ${throwable.message}")
+                    Log.d(TAG, "Unresolved error: $throwable")
                     DEFAULT
                 }
             }

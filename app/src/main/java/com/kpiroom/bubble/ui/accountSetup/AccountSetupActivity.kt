@@ -94,7 +94,7 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
             logic.finishSetup()
         })
 
-        logic.started.observeTrue(this, Observer {
+        logic.setupComplete.observeTrue(this, Observer {
             startActivity(
                 MainActivity.getIntent(this)
             )
