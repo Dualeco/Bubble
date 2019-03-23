@@ -20,11 +20,9 @@ object FirebaseStructure {
     }
 
     data class User(
-        val username: String? = null,
-        val joinedDate: String? = null,
+        val username: String = "",
+        val joinedDate: String = "",
         val isPhotoSet: Boolean = false,
         val isWallpaperSet: Boolean = false
     )
-
-    class StringHashMap : HashMap<String, String>()
 }

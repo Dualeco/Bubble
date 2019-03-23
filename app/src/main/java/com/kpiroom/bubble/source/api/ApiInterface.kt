@@ -12,9 +12,9 @@ interface ApiInterface {
 
     suspend fun usernameExists(username: String): Boolean
 
-    suspend fun getUserData(uuid: String?): User?
+    suspend fun getUserData(uuid: String): User?
 
-    suspend fun uploadUserData(uuid: String?, user: User)
+    suspend fun uploadUserData(uuid: String, user: User)
 
     //Auth
     suspend fun signUp(email: String, password: String): String?
@@ -27,16 +27,10 @@ interface ApiInterface {
     suspend fun uploadFile(
         dirRef: String,
         uri: Uri,
-        name: String?
+        name: String
     ): String
 
-    suspend fun uploadUserPhoto(
-        uuid: String?,
-        uri: Uri
-    ): String
+    suspend fun uploadUserPhoto(uuid: String, uri: Uri): String
 
-    suspend fun uploadUserWallpaper(
-        uuid: String?,
-        uri: Uri
-    ): String
+    suspend fun uploadUserWallpaper(uuid: String, uri: Uri): String
 }

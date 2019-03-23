@@ -9,7 +9,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.IS_CONNECTED
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.StringHashMap
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
@@ -26,7 +25,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         private const val TAG = "FirebaseDbUtil"
     }
 
-    private suspend fun isConnected(): Boolean = read(IS_CONNECTED, Boolean::class.java)
+    private suspend fun isConnected(): Boolean = read(IS_CONNECTED, Boolean::class.java, true)
 
     suspend fun <T : Any?> write(
         ref: String,
@@ -40,8 +39,47 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun <T : Any?> read(
         path: String,
-        type: Class<T>
-    ): T = suspendCancellableCoroutine { continuation ->
+        type: Class<T>,
+        readOffline: Boolean = false
+    ): T = if (!(readOffline || isConnected()))
+        throw FirebaseNetworkException("")
+    else
+        suspendCancellableCoroutine { continuation ->
+            val ref = firebaseDb.getReference(path)
+            val listener = object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(TAG, "Read error on cancelled [$path]: $error")
+                    val exception = when (error.toException()) {
+                        is FirebaseException -> error.toException()
+                        else -> DbCancelledException()
+                    }
+                    continuation.resumeWithException(exception)
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    try {
+                        val data: T = snapshot.getValue(type) ?: throw DbEmptyFieldException()
+                        continuation.resume(data)
+                    } catch (exception: Exception) {
+                        Log.d(TAG, "Read error [$ref]: $exception")
+                        continuation.resumeWithException(exception)
+                    }
+                }
+            }
+
+            continuation.invokeOnCancellation {
+                Log.d(TAG, "Canceled $ref")
+                ref.removeEventListener(listener)
+            }
+            ref.addListenerForSingleValueEvent(listener)
+        }
+
+    suspend fun <T : Any?> readChildren(
+        path: String,
+        childType: Class<T>
+    ): List<T> = if (!isConnected())
+        throw FirebaseNetworkException(str(R.string.db_no_connection))
+    else suspendCancellableCoroutine { continuation ->
         val ref = firebaseDb.getReference(path)
         val listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -55,29 +93,24 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 try {
-                    val data: T = snapshot.getValue(type) ?: throw DbEmptyFieldException()
-                    continuation.resume(data)
+                    val children = snapshot.children.map {
+                        it.getValue(childType) ?: throw DbEmptyFieldException()
+                    }
+
+                    continuation.resume(children)
                 } catch (exception: Exception) {
                     Log.d(TAG, "Read error [$ref]: $exception")
                     continuation.resumeWithException(exception)
                 }
             }
         }
+
         continuation.invokeOnCancellation {
             Log.d(TAG, "Canceled $ref")
             ref.removeEventListener(listener)
         }
         ref.addListenerForSingleValueEvent(listener)
     }
-
-    private suspend fun <T : Any?> readIfConnected(
-        path: String,
-        type: Class<T>
-    ): T =
-        if (isConnected())
-            read(path, type)
-        else
-            throw FirebaseNetworkException(str(R.string.db_no_connection))
 
     suspend fun getUserData(uuid: String?): User? =
         uuid?.let { id ->
@@ -96,7 +129,8 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     }
 
     suspend fun usernameExists(username: String): Boolean = try {
-        readIfConnected(USERNAMES, StringHashMap::class.java).containsValue(username)
+        readChildren(USERNAMES, String::class.java)
+            .contains(username)
     } catch (ex: DbEmptyFieldException) {
         false
     }

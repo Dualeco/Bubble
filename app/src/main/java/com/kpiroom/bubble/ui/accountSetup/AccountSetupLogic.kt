@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.ui.accountSetup
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
@@ -17,6 +18,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AccountSetupLogic : CoreLogic() {
+
+    companion object {
+        const val TAG = "AccountSetupLogic"
+    }
+
     val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>()
@@ -111,8 +117,6 @@ class AccountSetupLogic : CoreLogic() {
     private fun isSetupFinishRequested(isRequested: Boolean) {
         if (isRequested)
             finishRequested.postValue(true)
-        else
-            return
     }
 
     fun finishSetup() {
@@ -131,42 +135,46 @@ class AccountSetupLogic : CoreLogic() {
         }
     }
 
-    private suspend fun uploadProfile() {
-        Source.userPrefs.let {
-            Source.api.uploadUserData(
-                it.uuid,
-                User(
-                    it.username,
-                    it.joinedDate,
-                    it.isPhotoSet,
-                    it.isWallpaperSet
+    private suspend fun uploadProfile() = Source.apply {
+        userPrefs.apply {
+            uuid.let { id ->
+                api.uploadUserData(
+                    id,
+                    User(
+                        username,
+                        joinedDate,
+                        isPhotoSet,
+                        isWallpaperSet
+                    )
                 )
-            )
+            }
         }
         uploadUserImages()
     }
 
-    private suspend fun uploadUserImages() {
+    private suspend fun uploadUserImages() = Source.apply {
         val photoUri = photoUri.value
         val wallpaperUri = wallpaperUri.value
 
-        val uuid = Source.userPrefs.uuid
-        Source.api.apply {
+        userPrefs.uuid.let { id ->
+            api.apply {
 
-            if (isPhotoSet)
-                photoUri?.let {
-                    uploadUserPhoto(uuid, it)
-                }
-            if (isWallpaperSet)
-                wallpaperUri?.let {
-                    uploadUserWallpaper(uuid, it)
-                }
+                if (isPhotoSet)
+                    photoUri?.let {
+                        uploadUserPhoto(id, it)
+                    }
+                if (isWallpaperSet)
+                    wallpaperUri?.let {
+                        uploadUserWallpaper(id, it)
+                    }
+            }
         }
     }
 
     private fun saveUserData() {
+        val username = username.value ?: ""
         Source.userPrefs.let {
-            it.username = username.value
+            it.username = username
             it.joinedDate = currentDateString
             it.isPhotoSet = isPhotoSet
             it.isWallpaperSet = isWallpaperSet

@@ -25,9 +25,9 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun usernameExists(username: String): Boolean = dbUtil.usernameExists(username)
 
-    override suspend fun getUserData(uuid: String?): User? = dbUtil.getUserData(uuid)
+    override suspend fun getUserData(uuid: String): User? = dbUtil.getUserData(uuid)
 
-    override suspend fun uploadUserData(uuid: String?, user: User): Unit = dbUtil.uploadUserData(uuid, user)
+    override suspend fun uploadUserData(uuid: String, user: User): Unit = dbUtil.uploadUserData(uuid, user)
 
     //Auth
     override suspend fun signUp(email: String, password: String): String? = authUtil.signUp(email, password)
@@ -43,16 +43,12 @@ class FirebaseApi : ApiInterface {
     override suspend fun uploadFile(
         dirRef: String,
         uri: Uri,
-        name: String?
+        name: String
     ): String = storageUtil.uploadFile(dirRef, uri, name)
 
-    override suspend fun uploadUserPhoto(
-        uuid: String?,
-        uri: Uri
-    ): String = uploadFile(FirebaseStructure.PROFILE_PHOTOS, uri, uuid)
+    override suspend fun uploadUserPhoto(uuid: String, uri: Uri): String =
+        uploadFile(FirebaseStructure.PROFILE_PHOTOS, uri, uuid)
 
-    override suspend fun uploadUserWallpaper(
-        uuid: String?,
-        uri: Uri
-    ): String = uploadFile(FirebaseStructure.PROFILE_WALLPAPERS, uri, uuid)
+    override suspend fun uploadUserWallpaper(uuid: String, uri: Uri): String =
+        uploadFile(FirebaseStructure.PROFILE_WALLPAPERS, uri, uuid)
 }

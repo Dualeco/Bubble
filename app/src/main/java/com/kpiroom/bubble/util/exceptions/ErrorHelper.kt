@@ -35,6 +35,7 @@ object ErrorHelper {
                     Log.d(TAG, "Unresolved error: $throwable")
                     DEFAULT
                 }
-            }
+            },
+            throwable
         )
 }

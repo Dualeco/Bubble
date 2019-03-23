@@ -17,6 +17,7 @@ import com.kpiroom.bubble.databinding.ActivityAccountSetupBinding
 import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.ui.login.LoginActivity
 import com.kpiroom.bubble.ui.main.MainActivity
+import com.kpiroom.bubble.util.constants.FILE_PROVIDER
 import com.kpiroom.bubble.util.constants.dpToPx
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.livedata.alert
@@ -36,28 +37,6 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
     companion object {
         const val REQUEST_PHOTO: Int = 0
         fun getIntent(context: Context): Intent = Intent(context, AccountSetupActivity::class.java)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-
-        if (resultCode == Activity.RESULT_OK) {
-
-            if (requestCode == REQUEST_PHOTO) {
-
-                logic.apply {
-                    val uri = if (usingCamera)
-                        photoCaptureUri
-                    else
-                        intent?.data
-
-                    uri?.let {
-                        val isProfilePhoto = photoChangeRequested.value == true
-                        dispatchUri(it, isProfilePhoto)
-                    }
-                }
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,6 +85,28 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
                 hideKeyboard()
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == REQUEST_PHOTO) {
+
+                logic.apply {
+                    val uri = if (usingCamera)
+                        photoCaptureUri
+                    else
+                        intent?.data
+
+                    uri?.let {
+                        val isProfilePhoto = photoChangeRequested.value == true
+                        dispatchUri(it, isProfilePhoto)
+                    }
+                }
+            }
+        }
     }
 
     private var optionWindow: ProfileOptionWindow? = null
@@ -181,7 +182,7 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
 
     private fun getFileUri(file: File) = FileProvider.getUriForFile(
         this,
-        "com.kpiroom.bubble.fileprovider",
+        FILE_PROVIDER,
         file
     )
 
