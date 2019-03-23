@@ -106,7 +106,7 @@
                             app:layout_constraintHeight_percent="0.4"
                             app:layout_constraintStart_toStartOf="parent">
 
-                        <com.dichotome.profileshared.views.CircularImageView
+                        <ImageView
                                 android:id="@+id/photo_frame_background"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -115,7 +115,7 @@
                                 android:src="@drawable/profile_photo_stroke"
                                 android:scaleType="centerCrop"/>
 
-                        <com.dichotome.profileshared.views.CircularImageView
+                        <ImageView
                                 android:id="@+id/photo"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"

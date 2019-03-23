@@ -13,8 +13,12 @@ abstract class CoreFragment<V : CoreLogic, B : ViewDataBinding> : Fragment() {
     protected lateinit var logic: V
     protected lateinit var binding: B
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         logic = provideLogic()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = provideLayout(inflater, container).createBinding()
         return binding.root
     }
@@ -31,6 +35,7 @@ abstract class CoreFragment<V : CoreLogic, B : ViewDataBinding> : Fragment() {
     ) {
 
         fun createBinding() = DataBindingUtil.inflate<B>(inflater, layout, container, false).apply {
+            lifecycleOwner = this@CoreFragment
             editing()
             executePendingBindings()
         }

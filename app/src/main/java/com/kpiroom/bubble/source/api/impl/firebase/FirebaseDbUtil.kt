@@ -8,8 +8,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.IS_CONNECTED
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.StringHashMap
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
@@ -26,8 +24,6 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         private const val TAG = "FirebaseDbUtil"
     }
 
-    private suspend fun isConnected(): Boolean = read(IS_CONNECTED, Boolean::class.java)
-
     suspend fun <T : Any?> write(
         ref: String,
         value: T
@@ -40,7 +36,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun <T : Any?> read(
         path: String,
-        type: Class<T>
+        customType: Class<T>? = null
     ): T = suspendCancellableCoroutine { continuation ->
         val ref = firebaseDb.getReference(path)
         val listener = object : ValueEventListener {
@@ -53,31 +49,27 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
                 continuation.resumeWithException(exception)
             }
 
-            override fun onDataChange(snapshot: DataSnapshot) {
+            override fun onDataChange(snapshot: DataSnapshot) =
                 try {
-                    val data: T = snapshot.getValue(type) ?: throw DbEmptyFieldException()
+                    val data: T = customType?.let {
+                        snapshot.getValue(it)
+                    } ?: run {
+                        snapshot.value as? T
+                    } ?: throw DbEmptyFieldException()
+
                     continuation.resume(data)
                 } catch (exception: Exception) {
                     Log.d(TAG, "Read error [$ref]: $exception")
                     continuation.resumeWithException(exception)
                 }
-            }
         }
+
         continuation.invokeOnCancellation {
             Log.d(TAG, "Canceled $ref")
             ref.removeEventListener(listener)
         }
         ref.addListenerForSingleValueEvent(listener)
     }
-
-    private suspend fun <T : Any?> readIfConnected(
-        path: String,
-        type: Class<T>
-    ): T =
-        if (isConnected())
-            read(path, type)
-        else
-            throw FirebaseNetworkException(str(R.string.db_no_connection))
 
     suspend fun getUserData(uuid: String?): User? =
         uuid?.let { id ->
@@ -96,8 +88,11 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     }
 
     suspend fun usernameExists(username: String): Boolean = try {
-        readIfConnected(USERNAMES, StringHashMap::class.java).containsValue(username)
+        val m = read<Map<String, String>>(USERNAMES)
+        Log.d(TAG, "Empty")
+        m.containsValue(username)
     } catch (ex: DbEmptyFieldException) {
+        Log.d(TAG, "Ex")
         false
     }
 }

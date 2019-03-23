@@ -8,9 +8,10 @@ import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.databinding.ProgressState
+import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.events.DelayedAction
 import com.kpiroom.bubble.util.livedata.*
+import com.kpiroom.bubble.util.progressState.livedata.*
 
 class LoginLogic : CoreLogic() {
 
@@ -123,7 +124,7 @@ class LoginLogic : CoreLogic() {
     }
 
 
-    suspend fun signUp(email: String, password: String) {
+    private suspend fun signUp(email: String, password: String) {
         Source.userPrefs.uuid = Source.api.signUp(email, password)
         accountSetupRequested.postValue(true)
     }

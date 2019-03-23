@@ -1,29 +1,114 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.kpiroom.bubble.databinding.FragmentProfileBinding
-import com.kpiroom.bubble.ui.core.CoreFragment
+import com.dichotome.profilebar.ui.tabPager.TabPagerAdapter
 import com.kpiroom.bubble.R
+import com.kpiroom.bubble.databinding.FragmentProfileBinding
 import com.kpiroom.bubble.source.Source
+import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
+import com.kpiroom.bubble.ui.core.CoreFragment
+import com.kpiroom.bubble.ui.login.LoginActivity
+import com.kpiroom.bubble.util.files.createImageInSubdir
+import com.kpiroom.bubble.util.imageSelection.createCameraPictureUri
+import com.kpiroom.bubble.util.imageSelection.startImageSelectionActivity
+import com.kpiroom.bubble.util.livedata.observeTrue
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
+    private var photoCaptureUri: Uri? = null
+    private var usingCamera = false
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        if (resultCode == Activity.RESULT_OK)
+            if (requestCode == AccountSetupActivity.REQUEST_PHOTO)
+                logic.apply {
+                    val uri = if (usingCamera)
+                        photoCaptureUri
+                    else
+                        intent?.data
+
+                    uri?.let {
+                        val isProfilePhoto = photoChangeRequested.value == true
+                        dispatchUri(it, isProfilePhoto)
+                    }
+                }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val picturesDir = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        picturesDir?.let {
+            Source.userPrefs.apply {
+                if (isPhotoSet)
+                    createImageInSubdir(it, "profile_photos", "$uuid").let { file ->
+                        logic.downloadPhotoFile(file)
+                    }
+                if (isWallpaperSet)
+                    createImageInSubdir(it, "profile_wallpapers", "$uuid").let { file ->
+                        logic.downloadWallpaperFile(file)
+                    }
+            }
+        }
+
+        logic.loggedOut.observeTrue(this, Observer {
+            context?.let {
+                activity?.finish()
+                startActivity(LoginActivity.getIntent(it))
+            }
+        })
+
+        logic.optionWindowClicked.observeTrue(this, Observer {
+            profileBar.optionWindow.dismiss()
+        })
+
+        logic.useCameraForPhoto.observe(this, Observer {
+            it?.let { isCamera ->
+                usingCamera = isCamera
+                addPhoto(isCamera)
+            }
+        })
+    }
+
+    private fun addPhoto(useCamera: Boolean) {
+        context?.also {
+            photoCaptureUri =
+                if (useCamera)
+                    createCameraPictureUri(it)
+                else
+                    null
+        }
+        startImageSelectionActivity(this, useCamera, photoCaptureUri)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        profilePager.adapter = TabPagerAdapter(childFragmentManager)
+        profileBar.setupWithViewPager(profilePager)
+    }
 
-        Source.userPrefs.apply {
-            profileTV.text = "$uuid $username $joinedDate $isPhotoSet $isWallpaperSet"
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        logic.progress.value = null
     }
 
     override fun provideLogic() = ViewModelProviders.of(this).get(ProfileLogic::class.java)
 
-    override fun provideLayout(inflater: LayoutInflater, container: ViewGroup?) = LayoutBuilder(inflater, container, R.layout.fragment_profile) {
-        logic = this@ProfileFragment.logic
-    }
+    override fun provideLayout(inflater: LayoutInflater, container: ViewGroup?) =
+        LayoutBuilder(inflater, container, R.layout.fragment_profile) {
+            logic = this@ProfileFragment.logic
+        }
 }

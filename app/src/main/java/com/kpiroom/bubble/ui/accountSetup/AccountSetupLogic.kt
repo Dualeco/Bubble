@@ -10,8 +10,13 @@ import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.databinding.ProgressState
-import com.kpiroom.bubble.util.livedata.*
+import com.kpiroom.bubble.util.imageSelection.showImageSelectionAlert
+import com.kpiroom.bubble.util.livedata.setDefault
+import com.kpiroom.bubble.util.progressState.ProgressState
+import com.kpiroom.bubble.util.progressState.livedata.alert
+import com.kpiroom.bubble.util.progressState.livedata.alertAsync
+import com.kpiroom.bubble.util.progressState.livedata.finishAsync
+import com.kpiroom.bubble.util.progressState.livedata.loadAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +49,8 @@ class AccountSetupLogic : CoreLogic() {
     private val isWallpaperSet
         get() = wallpaperUri.value != defaultWallpaperUri
 
+    val useCameraForPhoto = MutableLiveData<Boolean>()
+
     val backButtonClicked = MutableLiveData<Boolean>()
     fun onBackButton() {
         Source.userPrefs.clear()
@@ -54,12 +61,14 @@ class AccountSetupLogic : CoreLogic() {
         clearUsernameFocus.value = true
         photoChangeRequested.value = true
         wallpaperChangeRequested.value = false
+        showAlertChoosePhoto()
     }
 
     fun onWallpaperChanged() {
         clearUsernameFocus.value = true
         photoChangeRequested.value = false
         wallpaperChangeRequested.value = true
+        showAlertChoosePhoto()
     }
 
     fun onGetStarted() {
@@ -111,8 +120,6 @@ class AccountSetupLogic : CoreLogic() {
     private fun isSetupFinishRequested(isRequested: Boolean) {
         if (isRequested)
             finishRequested.postValue(true)
-        else
-            return
     }
 
     fun finishSetup() {
@@ -136,8 +143,8 @@ class AccountSetupLogic : CoreLogic() {
             Source.api.uploadUserData(
                 it.uuid,
                 User(
-                    it.username,
-                    it.joinedDate,
+                    it.username ?: "",
+                    it.joinedDate ?: "",
                     it.isPhotoSet,
                     it.isWallpaperSet
                 )
@@ -146,23 +153,25 @@ class AccountSetupLogic : CoreLogic() {
         uploadUserImages()
     }
 
-    private suspend fun uploadUserImages() {
+    private suspend fun uploadUserImages() = Source.apply {
         val photoUri = photoUri.value
         val wallpaperUri = wallpaperUri.value
 
-        val uuid = Source.userPrefs.uuid
-        Source.api.apply {
+        userPrefs.uuid?.let { id ->
+            api.apply {
 
-            if (isPhotoSet)
-                photoUri?.let {
-                    uploadUserPhoto(uuid, it)
-                }
-            if (isWallpaperSet)
-                wallpaperUri?.let {
-                    uploadUserWallpaper(uuid, it)
-                }
+                if (isPhotoSet)
+                    photoUri?.let {
+                        uploadUserPhoto(id, it)
+                    }
+                if (isWallpaperSet)
+                    wallpaperUri?.let {
+                        uploadUserWallpaper(id, it)
+                    }
+            }
         }
     }
+
 
     private fun saveUserData() {
         Source.userPrefs.let {
@@ -178,5 +187,15 @@ class AccountSetupLogic : CoreLogic() {
             photoUri.value = uri
         else
             wallpaperUri.value = uri
+    }
+
+    fun showAlertChoosePhoto(): Unit = showImageSelectionAlert(
+        progress,
+        wallpaperChangeRequested.value == true,
+        ::requestPhoto
+    )
+
+    private fun requestPhoto(useCamera: Boolean) {
+        useCameraForPhoto.postValue(useCamera)
     }
 }

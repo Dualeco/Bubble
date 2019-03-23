@@ -20,11 +20,17 @@ object FirebaseStructure {
     }
 
     data class User(
-        val username: String? = null,
-        val joinedDate: String? = null,
-        val isPhotoSet: Boolean = false,
-        val isWallpaperSet: Boolean = false
+        val username: String = "",
+        val joinedDate: String = "",
+        val photoSet: Boolean = false,
+        val wallpaperSet: Boolean = false
     )
 
-    class StringHashMap : HashMap<String, String>()
+    class USER_KEYS(uuid: String) {
+        val LOCATION = "$USERS/$uuid"
+        val USERNAME = "$LOCATION/username"
+        val JOINED_DATE = "$LOCATION/joinedDate"
+        val PHOTO_SET = "$LOCATION/photoSet"
+        val WALLPAPER_SET = "$LOCATION/wallpaperSet"
+    }
 }

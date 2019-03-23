@@ -2,6 +2,7 @@ package com.kpiroom.bubble.util.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
@@ -62,7 +63,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         isClickable = false
     }
 
-    private val alert = LayoutInflater.from(context).inflate(R.layout.layout_dialog, this, false).apply {
+    private val alert = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog, this, false).apply {
         layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
                 .apply {
@@ -83,7 +84,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun progress(message: String = str(R.string.common_loading)) {
-
+        Log.d("PRG", "progress")
         dimmingView.isClickable = true
 
         updateStaticBack(false)
@@ -93,6 +94,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun dismiss() {
+        Log.d("PRG", "dismiss")
         dimmingView.isClickable = false
 
         updateDimming(false)
@@ -107,6 +109,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         firstOption: String? = null,
         secondOption: String? = null
     ) {
+        Log.d("PRG", "alert")
         dimmingView.isClickable = true
 
         updateDimming(true)

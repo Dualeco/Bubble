@@ -2,6 +2,7 @@ package com.kpiroom.bubble.source.api
 
 import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import java.io.File
 
 interface ApiInterface {
 
@@ -11,6 +12,8 @@ interface ApiInterface {
     suspend fun setServerVersion(version: String)
 
     suspend fun usernameExists(username: String): Boolean
+
+    suspend fun fetchUserPrefs(uuid: String)
 
     suspend fun getUserData(uuid: String?): User?
 
@@ -31,12 +34,18 @@ interface ApiInterface {
     ): String
 
     suspend fun uploadUserPhoto(
-        uuid: String?,
+        uuid: String,
         uri: Uri
     ): String
 
     suspend fun uploadUserWallpaper(
-        uuid: String?,
+        uuid: String,
         uri: Uri
     ): String
+
+    suspend fun downloadFile(dirRef: String, destination: File)
+
+    suspend fun downloadUserPhoto(uuid: String?, destination: File)
+
+    suspend fun downloadUserWallpaper(uuid: String?, destination: File)
 }
