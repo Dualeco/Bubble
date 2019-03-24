@@ -188,8 +188,8 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
 
     override fun onPause() {
         super.onPause()
-        optionWindow?.let {
-            it.dismiss()
+        optionWindow?.run {
+            dismiss()
         }
     }
 

@@ -1,7 +1,6 @@
 package com.kpiroom.bubble.ui.accountSetup
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
@@ -76,20 +75,26 @@ class AccountSetupLogic : CoreLogic() {
                 AsyncProcessor {
                     progress.loadAsync()
                     when {
-                        it.isNullOrBlank() -> alertAsync(str(R.string.setup_username_cannot_be_empty))
+                        it.isNullOrBlank() ->
+                            alertAsync(str(R.string.setup_username_cannot_be_empty))
 
-                        it.length < 6 -> alertAsync(str(R.string.setup_username_too_short))
+                        it.length < 6 ->
+                            alertAsync(str(R.string.setup_username_too_short))
 
-                        it.length > 16 -> alertAsync(str(R.string.setup_username_too_long))
+                        it.length > 16 ->
+                            alertAsync(str(R.string.setup_username_too_long))
 
-                        !it.matches(usernameRegex) -> alertAsync(str(R.string.setup_username_invalid))
+                        !it.matches(usernameRegex) ->
+                            alertAsync(str(R.string.setup_username_invalid))
 
-                        Source.api.usernameExists(it) -> alertAsync(str(R.string.setup_username_exists))
+                        Source.api.usernameExists(it) ->
+                            alertAsync(str(R.string.setup_username_exists))
 
-                        !(isPhotoSet && isWallpaperSet) -> progress.alertAsync(
-                            warningPhotosUnchanged,
-                            ::isSetupFinishRequested
-                        )
+                        !(isPhotoSet && isWallpaperSet) ->
+                            progress.alertAsync(
+                                warningPhotosUnchanged,
+                                ::isSetupFinishRequested
+                            )
 
                         else -> {
                             finishRequested.postValue(true)
