@@ -26,7 +26,7 @@ class FirebaseApi : ApiInterface {
     private val storageUtil = FirebaseStrorageUtil(FirebaseStorage.getInstance())
 
     //Database
-    override suspend fun getServerVersion(): String = dbUtil.read(FirebaseStructure.VERSION)
+    override suspend fun getServerVersion(): String = dbUtil.read(FirebaseStructure.VERSION, String::class.java)
 
     override suspend fun setServerVersion(version: String): Unit = dbUtil.write(FirebaseStructure.VERSION, version)
 
@@ -42,7 +42,7 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun getUserData(uuid: String): User? = dbUtil.getUserData(uuid)
 
-    override suspend fun uploadUserData(uuid: String?, user: User): Unit = dbUtil.uploadUserData(uuid, user)
+    override suspend fun uploadUserData(uuid: String, user: User): Unit = dbUtil.uploadUserData(uuid, user)
 
     //Auth
     override suspend fun signUp(email: String, password: String): String? = authUtil.signUp(email, password)
@@ -56,7 +56,7 @@ class FirebaseApi : ApiInterface {
     override suspend fun uploadFile(
         dirRef: String,
         uri: Uri,
-        name: String?
+        name: String
     ): Unit = storageUtil.uploadFile(dirRef, uri, name)
 
     override suspend fun uploadUserPhoto(

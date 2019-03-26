@@ -48,11 +48,15 @@ fun getProfileWallpaperUri(wallpaper: String): Uri = File(
     wallpaper
 ).toUri()
 
-fun createProfilePhoto(uri: Uri, photoName: String): Uri =
-    createCompressedImage(uri, File(DIR_PROFILE_PHOTOS, photoName), square = true)
+fun createProfilePhoto(uri: Uri, photoName: String): Uri {
+    DIR_PROFILE_PHOTOS
+    return createCompressedImage(uri, File(DIR_PROFILE_PHOTOS, photoName), square = true)
+}
 
-fun createProfileWallpaper(uri: Uri, wallpaperName: String): Uri =
-    createCompressedImage(uri, File(DIR_PROFILE_WALLPAPERS, wallpaperName))
+fun createProfileWallpaper(uri: Uri, wallpaperName: String): Uri {
+    DIR_PROFILE_WALLPAPERS
+    return createCompressedImage(uri, File(DIR_PROFILE_WALLPAPERS, wallpaperName))
+}
 
 fun createCompressedImage(
     uri: Uri,

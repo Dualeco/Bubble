@@ -2,6 +2,7 @@ package com.kpiroom.bubble.ui.splash
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
@@ -20,11 +21,10 @@ class SplashActivity : AppCompatActivity() {
     private fun boot(context: Context) {
         val intent = Source.userPrefs.run {
             when {
-                uuid.isBlank() -> MainActivity.getIntent(context)
-                username.isBlank() -> LoginActivity.getIntent(context)
-                else -> AccountSetupActivity.getIntent(context)
+                uuid.isBlank() -> LoginActivity.getIntent(context)
+                username.isBlank() -> AccountSetupActivity.getIntent(context)
+                else -> MainActivity.getIntent(context)
             }
-
         }
         startActivity(intent)
         finish()

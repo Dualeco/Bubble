@@ -36,7 +36,7 @@ fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressSta
         val state = it.state
         val loadingMessage = it.message
         val alertMessage = it.message ?: ""
-        val callback = it.alertCallback
+        val callback = it.callback
 
         val firstOption = it.firstOption
         val secondOption = it.secondOption

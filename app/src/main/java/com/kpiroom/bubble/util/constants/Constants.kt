@@ -27,6 +27,8 @@ val DIR_PROFILE_PHOTOS: File = mkDir(DIR_PICTURES, str(R.string.photo_dir))
 val DIR_PROFILE_WALLPAPERS: File = mkDir(DIR_PICTURES, str(R.string.wallpaper_dir))
 val DIR_CAMERA: File = mkDir(DIR_PICTURES, str(R.string.camera_dir))
 
+val FILE_PROVIDER = "com.kpiroom.bubble.fileprovider"
+
 fun android(api: Int, action: () -> Unit) {
     if (Build.VERSION.SDK_INT >= api) action()
 }

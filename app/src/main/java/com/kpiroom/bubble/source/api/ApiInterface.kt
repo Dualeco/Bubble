@@ -19,7 +19,7 @@ interface ApiInterface {
 
     suspend fun getUserData(uuid: String): User?
 
-    suspend fun uploadUserData(uuid: String?, user: User)
+    suspend fun uploadUserData(uuid: String, user: User)
 
     //Auth
     suspend fun signUp(email: String, password: String): String?
@@ -32,7 +32,7 @@ interface ApiInterface {
     suspend fun uploadFile(
         dirRef: String,
         uri: Uri,
-        name: String?
+        name: String
     )
 
     suspend fun uploadUserPhoto(

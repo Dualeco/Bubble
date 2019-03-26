@@ -2,9 +2,12 @@ package com.kpiroom.bubble.util.exceptions.core
 
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.util.constants.str
+import java.io.PrintWriter
+import java.io.StringWriter
 
 data class CoreException(
     val errorId: Int = DEFAULT,
+    override val cause: Throwable,
     override val message: String = initMessage(errorId)
 ) : Exception() {
 
@@ -30,4 +33,8 @@ data class CoreException(
             else -> str(R.string.common_error_message)
         }
     }
+
+    override fun toString(): String = StringWriter().apply {
+        cause.printStackTrace(PrintWriter(this))
+    }.toString()
 }

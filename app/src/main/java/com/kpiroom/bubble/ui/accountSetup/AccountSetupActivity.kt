@@ -32,24 +32,6 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
         fun getIntent(context: Context): Intent = Intent(context, AccountSetupActivity::class.java)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-
-        if (resultCode == Activity.RESULT_OK)
-            if (requestCode == REQUEST_PHOTO)
-                logic.apply {
-                    val uri = if (usingCamera)
-                        photoCaptureUri
-                    else
-                        intent?.data
-
-                    uri?.let {
-                        val isProfilePhoto = photoChangeRequested.value == true
-                        dispatchUri(it, isProfilePhoto)
-                    }
-                }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupOptionMenu()
@@ -95,6 +77,24 @@ class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetu
                 addPhoto(isCamera)
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        if (resultCode == Activity.RESULT_OK)
+            if (requestCode == REQUEST_PHOTO)
+                logic.apply {
+                    val uri = if (usingCamera)
+                        photoCaptureUri
+                    else
+                        intent?.data
+
+                    uri?.let {
+                        val isProfilePhoto = photoChangeRequested.value == true
+                        dispatchUri(it, isProfilePhoto)
+                    }
+                }
     }
 
     private var optionWindow: AccountSetupOptionWindow? = null

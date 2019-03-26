@@ -1,10 +1,11 @@
 package com.kpiroom.bubble.source.pref
 
+import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure
 import com.kpiroom.bubble.util.pref.addBoolean
 import com.kpiroom.bubble.util.pref.addString
+import com.kpiroom.bubble.util.pref.clear
 
 class UserPrefs {
     companion object {
@@ -46,13 +47,4 @@ class UserPrefs {
         get() = prefs.getString(WALLPAPER_NAME, "")
         set(value) = prefs.addString(WALLPAPER_NAME, value)
 
-    fun clear() {
-        uuid = ""
-        username = ""
-        joinedDate = ""
-        isPhotoSet = false
-        photoName = ""
-        isWallpaperSet = false
-        wallpaperName = ""
-    }
-}
+    fun clear(): Unit = prefs.clear()}

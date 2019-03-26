@@ -94,10 +94,9 @@ class ProfileLogic : CoreLogic() {
     }
 
     private fun changeUsername(accepted: Boolean) {
-        if (accepted)
-            progress.input {
-                username.value = it
-            }
+        if (accepted) {
+
+        }
         progress.finish()
     }
 

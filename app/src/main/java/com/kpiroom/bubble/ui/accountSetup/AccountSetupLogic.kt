@@ -24,6 +24,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AccountSetupLogic : CoreLogic() {
+
+    companion object {
+        const val TAG = "AccountSetupLogic"
+    }
+
     val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>()
@@ -81,20 +86,26 @@ class AccountSetupLogic : CoreLogic() {
                 AsyncProcessor {
                     progress.loadAsync()
                     when {
-                        it.isNullOrBlank() -> alertAsync(str(R.string.setup_username_cannot_be_empty))
+                        it.isNullOrBlank() ->
+                            alertAsync(str(R.string.setup_username_cannot_be_empty))
 
-                        it.length < 6 -> alertAsync(str(R.string.setup_username_too_short))
+                        it.length < 6 ->
+                            alertAsync(str(R.string.setup_username_too_short))
 
-                        it.length > 16 -> alertAsync(str(R.string.setup_username_too_long))
+                        it.length > 16 ->
+                            alertAsync(str(R.string.setup_username_too_long))
 
-                        !it.matches(usernameRegex) -> alertAsync(str(R.string.setup_username_invalid))
+                        !it.matches(usernameRegex) ->
+                            alertAsync(str(R.string.setup_username_invalid))
 
-                        Source.api.usernameExists(it) -> alertAsync(str(R.string.setup_username_exists))
+                        Source.api.usernameExists(it) ->
+                            alertAsync(str(R.string.setup_username_exists))
 
-                        !(isPhotoSet && isWallpaperSet) -> progress.alertAsync(
-                            warningPhotosUnchanged,
-                            ::isSetupFinishRequested
-                        )
+                        !isPhotoSet || !isWallpaperSet ->
+                            progress.alertAsync(
+                                warningPhotosUnchanged,
+                                ::isSetupFinishRequested
+                            )
 
                         else -> {
                             finishRequested.postValue(true)
@@ -112,7 +123,7 @@ class AccountSetupLogic : CoreLogic() {
         get() = app.getString(
             R.string.setup_continue_with_unchanged,
             when {
-                !(isPhotoSet || isWallpaperSet) -> str(R.string.setup_unchanged_photo_and_wallpaper)
+                !isPhotoSet && !isWallpaperSet -> str(R.string.setup_unchanged_photo_and_wallpaper)
                 !isPhotoSet -> str(R.string.setup_unchanged_photo)
                 !isWallpaperSet -> str(R.string.setup_unchanged_wallpaper)
                 else -> null
@@ -140,37 +151,34 @@ class AccountSetupLogic : CoreLogic() {
         }
     }
 
-    private suspend fun uploadProfile() {
-        Source.userPrefs.let {
-            Source.api.uploadUserData(
-                it.uuid,
-                User(
-                    it.username,
-                    it.joinedDate,
-                    it.isPhotoSet,
-                    it.isWallpaperSet
+    private suspend fun uploadProfile() = Source.apply {
+        userPrefs.apply {
+            uuid.let { id ->
+                api.uploadUserData(
+                    id,
+                    User(
+                        username,
+                        joinedDate,
+                        isPhotoSet,
+                        isWallpaperSet
+                    )
                 )
-            )
+            }
         }
         uploadUserImages()
     }
 
     private suspend fun uploadUserImages() = Source.apply {
-        val photoUri = photoUri.value
-        val wallpaperUri = wallpaperUri.value
+        val photoUri = photoUri.value ?: return@apply
+        val wallpaperUri = wallpaperUri.value ?: return@apply
 
         userPrefs.apply {
             if (isPhotoSet)
-                photoUri?.let { uri ->
-                    api.uploadUserPhoto(uuid, getUpdatedProfilePhoto(uri))
-                }
+                api.uploadUserPhoto(uuid, getUpdatedProfilePhoto(photoUri))
             if (isWallpaperSet)
-                wallpaperUri?.let { uri ->
-                    api.uploadUserWallpaper(uuid, getUpdatedProfileWallpaper(uri))
-                }
+                api.uploadUserWallpaper(uuid, getUpdatedProfileWallpaper(wallpaperUri))
         }
     }
-
 
     private fun saveUserData() {
         Source.userPrefs.let {

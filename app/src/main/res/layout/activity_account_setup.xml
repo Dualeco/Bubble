@@ -115,7 +115,7 @@
                                 android:src="@drawable/profile_photo_stroke"
                                 android:scaleType="centerCrop"/>
 
-                        <ImageView
+                        <com.dichotome.profileshared.views.CircularImageView
                                 android:id="@+id/photo"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"

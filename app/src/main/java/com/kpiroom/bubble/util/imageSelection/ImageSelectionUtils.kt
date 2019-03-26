@@ -3,7 +3,6 @@ package com.kpiroom.bubble.util.imageSelection
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -78,13 +77,11 @@ fun startImageSelectionActivity(fragment: Fragment, useCamera: Boolean, imageFro
     }
 }
 
-fun createCameraPictureUri(context: Context): Uri? =
-    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let { file ->
-        getFileUri(
-            context,
-            File(DIR_CAMERA, timeStamp)
-        )
-    }
+fun createCameraPictureUri(context: Context): Uri? = getFileUri(
+    context,
+    File(DIR_CAMERA, timeStamp)
+)
+
 
 fun getUpdatedProfilePhoto(uri: Uri): Uri = Source.userPrefs.run {
     deleteProfilePhoto(photoName)

@@ -65,11 +65,3 @@ fun MutableLiveData<ProgressState>.loadAsync(message: String? = null) {
         )
     )
 }
-
-fun MutableLiveData<ProgressState>.input(callback: ((String) -> Unit)) {
-    value = ProgressState(
-        ProgressState.INPUT,
-        inputCallback = callback
-    )
-}
-
