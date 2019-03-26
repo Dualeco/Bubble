@@ -3,7 +3,6 @@ package com.kpiroom.bubble.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -19,7 +18,6 @@ class MainActivity : CoreActivity<MainLogic, ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         logic.fetchUserData()
 
         navigation.setupWithNavController(findNavController(R.id.host_fragment))

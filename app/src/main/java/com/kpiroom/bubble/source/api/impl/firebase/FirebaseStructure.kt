@@ -23,7 +23,9 @@ object FirebaseStructure {
         val username: String = "",
         val joinedDate: String = "",
         val photoSet: Boolean = false,
-        val wallpaperSet: Boolean = false
+        val wallpaperSet: Boolean = false,
+        val photoName: String = "",
+        val wallpaperName: String = ""
     )
 
     class USER_KEYS(uuid: String) {
@@ -32,5 +34,7 @@ object FirebaseStructure {
         val JOINED_DATE = "$LOCATION/joinedDate"
         val PHOTO_SET = "$LOCATION/photoSet"
         val WALLPAPER_SET = "$LOCATION/wallpaperSet"
+        val PHOTO_NAME = "$LOCATION/photoName"
+        val WALLPAPER_NAME = "$LOCATION/wallpaperName"
     }
 }

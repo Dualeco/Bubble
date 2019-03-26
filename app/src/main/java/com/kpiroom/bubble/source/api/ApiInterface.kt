@@ -13,9 +13,11 @@ interface ApiInterface {
 
     suspend fun usernameExists(username: String): Boolean
 
-    suspend fun fetchUserPrefs(uuid: String)
+    suspend fun getUsername(uuid: String): String?
 
-    suspend fun getUserData(uuid: String?): User?
+    suspend fun updateUserPrefs(uuid: String)
+
+    suspend fun getUserData(uuid: String): User?
 
     suspend fun uploadUserData(uuid: String?, user: User)
 
@@ -31,21 +33,21 @@ interface ApiInterface {
         dirRef: String,
         uri: Uri,
         name: String?
-    ): String
+    )
 
     suspend fun uploadUserPhoto(
         uuid: String,
         uri: Uri
-    ): String
+    )
 
     suspend fun uploadUserWallpaper(
         uuid: String,
         uri: Uri
-    ): String
+    )
 
     suspend fun downloadFile(dirRef: String, destination: File)
 
-    suspend fun downloadUserPhoto(uuid: String?, destination: File)
+    suspend fun downloadUserPhoto(photoName: String, destination: File)
 
-    suspend fun downloadUserWallpaper(uuid: String?, destination: File)
+    suspend fun downloadUserWallpaper(wallpaperName: String, destination: File)
 }

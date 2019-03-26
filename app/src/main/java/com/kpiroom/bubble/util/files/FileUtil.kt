@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
-import java.io.FileOutputStream
 
 fun mkDir(dir: File, subdir: String): File = File(dir, subdir).apply {
     if (!exists())
@@ -17,9 +16,17 @@ fun getFileUri(context: Context, file: File): Uri = FileProvider.getUriForFile(
     file
 )
 
-fun createImageFile(dir: File, name: String): File = File(dir, "$name.jpg")
+fun deleteFile(dir: File, fileName: String) =
+    File(dir, fileName).run {
+        if (exists())
+            delete()
+    }
 
-fun createImageInSubdir(dir: File, subdir: String, fileName: String): File = createImageFile(
-    mkDir(dir, subdir),
-    fileName
-)
+fun deleteDir(dir: File) = dir.apply {
+    if (isDirectory)
+        deleteRecursively()
+}
+
+fun getFileExtension(uri: Uri): String = uri.toString().run {
+    substring(lastIndexOf("."))
+}

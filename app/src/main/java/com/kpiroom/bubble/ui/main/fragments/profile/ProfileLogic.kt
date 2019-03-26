@@ -1,7 +1,6 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import com.dichotome.profilebar.stubs.fragments.FavouritesTabFragment
 import com.dichotome.profilebar.stubs.fragments.SubscriptionsTabFragment
@@ -9,7 +8,15 @@ import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
+import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
+import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
 import com.kpiroom.bubble.util.constants.str
+import com.kpiroom.bubble.util.files.getProfilePhotoUri
+import com.kpiroom.bubble.util.files.getProfileWallpaperUri
+import com.kpiroom.bubble.util.files.profilePhotoExists
+import com.kpiroom.bubble.util.files.profileWallpaperExists
+import com.kpiroom.bubble.util.imageSelection.getUpdatedProfilePhoto
+import com.kpiroom.bubble.util.imageSelection.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageSelection.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
@@ -27,10 +34,22 @@ class ProfileLogic : CoreLogic() {
 
     val useCameraForPhoto = MutableLiveData<Boolean>()
 
-    var photoUri = MutableLiveData<Uri>()
+    var photoUri = MutableLiveData<Uri>().apply {
+        Source.userPrefs.apply {
+            if (isPhotoSet)
+                value = getProfilePhotoUri(photoName)
+        }
+    }
+
     val photoChangeRequested = MutableLiveData<Boolean>()
 
-    var wallpaperUri = MutableLiveData<Uri>()
+    var wallpaperUri = MutableLiveData<Uri>().apply {
+        Source.userPrefs.apply {
+            if (isWallpaperSet)
+                value = getProfileWallpaperUri(wallpaperName)
+        }
+    }
+
     val wallpaperChangeRequested = MutableLiveData<Boolean>()
 
     val optionWindowClicked = MutableLiveData<Boolean>()
@@ -101,40 +120,62 @@ class ProfileLogic : CoreLogic() {
         progress.finish()
     }
 
-    fun downloadWallpaperFile(destination: File): Unit =
-        loadAsync {
-            Source.apply {
-                api.downloadUserWallpaper(
-                    userPrefs.uuid,
-                    destination
-                )
-            }
-            wallpaperUri.postValue(destination.toUri())
-        }
-
-    fun downloadPhotoFile(destination: File): Unit = loadAsync {
+    private fun uploadPhoto(uri: Uri): Unit = uploadAsync {
         Source.apply {
-            api.downloadUserPhoto(
+            api.uploadUserPhoto(
                 userPrefs.uuid,
-                destination
+                getUpdatedProfilePhoto(uri)
             )
         }
-        photoUri.postValue(destination.toUri())
     }
 
-
-    private fun uploadPhoto(uri: Uri): Unit = loadAsync {
+    private fun uploadWallpaper(uri: Uri): Unit = uploadAsync {
         Source.apply {
-            userPrefs.uuid?.let { id ->
-                api.uploadUserPhoto(id, uri)
+            api.uploadUserWallpaper(
+                userPrefs.uuid,
+                getUpdatedProfileWallpaper(uri)
+            )
+        }
+    }
+
+    private fun updatePhotoFile() = downloadAsync {
+        Source.apply {
+            userPrefs.apply {
+                if (!profilePhotoExists(photoName)) {
+                    api.downloadUserPhoto(
+                        photoName,
+                        File(DIR_PROFILE_PHOTOS, photoName)
+                    )
+                    photoUri.postValue(getProfilePhotoUri(photoName))
+                }
             }
         }
     }
 
-    private fun uploadWallpaper(uri: Uri): Unit = loadAsync {
+    private fun updateWallpaperFile() = downloadAsync {
         Source.apply {
-            userPrefs.uuid?.let { id ->
-                api.uploadUserWallpaper(id, uri)
+            userPrefs.apply {
+                if (!profileWallpaperExists(wallpaperName)) {
+                    api.downloadUserWallpaper(
+                        wallpaperName,
+                        File(DIR_PROFILE_WALLPAPERS, wallpaperName)
+                    )
+                    wallpaperUri.postValue(getProfileWallpaperUri(wallpaperName))
+                }
+            }
+        }
+    }
+
+    fun updateProfileImages() {
+        Source.userPrefs.apply {
+            if (isPhotoSet) {
+                //refreshPhotoUri()
+                updatePhotoFile()
+            }
+
+            if (isWallpaperSet) {
+                //refreshWallpaperUri()
+                updateWallpaperFile()
             }
         }
     }
@@ -148,12 +189,22 @@ class ProfileLogic : CoreLogic() {
             wallpaperUri.value = uri
         }
 
-    private fun loadAsync(action: suspend () -> Unit) {
+    private fun uploadAsync(action: suspend () -> Unit) {
         progress.apply {
             AsyncProcessor(Dispatchers.IO) {
                 loadAsync()
                 action()
                 finishAsync()
+            } handleError {
+                alertAsync(it.message)
+            } runWith (bag)
+        }
+    }
+
+    private fun downloadAsync(action: suspend () -> Unit) {
+        progress.apply {
+            AsyncProcessor(Dispatchers.IO) {
+                action()
             } handleError {
                 alertAsync(it.message)
             } runWith (bag)

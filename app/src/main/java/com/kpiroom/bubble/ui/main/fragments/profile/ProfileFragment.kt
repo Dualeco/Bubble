@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +13,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.dichotome.profilebar.ui.tabPager.TabPagerAdapter
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.FragmentProfileBinding
-import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.login.LoginActivity
-import com.kpiroom.bubble.util.files.createImageInSubdir
 import com.kpiroom.bubble.util.imageSelection.createCameraPictureUri
 import com.kpiroom.bubble.util.imageSelection.startImageSelectionActivity
 import com.kpiroom.bubble.util.livedata.observeTrue
@@ -49,20 +46,7 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val picturesDir = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-        picturesDir?.let {
-            Source.userPrefs.apply {
-                if (isPhotoSet)
-                    createImageInSubdir(it, "profile_photos", "$uuid").let { file ->
-                        logic.downloadPhotoFile(file)
-                    }
-                if (isWallpaperSet)
-                    createImageInSubdir(it, "profile_wallpapers", "$uuid").let { file ->
-                        logic.downloadWallpaperFile(file)
-                    }
-            }
-        }
+        logic.updateProfileImages()
 
         logic.loggedOut.observeTrue(this, Observer {
             context?.let {

@@ -18,18 +18,16 @@ class FirebaseStrorageUtil(val storage: FirebaseStorage) {
         dirRef: String,
         uri: Uri,
         name: String? = null
-    ): String = suspendCancellableCoroutine { continuation ->
+    ): Unit = suspendCancellableCoroutine { continuation ->
         val sourceName = uri.lastPathSegment as String
 
-        val fileName = name?.let {
-            "$name.jpg"
-        } ?: sourceName
+        val fileName = name ?: sourceName
 
         val fileRef = storage.getReference(dirRef).child(fileName)
         fileRef.putFile(uri)
             .addOnSuccessListener {
                 Log.d(TAG, "File uploaded successfully: $uri")
-                continuation.resume(fileName)
+                continuation.resume(Unit)
             }
             .addOnFailureListener {
                 Log.d(TAG, "File upload failed: $uri")

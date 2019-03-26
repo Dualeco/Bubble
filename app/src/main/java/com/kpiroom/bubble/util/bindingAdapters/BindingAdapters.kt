@@ -33,9 +33,6 @@ fun isImeActionDone(editText: EditText, isActionDone: Boolean) {
 fun setUri(imageView: ImageView, uri: Uri?) {
     uri?.let {
         val options = RequestOptions().apply {
-            val f = File(uri.encodedPath)
-            Log.d("URI", "${uri.encodedPath} ${f.exists()}")
-
             if (imageView.id == R.id.photo)
                 circleCrop()
         }

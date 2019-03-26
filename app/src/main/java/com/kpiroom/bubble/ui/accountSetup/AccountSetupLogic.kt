@@ -10,6 +10,8 @@ import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
+import com.kpiroom.bubble.util.imageSelection.getUpdatedProfilePhoto
+import com.kpiroom.bubble.util.imageSelection.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageSelection.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
@@ -143,8 +145,8 @@ class AccountSetupLogic : CoreLogic() {
             Source.api.uploadUserData(
                 it.uuid,
                 User(
-                    it.username ?: "",
-                    it.joinedDate ?: "",
+                    it.username,
+                    it.joinedDate,
                     it.isPhotoSet,
                     it.isWallpaperSet
                 )
@@ -157,25 +159,22 @@ class AccountSetupLogic : CoreLogic() {
         val photoUri = photoUri.value
         val wallpaperUri = wallpaperUri.value
 
-        userPrefs.uuid?.let { id ->
-            api.apply {
-
-                if (isPhotoSet)
-                    photoUri?.let {
-                        uploadUserPhoto(id, it)
-                    }
-                if (isWallpaperSet)
-                    wallpaperUri?.let {
-                        uploadUserWallpaper(id, it)
-                    }
-            }
+        userPrefs.apply {
+            if (isPhotoSet)
+                photoUri?.let { uri ->
+                    api.uploadUserPhoto(uuid, getUpdatedProfilePhoto(uri))
+                }
+            if (isWallpaperSet)
+                wallpaperUri?.let { uri ->
+                    api.uploadUserWallpaper(uuid, getUpdatedProfileWallpaper(uri))
+                }
         }
     }
 
 
     private fun saveUserData() {
         Source.userPrefs.let {
-            it.username = username.value
+            it.username = username.value ?: ""
             it.joinedDate = currentDateString
             it.isPhotoSet = isPhotoSet
             it.isWallpaperSet = isWallpaperSet

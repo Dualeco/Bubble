@@ -2,16 +2,13 @@ package com.kpiroom.bubble.source.api.impl.firebase
 
 import android.util.Log
 import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
-import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.exceptions.core.db.DbCancelledException
 import com.kpiroom.bubble.util.exceptions.core.db.DbEmptyFieldException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -71,14 +68,20 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         ref.addListenerForSingleValueEvent(listener)
     }
 
-    suspend fun getUserData(uuid: String?): User? =
-        uuid?.let { id ->
-            try {
-                read("$USERS/$id", User::class.java)
-            } catch (ex: DbEmptyFieldException) {
-                null
-            }
+    suspend fun getUsername(uuid: String): String? =
+        try {
+            read("$USERNAMES/$uuid")
+        } catch (ex: DbEmptyFieldException) {
+            null
         }
+
+    suspend fun getUserData(uuid: String): User? =
+        try {
+            read("$USERS/$uuid", User::class.java)
+        } catch (ex: DbEmptyFieldException) {
+            null
+        }
+
 
     suspend fun uploadUserData(uuid: String?, user: User) {
         uuid?.let { id ->

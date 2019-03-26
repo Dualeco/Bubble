@@ -9,13 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
+import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
+import com.kpiroom.bubble.util.constants.DIR_CAMERA
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.date.timeStamp
-import com.kpiroom.bubble.util.files.createImageInSubdir
-import com.kpiroom.bubble.util.files.getFileUri
+import com.kpiroom.bubble.util.files.*
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.alert
+import java.io.File
 
 
 fun showImageSelectionAlert(
@@ -80,6 +82,24 @@ fun createCameraPictureUri(context: Context): Uri? =
     context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let { file ->
         getFileUri(
             context,
-            createImageInSubdir(file, "camera", timeStamp)
+            File(DIR_CAMERA, timeStamp)
         )
     }
+
+fun getUpdatedProfilePhoto(uri: Uri): Uri = Source.userPrefs.run {
+    deleteProfilePhoto(photoName)
+
+    getCurrentProfileImageName(uuid).let { name ->
+        photoName = name
+        createProfilePhoto(uri, name)
+    }
+}
+
+fun getUpdatedProfileWallpaper(uri: Uri): Uri = Source.userPrefs.run {
+    deleteProfileWallpaper(wallpaperName)
+
+    getCurrentProfileImageName(uuid).let { name ->
+        wallpaperName = name
+        createProfileWallpaper(uri, name)
+    }
+}

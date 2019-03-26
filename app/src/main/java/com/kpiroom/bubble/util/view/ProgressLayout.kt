@@ -84,7 +84,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun progress(message: String = str(R.string.common_loading)) {
-        Log.d("PRG", "progress")
         dimmingView.isClickable = true
 
         updateStaticBack(false)
@@ -94,7 +93,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun dismiss() {
-        Log.d("PRG", "dismiss")
         dimmingView.isClickable = false
 
         updateDimming(false)
@@ -109,7 +107,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         firstOption: String? = null,
         secondOption: String? = null
     ) {
-        Log.d("PRG", "alert")
         dimmingView.isClickable = true
 
         updateDimming(true)

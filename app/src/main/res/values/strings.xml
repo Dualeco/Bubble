@@ -1,5 +1,11 @@
 <resources>
 
+    <!--Files-->
+    <string name="template_image_with_timestamp">%1$s-%2$s.jpg</string>
+    <string name="photo_dir">profile_photos</string>
+    <string name="wallpaper_dir">profile_wallpapers</string>
+    <string name="camera_dir">camera</string>
+
     <!--Date format-->
     <string name="date_format">dd MMMM yyyy</string>
 
