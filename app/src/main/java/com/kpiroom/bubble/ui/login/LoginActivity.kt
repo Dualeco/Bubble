@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import android.view.animation.DecelerateInterpolator
@@ -96,19 +95,11 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
         })
 
         logic.loggedIn.observeTrue(this, Observer {
-            switchToActivity(
-                MainActivity.getIntent(this@LoginActivity)
-            )
+            switchToActivity(MainActivity.getIntent(this@LoginActivity))
         })
 
-        logic.accountSetupRequested.observe(this, Observer {
-            if (it == true) {
-                Log.d("ErrorHelper", "Y")
-                switchToActivity(
-                    AccountSetupActivity.getIntent(this@LoginActivity)
-                )
-            } else
-                Log.d("ErrorHelper", "N")
+        logic.accountSetupRequested.observeTrue(this, Observer {
+            switchToActivity(AccountSetupActivity.getIntent(this@LoginActivity))
         })
     }
 

@@ -50,7 +50,7 @@ fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressSta
         callback?.let {
             progressLayout.alert(message, callback, firstOption, secondOption)
         } ?: run {
-            progressLayout.alert(message, firstOption = firstOption)
+            progressLayout.alert(message)
         }
     }
 

@@ -90,7 +90,7 @@ class AccountSetupLogic : CoreLogic() {
                         Source.api.usernameExists(it) ->
                             alertAsync(str(R.string.setup_username_exists))
 
-                        !(isPhotoSet && isWallpaperSet) ->
+                        !isPhotoSet || !isWallpaperSet ->
                             progress.alertAsync(
                                 warningPhotosUnchanged,
                                 ::isSetupFinishRequested
@@ -112,7 +112,7 @@ class AccountSetupLogic : CoreLogic() {
         get() = app.getString(
             R.string.setup_continue_with_unchanged,
             when {
-                !(isPhotoSet || isWallpaperSet) -> str(R.string.setup_unchanged_photo_and_wallpaper)
+                !isPhotoSet && !isWallpaperSet -> str(R.string.setup_unchanged_photo_and_wallpaper)
                 !isPhotoSet -> str(R.string.setup_unchanged_photo)
                 !isWallpaperSet -> str(R.string.setup_unchanged_wallpaper)
                 else -> null
@@ -158,20 +158,16 @@ class AccountSetupLogic : CoreLogic() {
     }
 
     private suspend fun uploadUserImages() = Source.apply {
-        val photoUri = photoUri.value
-        val wallpaperUri = wallpaperUri.value
+        val photoUri = photoUri.value ?: return@apply
+        val wallpaperUri = wallpaperUri.value ?: return@apply
 
         userPrefs.uuid.let { id ->
             api.apply {
-
                 if (isPhotoSet)
-                    photoUri?.let {
-                        uploadUserPhoto(id, it)
-                    }
+                    uploadUserPhoto(id, photoUri)
+
                 if (isWallpaperSet)
-                    wallpaperUri?.let {
-                        uploadUserWallpaper(id, it)
-                    }
+                    uploadUserWallpaper(id, wallpaperUri)
             }
         }
     }
