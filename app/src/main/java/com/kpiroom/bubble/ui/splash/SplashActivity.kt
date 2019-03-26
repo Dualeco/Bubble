@@ -19,12 +19,12 @@ class SplashActivity : AppCompatActivity() {
 
     private fun boot(context: Context) {
         val intent = Source.userPrefs.run {
-            if (username.isBlank())
-                if (uuid.isBlank())
-                    LoginActivity.getIntent(context)
-                else AccountSetupActivity.getIntent(context)
-            else
-                MainActivity.getIntent(context)
+            when {
+                uuid.isBlank() -> MainActivity.getIntent(context)
+                username.isBlank() -> LoginActivity.getIntent(context)
+                else -> AccountSetupActivity.getIntent(context)
+            }
+
         }
         startActivity(intent)
         finish()
