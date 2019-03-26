@@ -29,7 +29,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     private val container = FrameLayout(context)
     private val animatorCollector = LinkedList<ViewPropertyAnimator>()
 
-    var isLoading = false
+    private var isAlertShown = false
 
     private val loading = LayoutInflater.from(context).inflate(R.layout.layout_loading_background, this, false).apply {
         layoutParams =
@@ -56,6 +56,10 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F
+        setOnClickListener {
+            if (isAlertShown) dismiss()
+        }
+        isClickable = false
     }
 
     private val alert = LayoutInflater.from(context).inflate(R.layout.layout_dialog, this, false).apply {
@@ -73,10 +77,13 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         addView(dimmingView)
         addView(loading)
         addView(alert)
+        setOnBackButtonClicked(::isAlertShown) {
+            dismiss()
+        }
     }
 
     fun progress(message: String = str(R.string.common_loading)) {
-        isLoading = true
+
         dimmingView.isClickable = true
 
         updateStaticBack(false)
@@ -86,7 +93,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun dismiss() {
-        isLoading = false
         dimmingView.isClickable = false
 
         updateDimming(false)
@@ -95,34 +101,59 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         updateAlert(false)
     }
 
-    fun alert(message: String, callback: ((Boolean) -> Unit)? = null) {
-        isLoading = true
+    fun alert(
+        message: String,
+        callback: ((Boolean) -> Unit)? = null,
+        firstOption: String? = null,
+        secondOption: String? = null
+    ) {
         dimmingView.isClickable = true
 
         updateDimming(true)
         updateLoading(false)
         updateStaticBack(false)
-        updateAlert(true, message, callback)
+        updateAlert(true, message, callback, firstOption, secondOption)
     }
 
-    private fun updateAlert(show: Boolean, message: String = "", callback: ((Boolean) -> Unit)? = null) {
+    private fun updateAlert(
+        show: Boolean,
+        message: String = "",
+        callback: ((Boolean) -> Unit)? = null,
+        firstOption: String? = null,
+        secondOption: String? = null
+    ) {
         alert.apply {
+            isAlertShown = show
+            isClickable = show
+            dimmingView.isClickable = show
+
             if (show) {
                 findViewById<TextView>(R.id.text).text = message
                 if (callback != null) {
                     findViewById<Button>(R.id.firstButton).apply {
-                        text = str(R.string.common_yes)
-                        setOnClickListener { callback(true) }
+                        text = firstOption ?: str(R.string.common_yes)
+                        setOnClickListener {
+                            callback(true)
+                            dismiss()
+                        }
                     }
                     findViewById<Button>(R.id.secondButton).apply {
-                        text = str(R.string.common_no)
+                        text = secondOption ?: str(R.string.common_no)
                         visibility = View.VISIBLE
-                        setOnClickListener { callback(false) }
+                        setOnClickListener {
+                            callback(false)
+                            dismiss()
+                        }
                     }
                 } else {
                     findViewById<Button>(R.id.firstButton).apply {
-                        text = str(R.string.common_ok)
+                        text = firstOption ?: str(R.string.common_ok)
                         setOnClickListener { dismiss() }
+                    }
+                    findViewById<Button>(R.id.secondButton).apply {
+                        text = null
+                        visibility = View.GONE
+                        setOnClickListener(null)
                     }
                 }
             }

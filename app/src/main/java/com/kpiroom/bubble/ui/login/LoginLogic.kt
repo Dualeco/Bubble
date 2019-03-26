@@ -3,6 +3,7 @@ package com.kpiroom.bubble.ui.login
 
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
+import com.kpiroom.bubble.os.BubbleApp
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
@@ -12,6 +13,13 @@ import com.kpiroom.bubble.util.events.DelayedAction
 import com.kpiroom.bubble.util.livedata.*
 
 class LoginLogic : CoreLogic() {
+
+    companion object {
+        val TAG = "LoginLogic"
+    }
+
+    val loggedIn = MutableLiveData<Boolean>()
+    val accountSetupRequested = MutableLiveData<Boolean>()
 
     val email = MutableLiveData<String>()
     val password = MutableLiveData<String>()
@@ -27,7 +35,7 @@ class LoginLogic : CoreLogic() {
     fun onAuthClicked() {
         clickThrottler.next {
             delayedAction.value = DelayedAction(300L) {
-                signUpOrSignIn()
+                submitData()
             }
         }
     }
@@ -40,10 +48,12 @@ class LoginLogic : CoreLogic() {
                         alert(str(R.string.message_forgot_password_no_email))
                     else
                         AsyncProcessor {
+                            loadAsync()
                             Source.api.sendPasswordResetEmail(mail)
-                            alert(str(R.string.message_forgot_password_success))
+                            alertAsync(str(R.string.message_forgot_password_success))
                         } handleError {
-                            alert("Error resetting password: ${it.message}")
+                            val resources = BubbleApp.app.resources
+                            alert(resources.getString(R.string.login_error_resetting_password, it.message))
                         } runWith (bag)
                 }
             }
@@ -63,48 +73,63 @@ class LoginLogic : CoreLogic() {
         }
     }
 
-    private fun signUpOrSignIn() {
-
-        progress.load()
+    private fun submitData() {
 
         val email = email.value
         val password = password.value
         val confirmPassword = confirmPassword.value
 
-        val isNewAccount = isNewAccount.value
+        val isNewAccount = isNewAccount.value ?: false
 
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             progress.alert(str(R.string.message_auth_fields_empty))
             return
-
-        } else if (isNewAccount == true && confirmPassword.isNullOrEmpty()) {
-            progress.alert(str(R.string.message_auth_confirm_password))
-            return
-        } else if (isNewAccount == true && confirmPassword != password) {
-            progress.alert(str(R.string.message_auth_passwords_do_not_match))
-            return
-        }
-
-        AsyncProcessor {
-            Source.apply {
-                userPrefs.uuid = authenticate(
-                    if (isNewAccount == true)
-                        api::signUp
-                    else
-                        api::signIn,
-                    email,
-                    password
-                )
+        } else if (isNewAccount)
+            when {
+                confirmPassword.isNullOrEmpty() -> {
+                    progress.alert(str(R.string.message_auth_confirm_password))
+                }
+                confirmPassword != password -> {
+                    progress.alert(str(R.string.message_auth_passwords_do_not_match))
+                }
             }
+
+        authenticate(email, password, isNewAccount)
+    }
+
+    private fun authenticate(email: String, password: String, isNewAccount: Boolean) {
+        AsyncProcessor {
+            progress.loadAsync()
+            processAccount(
+                if (isNewAccount) ::signUp else ::signIn,
+                email,
+                password
+            )
             progress.finishAsync()
         } handleError {
             progress.alertAsync(it.message)
         } runWith (bag)
     }
 
-    private suspend fun authenticate(
-        authMethod: suspend (String, String) -> String?,
+    private suspend fun signIn(email: String, password: String) {
+        Source.apply {
+            api.signIn(email, password)
+            if (userPrefs.username.isBlank())
+                accountSetupRequested.postValue(true)
+            else
+                loggedIn.postValue(true)
+        }
+    }
+
+
+    suspend fun signUp(email: String, password: String) {
+        Source.userPrefs.uuid = Source.api.signUp(email, password) ?: return
+        accountSetupRequested.postValue(true)
+    }
+
+    private suspend fun processAccount(
+        method: suspend (String, String) -> Unit,
         email: String,
         password: String
-    ): String? = authMethod(email, password)
+    ) = method(email, password)
 }

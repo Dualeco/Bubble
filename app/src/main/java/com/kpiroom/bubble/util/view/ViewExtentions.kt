@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.TypedValue
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.kpiroom.bubble.os.BubbleApp
@@ -55,5 +56,16 @@ fun Activity.showKeyboard(view: View? = currentFocus) {
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
+
+fun View.setOnBackButtonClicked(condition: () -> Boolean, onClicked: () -> Unit) {
+    isFocusableInTouchMode = true
+    requestFocus()
+    setOnKeyListener { _, keyCode, event ->
+        if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && condition()) {
+            onClicked()
+            true
+        } else false
     }
 }

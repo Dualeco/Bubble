@@ -18,6 +18,8 @@ val NAVBAR_SIZE: Int
     get() = BubbleApp.app.getNavBarHeight()
 val CONTAINER_TOP_MARGIN = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) -STATUS_BAR_SIZE else 0
 
+val FILE_PROVIDER = "com.kpiroom.bubble.fileprovider"
+
 fun android(api: Int, action: () -> Unit) {
     if (Build.VERSION.SDK_INT >= api) action()
 }

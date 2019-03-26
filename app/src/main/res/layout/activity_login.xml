@@ -62,7 +62,8 @@
                             android:id="@+id/editTextArea"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingBottom="20dp">
 
                         <EditText
                                 android:id="@+id/emailEditText"
@@ -135,12 +136,6 @@
                         </FrameLayout>
                     </LinearLayout>
 
-                    <View
-                            android:id="@+id/editAreaEmptySpot"
-                            android:layout_width="match_parent"
-                            android:layout_height="20dp"/>
-
-
                     <Button
                             android:id="@+id/authButton"
                             android:layout_width="match_parent"
@@ -152,7 +147,7 @@
                             android:onClick="@{() -> logic.onAuthClicked()}"
                             android:text="@{logic.authButtonText}"
                             android:textColor="@color/textColorPrimary"
-                            android:textSize="20sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"/>
 
                     <TextView

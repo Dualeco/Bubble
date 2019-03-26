@@ -1,19 +1,24 @@
 <resources>
 
+    <!--Date format-->
+    <string name="date_format">dd MMMM yyyy</string>
+
+    <!--Regex-->
+    <string name="username_regex">^[a-z0-9_-]{6,16}$</string>
+
     <!--Login-->
     <string name="login_app_name">Bubble</string>
     <string name="login_email_field_default">Email...</string>
     <string name="login_password_field_default">Password...</string>
     <string name="login_confirm_password_field_default">Confirm password...</string>
-    <string name="login_forgot_password">
-        <u>Forgot password?</u>
-    </string>
+    <string name="login_forgot_password"><u>Forgot password?</u></string>
     <string name="login_sign_up">Sign up</string>
     <string name="login_sign_in">Sign in</string>
     <string name="login_or_instead">or instead:</string>
     <string name="login_read_now">Read now</string>
+    <string name="login_error_resetting_password">Error resetting password: %1$s</string>
 
-    <!--Login database errors-->
+    <!--Email-->
     <string name="message_auth_invalid_email_or_pwd">"Invalid email or password"</string>
     <string name="message_auth_weak_pwd">"Password should be at least 6 characters long"</string>
     <string name="message_auth_email_in_use">"This email address is already in use"</string>
@@ -30,6 +35,35 @@
     <string name="message_auth_confirm_password">Please, confirm your password</string>
     <string name="message_auth_passwords_do_not_match">Entered passwords do not match</string>
 
+
+    <!--Account setup-->
+    <string name="setup_your_username">Your username</string>
+    <string name="setup_joined_on">Joined on</string>
+    <string name="setup_choose_username">Now, please, choose a username</string>
+    <string name="setup_username_cannot_be_empty">Username field cannot be empty</string>
+    <string name="setup_username_cannot_contain_spaces">Username cannot contain spaces</string>
+    <string name="setup_username_too_short">Username must be at least 6 characters</string>
+    <string name="setup_username_too_long">Username must be not longer than 16 characters</string>
+    <string name="setup_username_invalid">Username contains restricted symbols</string>
+    <string name="setup_username_exists">Such username already exists</string>
+    <string name="setup_title">Successfully signed up!</string>
+    <string name="setup_get_started">Get started</string>
+    <string name="setup_upload_photo">Upload photo using:</string>
+    <string name="setup_upload_wallpaper">Upload wallpaper using:</string>
+    <string name="setup_take_photo_camera">Camera</string>
+    <string name="setup_from_gallery">Gallery</string>
+    <string name="setup_menu_change_photo">Photo</string>
+    <string name="setup_menu_change_wallpaper">Wallpaper</string>
+    <string name="setup_continue_with_unchanged">Continue with default %1$s ?</string>
+    <string name="setup_unchanged_photo_and_wallpaper">photo and wallpaper</string>
+    <string name="setup_unchanged_photo">photo</string>
+    <string name="setup_unchanged_wallpaper">wallpaper</string>
+
+    <!--Database-->
+    <string name="db_field_empty">This field is empty in the database</string>
+    <string name="db_call_cancelled">Database call cancelled</string>
+    <string name="db_no_connection">No connection</string>
+
     <!--Splash-->
     <string name="splash_get">Get</string>
     <string name="splash_set">Set</string>
@@ -41,6 +75,16 @@
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
     <string name="common_loading">Loading</string>
+    <string name="common_no_internet">Network error occurred. Please, check your connection</string>
     <string name="common_error_message">Oops, something went wrong</string>
+
+    <!--Dashboard-->
+    <string name="dashboard_title">Dashboard</string>
+
+    <!--Subscription-->
+    <string name="subscription_title">Subscription</string>
+
+    <!--Profile-->
+    <string name="profile_title">Profile</string>
 
 </resources>

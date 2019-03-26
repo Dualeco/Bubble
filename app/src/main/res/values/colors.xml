@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EBE9E9</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryUnselected">#99FFFFFF</color>
     <color name="colorPrimaryDark">#E6000000</color>
-    <color name="colorAccent">#DA0606</color>
+    <color name="colorAccent">#E00D0D</color>
     <color name="colorTextHintRed">#80950000</color>
     <color name="colorTextRed">#CC950000</color>
     <color name="colorTransparent">#00000000</color>
@@ -13,9 +14,11 @@
 
     <color name="textColorPrimary">#FFFFFF</color>
 
-    <color name="buttonColorRed">#DA0606</color>
+    <color name="buttonColorRed">#D10808</color>
 
     <color name="rippleColor">#4DFFFFFF</color>
+
+    <color name="shadowTransparent">#73727272</color>
 
     <!--EditText background-->
     <color name="edit_text_background_center">#E6EBE9E9</color>
@@ -26,5 +29,4 @@
     <color name="background_gradient_start">#2E000000</color>
     <color name="background_gradient_center">#A1000000</color>
     <color name="background_gradient_end">#D9000000</color>
-
 </resources>

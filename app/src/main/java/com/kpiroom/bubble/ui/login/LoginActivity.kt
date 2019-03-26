@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.DecelerateInterpolator
 import android.widget.EditText
@@ -16,9 +15,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityLoginBinding
+import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreActivity
+import com.kpiroom.bubble.ui.main.MainActivity
+import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.view.LoginAnimation
 import com.kpiroom.bubble.util.view.hideKeyboard
+import com.kpiroom.bubble.util.view.isWithinView
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
@@ -90,33 +93,32 @@ class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
                 Handler().postDelayed(::start, delay)
             }
         })
+
+        logic.loggedIn.observeTrue(this, Observer {
+            switchToActivity(MainActivity.getIntent(this@LoginActivity))
+        })
+
+        logic.accountSetupRequested.observeTrue(this, Observer {
+            switchToActivity(AccountSetupActivity.getIntent(this@LoginActivity))
+        })
     }
 
-    private fun inEditArea(ev: MotionEvent?) =
-        ev != null && (ev.isWithinView(emailEditText) ||
-                ev.isWithinView(passwordEditText) || ev.isWithinView(changeAuthButton) ||
-                ev.isWithinView(editAreaEmptySpot) ||
-                (forgotPasswordTextView.alpha != 1f && ev.isWithinView(confirmPasswordEditText)))
+    private fun switchToActivity(intent: Intent) {
+        finish()
+        startActivity(intent)
+    }
+
+    private fun inEditArea(ev: MotionEvent?) = ev?.let {
+        it.isWithinView(editTextArea) &&
+                !(it.isWithinView(forgotPasswordTextView) && forgotPasswordTextView.alpha == 1f)
+                || it.isWithinView(changeAuthButton)
+    } ?: false
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (!inEditArea(ev)) hideKeyboard()
 
         return super.dispatchTouchEvent(ev)
     }
-
-    private fun MotionEvent.isWithinView(view: View): Boolean =
-        (action == MotionEvent.ACTION_UP).let {
-            val srcCoords = IntArray(2)
-            view.getLocationOnScreen(srcCoords)
-
-            val x = rawX + view.left - srcCoords[0]
-            val y = rawY + view.top - srcCoords[1]
-
-            if (x < view.left || x > view.right || y < view.top || y > view.bottom) {
-                return false
-            }
-            return true
-        }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -2,11 +2,15 @@ package com.kpiroom.bubble.source.api.impl.firebase
 
 object FirebaseStructure {
 
-    private val VERSION_KEY = "version"
-    private val META_KEY = "meta"
-    private val USER_KEY = "user"
+    private const val VERSION_KEY = "version"
+    private const val META_KEY = "meta"
+    const val USERS = "users"
+    const val USERNAMES = "usernames"
+    const val IS_CONNECTED = ".info/connected"
+    const val PROFILE_PHOTOS = "profile_photos"
+    const val PROFILE_WALLPAPERS = "profile_wallpapers"
 
-    val VERSION = "/$VERSION_KEY"
+    const val VERSION = "/$VERSION_KEY"
 
     object META { // E. g.
 
@@ -15,7 +19,10 @@ object FirebaseStructure {
         val SERVER_TIME = "/$META_KEY/$SERVER_TIME_KEY"
     }
 
-    class USER(private val uuid: String) {
-        override fun toString() = "/$USER_KEY/$uuid"
-    }
+    data class User(
+        val username: String = "",
+        val joinedDate: String = "",
+        val isPhotoSet: Boolean = false,
+        val isWallpaperSet: Boolean = false
+    )
 }

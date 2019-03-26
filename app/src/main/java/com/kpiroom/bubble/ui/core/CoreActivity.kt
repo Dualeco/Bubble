@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-abstract class CoreActivity<V : CoreLogic, B : ViewDataBinding> : AppCompatActivity() {
+abstract class CoreActivity<L : CoreLogic, B : ViewDataBinding> : AppCompatActivity() {
 
-    protected lateinit var logic: V
+    protected lateinit var logic: L
     protected lateinit var binding: B
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +16,7 @@ abstract class CoreActivity<V : CoreLogic, B : ViewDataBinding> : AppCompatActiv
         binding = provideLayout().createBinding()
     }
 
-    abstract fun provideLogic(): V
+    abstract fun provideLogic(): L
 
     abstract fun provideLayout(): LayoutBuilder
 

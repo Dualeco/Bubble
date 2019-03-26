@@ -4,7 +4,9 @@ package com.kpiroom.bubble.util.databinding
 data class ProgressState(
     val state: Int,
     val message: String? = null,
-    val callback: ((Boolean) -> Unit)? = null
+    val callback: ((Boolean) -> Unit)? = null,
+    val firstOption: String? = null,
+    val secondOption: String? = null
 ) {
     companion object {
         const val LOADING = 0

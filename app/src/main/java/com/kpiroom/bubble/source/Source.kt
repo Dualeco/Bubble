@@ -12,5 +12,5 @@ object Source {
 
     val db: DbInterface = RoomDb()
 
-    val userPrefs = UserPrefs()
+    val userPrefs: UserPrefs = UserPrefs()
 }
