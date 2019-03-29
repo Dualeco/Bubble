@@ -15,6 +15,8 @@ interface ApiInterface {
 
     suspend fun getUsername(uuid: String): String?
 
+    suspend fun changeUsername(uuid: String, username: String)
+
     suspend fun updateUserPrefs(uuid: String)
 
     suspend fun getUserData(uuid: String): User?

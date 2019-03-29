@@ -18,6 +18,7 @@ class MainLogic : CoreLogic() {
                     api.updateUserPrefs(userPrefs.uuid)
                 }
             }
+        } handleError {
         } runWith (bag)
     }
 }

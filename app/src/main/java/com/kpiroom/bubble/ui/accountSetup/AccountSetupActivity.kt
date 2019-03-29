@@ -15,8 +15,8 @@ import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.ui.login.LoginActivity
 import com.kpiroom.bubble.ui.main.MainActivity
 import com.kpiroom.bubble.util.constants.dpToPx
-import com.kpiroom.bubble.util.imageSelection.createCameraPictureUri
-import com.kpiroom.bubble.util.imageSelection.startImageSelectionActivity
+import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
+import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
 import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.view.AccountSetupOptionWindow
 import com.kpiroom.bubble.util.view.hideKeyboard

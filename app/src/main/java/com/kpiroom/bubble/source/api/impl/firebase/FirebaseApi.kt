@@ -34,6 +34,8 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun getUsername(uuid: String): String? = dbUtil.getUsername(uuid)
 
+    override suspend fun changeUsername(uuid: String, username: String) = dbUtil.changeUsername(uuid, username)
+
     override suspend fun updateUserPrefs(uuid: String) {
         getUserData(uuid)?.let { data ->
             Source.userPrefs.setFromUser(uuid, data)
@@ -93,12 +95,8 @@ class FirebaseApi : ApiInterface {
         storageUtil.downloadFile(dirRef, destination)
 
     override suspend fun downloadUserPhoto(photoName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_PHOTOS/$photoName", destination).also {
-            Log.d("DWN", "Photo")
-        }
+        storageUtil.downloadFile("$PROFILE_PHOTOS/$photoName", destination)
 
     override suspend fun downloadUserWallpaper(wallpaperName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_WALLPAPERS/$wallpaperName", destination).also {
-            Log.d("DWN", "Wall")
-        }
+        storageUtil.downloadFile("$PROFILE_WALLPAPERS/$wallpaperName", destination)
 }

@@ -23,14 +23,18 @@
                     android:id="@+id/profileBar"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
+                    app:barScrollFlags="@{logic.scrollFlags}"
                     app:title="@{logic.username}"
                     app:subtitle="@{logic.joinedOn}"
                     app:photoUri="@{logic.photoUri}"
                     app:wallpaperUri="@{logic.wallpaperUri}"
-                    app:onPhotoChanged="@{logic::onPhotoChanged}"
-                    app:onWallpaperChanged="@{logic::onWallpaperChanged}"
-                    app:onUsernameChanged="@{logic::onUsernameChanged}"
-                    app:onLoggedOut="@{logic::onLoggedOut}"/>
+                    app:isTitleEditable="@{logic.isTitleEditable}"
+                    app:onPhotoChange="@{logic::onPhotoChanged}"
+                    app:onWallpaperChange="@{logic::onWallpaperChanged}"
+                    app:onUsernameChange="@{logic::onUsernameChanged}"
+                    app:onLogOut="@{logic::onLoggedOut}"
+                    app:onUsernameChangeFinished="@{logic::onUsernameChangeFinished}"
+                    app:onUsernameChangeCanceled="@{logic::onUsernameChangeCanceled}"/>
 
             <com.dichotome.profilebar.ui.tabPager.TabPager
                     android:id="@+id/profilePager"

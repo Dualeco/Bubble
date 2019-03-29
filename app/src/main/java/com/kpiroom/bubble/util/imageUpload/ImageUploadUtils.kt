@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.util.imageSelection
+package com.kpiroom.bubble.util.imageUpload
 
 import android.content.Context
 import android.content.Intent

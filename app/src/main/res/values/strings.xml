@@ -10,7 +10,7 @@
     <string name="date_format">dd MMMM yyyy</string>
 
     <!--Regex-->
-    <string name="username_regex">^[a-z0-9_-]{6,16}$</string>
+    <string name="username_regex">^[a-zA-Z0-9_-]{4,16}$</string>
 
     <!--Login-->
     <string name="login_app_name">Bubble</string>
@@ -48,10 +48,10 @@
     <string name="setup_choose_username">Now, please, choose a username</string>
     <string name="setup_username_cannot_be_empty">Username field cannot be empty</string>
     <string name="setup_username_cannot_contain_spaces">Username cannot contain spaces</string>
-    <string name="setup_username_too_short">Username must be at least 6 characters</string>
+    <string name="setup_username_too_short">Username must be at least 4 characters</string>
     <string name="setup_username_too_long">Username must be not longer than 16 characters</string>
     <string name="setup_username_invalid">Username contains restricted symbols</string>
-    <string name="setup_username_exists">Such username already exists</string>
+    <string name="username_exists">Such username already exists</string>
     <string name="setup_title">Successfully signed up!</string>
     <string name="setup_get_started">Get started</string>
     <string name="setup_upload_photo">Upload photo using:</string>

@@ -1,9 +1,12 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.dichotome.profilebar.stubs.fragments.FavouritesTabFragment
 import com.dichotome.profilebar.stubs.fragments.SubscriptionsTabFragment
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
@@ -15,20 +18,30 @@ import com.kpiroom.bubble.util.files.getProfilePhotoUri
 import com.kpiroom.bubble.util.files.getProfileWallpaperUri
 import com.kpiroom.bubble.util.files.profilePhotoExists
 import com.kpiroom.bubble.util.files.profileWallpaperExists
-import com.kpiroom.bubble.util.imageSelection.getUpdatedProfilePhoto
-import com.kpiroom.bubble.util.imageSelection.getUpdatedProfileWallpaper
-import com.kpiroom.bubble.util.imageSelection.showImageSelectionAlert
+import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
+import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
+import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.*
+import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 class ProfileLogic : CoreLogic() {
+    val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+    val scrollFlagsOff = 0
+
+    val hideKeyboard = MutableLiveData<Boolean>()
+    val restoreFocus = MutableLiveData<Boolean>()
+
+    val scrollFlags = MutableLiveData<Int>().setDefault(scrollFlagsOn)
+
     val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>().setDefault(Source.userPrefs.username)
-    val usernameChangeRequested = MutableLiveData<Boolean>()
+
+    val isTitleEditable = MutableLiveData<Boolean>()
 
     val joinedOn = Source.userPrefs.joinedDate
 
@@ -94,11 +107,47 @@ class ProfileLogic : CoreLogic() {
     }
 
     private fun changeUsername(accepted: Boolean) {
-        if (accepted) {
-
-        }
+        if (accepted) startUsernameChange()
         progress.finish()
     }
+
+    fun onUsernameChangeFinished(newUsername: String) {
+        progress.apply {
+            Source.apply {
+                if (newUsername != userPrefs.username)
+                    AsyncProcessor {
+                        loadAsync()
+                        validateUsername(newUsername)
+
+                        api.changeUsername(userPrefs.uuid, newUsername)
+                        finishAsync()
+
+                        userPrefs.username = newUsername
+                        username.postValue(newUsername)
+
+                        finishUsernameChange()
+                    } handleError {
+                        alertAsync(it.message)
+                        restoreFocus.postValue(true)
+                    } runWith (bag)
+                else
+                    finishUsernameChange()
+            }
+        }
+
+    }
+
+    private fun startUsernameChange() {
+        scrollFlags.postValue(scrollFlagsOff)
+        isTitleEditable.postValue(true)
+    }
+
+    private fun finishUsernameChange() {
+        scrollFlags.postValue(scrollFlagsOn)
+        isTitleEditable.postValue(false)
+    }
+
+    fun onUsernameChangeCanceled(): Unit = finishUsernameChange()
 
     private fun logOut(accepted: Boolean) {
         if (accepted) {
@@ -119,7 +168,7 @@ class ProfileLogic : CoreLogic() {
         progress.finish()
     }
 
-    private fun uploadPhoto(uri: Uri): Unit = uploadAsync {
+    private fun uploadPhoto(uri: Uri): Unit = requestAsync {
         Source.apply {
             api.uploadUserPhoto(
                 userPrefs.uuid,
@@ -128,7 +177,7 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    private fun uploadWallpaper(uri: Uri): Unit = uploadAsync {
+    private fun uploadWallpaper(uri: Uri): Unit = requestAsync {
         Source.apply {
             api.uploadUserWallpaper(
                 userPrefs.uuid,
@@ -188,7 +237,7 @@ class ProfileLogic : CoreLogic() {
             wallpaperUri.value = uri
         }
 
-    private fun uploadAsync(action: suspend () -> Unit) {
+    private fun requestAsync(action: suspend () -> Unit) {
         progress.apply {
             AsyncProcessor(Dispatchers.IO) {
                 loadAsync()

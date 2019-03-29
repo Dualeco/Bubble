@@ -15,10 +15,12 @@ import com.kpiroom.bubble.databinding.FragmentProfileBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.login.LoginActivity
-import com.kpiroom.bubble.util.imageSelection.createCameraPictureUri
-import com.kpiroom.bubble.util.imageSelection.startImageSelectionActivity
+import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
+import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
 import com.kpiroom.bubble.util.livedata.observeTrue
+import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlin.math.log
 
 class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
@@ -64,6 +66,16 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
                 addPhoto(isCamera)
             }
         })
+
+        logic.restoreFocus.observeTrue(this, Observer {
+            profileBar.editTitle.requestFocus()
+        })
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        profilePager.adapter = TabPagerAdapter(childFragmentManager)
+        profileBar.setupWithViewPager(profilePager)
     }
 
     private fun addPhoto(useCamera: Boolean) {
@@ -77,10 +89,9 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         startImageSelectionActivity(this, useCamera, photoCaptureUri)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        profilePager.adapter = TabPagerAdapter(childFragmentManager)
-        profileBar.setupWithViewPager(profilePager)
+    override fun onPause() {
+        super.onPause()
+        logic.isTitleEditable.value = false
     }
 
     override fun onDestroyView() {

@@ -10,15 +10,16 @@ import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.imageSelection.getUpdatedProfilePhoto
-import com.kpiroom.bubble.util.imageSelection.getUpdatedProfileWallpaper
-import com.kpiroom.bubble.util.imageSelection.showImageSelectionAlert
+import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
+import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
+import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.alert
 import com.kpiroom.bubble.util.progressState.livedata.alertAsync
 import com.kpiroom.bubble.util.progressState.livedata.finishAsync
 import com.kpiroom.bubble.util.progressState.livedata.loadAsync
+import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,7 +33,6 @@ class AccountSetupLogic : CoreLogic() {
     val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>()
-    private val usernameRegex = str(R.string.username_regex).toRegex()
     val clearUsernameFocus = MutableLiveData<Boolean>()
 
     private val dateFormat = str(R.string.date_format)
@@ -81,38 +81,19 @@ class AccountSetupLogic : CoreLogic() {
     fun onGetStarted() {
         clearUsernameFocus.value = true
         progress.apply {
-            username.value.let {
+            AsyncProcessor {
+                loadAsync()
+                validateUsername(username.value)
+                finishAsync()
 
-                AsyncProcessor {
-                    progress.loadAsync()
-                    when {
-                        it.isNullOrBlank() ->
-                            alertAsync(str(R.string.setup_username_cannot_be_empty))
+                if (!isPhotoSet || !isWallpaperSet)
+                    alertAsync(
+                        warningPhotosUnchanged,
+                        ::isSetupFinishRequested
+                    )
+                else
+                    finishRequested.postValue(true)
 
-                        it.length < 6 ->
-                            alertAsync(str(R.string.setup_username_too_short))
-
-                        it.length > 16 ->
-                            alertAsync(str(R.string.setup_username_too_long))
-
-                        !it.matches(usernameRegex) ->
-                            alertAsync(str(R.string.setup_username_invalid))
-
-                        Source.api.usernameExists(it) ->
-                            alertAsync(str(R.string.setup_username_exists))
-
-                        !isPhotoSet || !isWallpaperSet ->
-                            progress.alertAsync(
-                                warningPhotosUnchanged,
-                                ::isSetupFinishRequested
-                            )
-
-                        else -> {
-                            finishRequested.postValue(true)
-                            progress.finishAsync()
-                        }
-                    }
-                }
             } handleError {
                 progress.alert(it.message)
             } runWith (bag)

@@ -32,6 +32,7 @@
                 android:windowSoftInputMode="stateHidden"/>
 
         <activity android:name=".ui.main.MainActivity"
+                  android:theme="@style/ActivityMain"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateHidden"/>
 

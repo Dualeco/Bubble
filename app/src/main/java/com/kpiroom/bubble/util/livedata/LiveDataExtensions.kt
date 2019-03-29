@@ -12,11 +12,9 @@ fun <T : Any?> swapValues(liveData1: MutableLiveData<T>, liveData2: MutableLiveD
     liveData1.value = liveData2.value
     liveData2.value = temp
 }
-
 fun MutableLiveData<Boolean>.observeTrue(@NonNull owner: LifecycleOwner, @NonNull observer: Observer<Boolean>) {
     observe(owner, Observer {
         if (it == true)
             observer.onChanged(it)
     })
 }
-

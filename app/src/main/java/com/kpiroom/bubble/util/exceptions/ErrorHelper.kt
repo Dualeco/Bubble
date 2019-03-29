@@ -25,6 +25,7 @@ object ErrorHelper {
     fun resolve(throwable: Throwable): CoreException =
         CoreException(
             when (throwable) {
+                is CoreException -> throwable.errorId
                 is FirebaseAuthWeakPasswordException -> AUTH_WEAK_PASSWORD
                 is FirebaseAuthInvalidCredentialsException -> AUTH_INVALID_CREDENTIALS
                 is FirebaseAuthUserCollisionException -> AUTH_EMAIL_IN_USE
