@@ -1,15 +1,17 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.dichotome.profilebar.stubs.fragments.FavouritesTabFragment
-import com.dichotome.profilebar.stubs.fragments.SubscriptionsTabFragment
+import com.dichotome.profilebar.stubs.FavListItem
+import com.dichotome.profileshared.extensions.addTo
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.FavouritesTabFragment
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.SubscriptionsTabFragment
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.UploadsTabFragment
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
@@ -32,7 +34,6 @@ class ProfileLogic : CoreLogic() {
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
     val scrollFlagsOff = 0
 
-    val hideKeyboard = MutableLiveData<Boolean>()
     val restoreFocus = MutableLiveData<Boolean>()
 
     val scrollFlags = MutableLiveData<Int>().setDefault(scrollFlagsOn)
@@ -68,12 +69,14 @@ class ProfileLogic : CoreLogic() {
     val optionWindowClicked = MutableLiveData<Boolean>()
     val loggedOut = MutableLiveData<Boolean>()
 
-    val titleSubscriptions = str(R.string.profile_subscriptions)
-    val titleFavorites = str(R.string.profile_favorites)
+    val fragmentChannels = SubscriptionsTabFragment.newInstance(str(R.string.profile_channels))
+    val fragmentFavorites = FavouritesTabFragment.newInstance(str(R.string.profile_favorites))
+    val fragmentUploads = UploadsTabFragment.newInstance(str(R.string.profile_uploads))
 
     val pagerFragments = arrayListOf(
-        SubscriptionsTabFragment.newInstance(titleSubscriptions),
-        FavouritesTabFragment.newInstance(titleFavorites)
+        fragmentChannels,
+        fragmentFavorites,
+        fragmentUploads
     )
 
     fun onPhotoChanged() {
@@ -91,6 +94,53 @@ class ProfileLogic : CoreLogic() {
     }
 
     fun onUsernameChanged() {
+        fragmentFavorites.items = listOf(
+            FavListItem(
+                "Star Wars",
+                "#55, 2008",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            FavListItem(
+                "Esteemed comic book author",
+                "#214, 2017",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
+            ),
+            FavListItem(
+                "Superior comic book writer",
+                "#3, 2019",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            FavListItem(
+                "Batman: Rebirth",
+                "#4, 2011",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
+            ),
+            FavListItem(
+                "The Amazing Spider-Man",
+                "#5, 2018",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
+            ),
+            FavListItem(
+                "Star Wars",
+                "#55, 2008",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            FavListItem(
+                "Esteemed comic book author",
+                "#214, 2017",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
+            ),
+            FavListItem(
+                "Superior comic book writer",
+                "#3, 2019",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            FavListItem(
+                "Batman: Rebirth",
+                "#4, 2011",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
+            )
+        )
         optionWindowClicked.value = true
         progress.alert(
             "Are you sure you want to change username?",
@@ -216,15 +266,11 @@ class ProfileLogic : CoreLogic() {
 
     fun updateProfileImages() {
         Source.userPrefs.apply {
-            if (isPhotoSet) {
-                //refreshPhotoUri()
+            if (isPhotoSet)
                 updatePhotoFile()
-            }
 
-            if (isWallpaperSet) {
-                //refreshWallpaperUri()
+            if (isWallpaperSet)
                 updateWallpaperFile()
-            }
         }
     }
 

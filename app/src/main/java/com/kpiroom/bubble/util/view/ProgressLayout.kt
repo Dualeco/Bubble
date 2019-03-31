@@ -2,7 +2,6 @@ package com.kpiroom.bubble.util.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
@@ -53,7 +52,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     private val dimmingView = View(context).apply {
-        setBackgroundColor(col(R.color.dimColor))
+        setBackgroundColor(col(R.color.colorDim))
         layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F

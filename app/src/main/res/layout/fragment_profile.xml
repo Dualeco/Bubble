@@ -22,7 +22,7 @@
             <com.dichotome.profilebar.ui.profileBar.ProfileBar
                     android:id="@+id/profileBar"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="@dimen/profilebar_height"
                     app:barScrollFlags="@{logic.scrollFlags}"
                     app:title="@{logic.username}"
                     app:subtitle="@{logic.joinedOn}"

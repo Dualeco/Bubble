@@ -9,15 +9,11 @@
     <color name="colorTransparent">#00000000</color>
 
     <color name="toolbarColor">#4D000000</color>
-
-    <color name="dimColor">#CB000000</color>
-
+    <color name="colorDim">#CB000000</color>
     <color name="textColorPrimary">#FFFFFF</color>
-
-    <color name="buttonColorRed">#D10808</color>
-
+    <color name="colorRed">#C91B0B</color>
+    <color name="colorRedDark">#CC990701</color>
     <color name="rippleColor">#4DFFFFFF</color>
-
     <color name="shadowTransparent">#73727272</color>
 
     <!--EditText background-->

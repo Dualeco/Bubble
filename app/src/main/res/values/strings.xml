@@ -76,8 +76,9 @@
     <string name="splash_version">Version</string>
 
     <!--Profile-->
-    <string name="profile_subscriptions">Subscriptions</string>
+    <string name="profile_channels">Channels</string>
     <string name="profile_favorites">Favorites</string>
+    <string name="profile_uploads">Uploads</string>
 
     <!--Common-->
     <string name="common_ok">OK</string>
