@@ -15,17 +15,24 @@ import com.kpiroom.bubble.databinding.FragmentProfileBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.login.LoginActivity
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.FavouritesTabFragment
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.SubscriptionsTabFragment
+import com.kpiroom.bubble.ui.main.fragments.profile.tabs.UploadsTabFragment
+import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
+import com.kpiroom.bubble.util.livedata.observeNotNull
 import com.kpiroom.bubble.util.livedata.observeTrue
-import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlin.math.log
 
 class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
     private var photoCaptureUri: Uri? = null
     private var usingCamera = false
+
+    private lateinit var fragmentChannels: SubscriptionsTabFragment
+    private lateinit var fragmentFavorites: FavouritesTabFragment
+    private lateinit var fragmentUploads: UploadsTabFragment
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
@@ -49,6 +56,19 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         super.onCreate(savedInstanceState)
         logic.updateProfileImages()
 
+        fragmentChannels = SubscriptionsTabFragment.newInstance(
+            logic.channelsAdapter,
+            str(R.string.profile_channels)
+        )
+        fragmentFavorites = FavouritesTabFragment.newInstance(
+            logic.favoritesAdapter,
+            str(R.string.profile_favorites)
+        )
+        fragmentUploads = UploadsTabFragment.newInstance(
+            logic.uploadsAdapter,
+            str(R.string.profile_uploads)
+        )
+
         logic.loggedOut.observeTrue(this, Observer {
             context?.let {
                 activity?.finish()
@@ -60,15 +80,25 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
             profileBar.optionWindow.dismiss()
         })
 
-        logic.useCameraForPhoto.observe(this, Observer {
-            it?.let { isCamera ->
-                usingCamera = isCamera
-                addPhoto(isCamera)
-            }
+        logic.useCameraForPhoto.observeNotNull(this, Observer {
+            usingCamera = it
+            addPhoto(it)
         })
 
         logic.restoreFocus.observeTrue(this, Observer {
             profileBar.editTitle.requestFocus()
+        })
+
+        logic.channelList.observeNotNull(this, Observer {
+            fragmentChannels.items = it
+        })
+
+        logic.favoriteList.observeNotNull(this, Observer {
+            fragmentFavorites.items = it
+        })
+
+        logic.uploadList.observeNotNull(this, Observer {
+            fragmentUploads.items = it
         })
     }
 
@@ -76,6 +106,12 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         super.onViewCreated(view, savedInstanceState)
         profilePager.adapter = TabPagerAdapter(childFragmentManager)
         profileBar.setupWithViewPager(profilePager)
+
+        profilePager.fragments = arrayListOf(
+            fragmentChannels,
+            fragmentFavorites,
+            fragmentUploads
+        )
     }
 
     private fun addPhoto(useCamera: Boolean) {

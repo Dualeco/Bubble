@@ -6,37 +6,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/default_wallpaper"
-            android:alpha="0.7"
-            android:scaleType="fitXY"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <TextView
-            android:fontFamily="sans-serif-medium"
-            android:alpha="0.9"
-            android:gravity="center"
-            android:clickable="false"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/colorDim"
-            android:text="Nothing here yet"
-            android:textAllCaps="true"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="12sp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/channels_recycler"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:background="@color/colorPrimary"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

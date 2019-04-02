@@ -2,20 +2,15 @@ package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.dichotome.profilebar.stubs.FavListItem
-import com.dichotome.profileshared.extensions.addTo
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.FavouritesTabFragment
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.SubscriptionsTabFragment
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.UploadsTabFragment
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
-import com.kpiroom.bubble.util.constants.str
+import com.kpiroom.bubble.util.events.ClickThrottler
 import com.kpiroom.bubble.util.files.getProfilePhotoUri
 import com.kpiroom.bubble.util.files.getProfileWallpaperUri
 import com.kpiroom.bubble.util.files.profilePhotoExists
@@ -26,11 +21,17 @@ import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.*
+import com.kpiroom.bubble.util.recyclerview.TabGridAdapter
+import com.kpiroom.bubble.util.recyclerview.TabListAdapter
+import com.kpiroom.bubble.util.recyclerview.items.TabGridItem
+import com.kpiroom.bubble.util.recyclerview.items.TabListItem
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 class ProfileLogic : CoreLogic() {
+    private val clickThottler = ClickThrottler(350)
+
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
     val scrollFlagsOff = 0
 
@@ -64,20 +65,169 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
+    val channelsAdapter: TabListAdapter = TabListAdapter(
+        mutableListOf(),
+        R.layout.tab_item_channels,
+        ::onChannelClicked,
+        ::onChannelFollowed
+    )
+
+    val favoritesAdapter: TabGridAdapter = TabGridAdapter(
+        mutableListOf(),
+        R.layout.tab_item_favorites,
+        ::onFavoriteClicked
+    )
+
+    val uploadsAdapter: TabListAdapter = TabListAdapter(
+        mutableListOf(),
+        R.layout.tab_item_uploads,
+        ::onUploadClicked,
+        ::onUploadDeleted
+    )
+
     val wallpaperChangeRequested = MutableLiveData<Boolean>()
 
     val optionWindowClicked = MutableLiveData<Boolean>()
     val loggedOut = MutableLiveData<Boolean>()
 
-    val fragmentChannels = SubscriptionsTabFragment.newInstance(str(R.string.profile_channels))
-    val fragmentFavorites = FavouritesTabFragment.newInstance(str(R.string.profile_favorites))
-    val fragmentUploads = UploadsTabFragment.newInstance(str(R.string.profile_uploads))
-
-    val pagerFragments = arrayListOf(
-        fragmentChannels,
-        fragmentFavorites,
-        fragmentUploads
+    val channelList = MutableLiveData<MutableList<TabListItem>>().setDefault(
+        mutableListOf(
+            TabListItem(
+                "2019 The Amazing Spider-Man #2",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "2018 Star Wars #55",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "2019 Batman: Rebirth #26",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            )
+        )
     )
+    val favoriteList = MutableLiveData<MutableList<TabGridItem>>().setDefault(
+        mutableListOf(
+            TabGridItem(
+                "The Amazing Spider-Man",
+                "#5, 2018",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
+            ),
+            TabGridItem(
+                "Star Wars",
+                "#55, 2008",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            TabGridItem(
+                "Esteemed comic book author",
+                "#214, 2017",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
+            ),
+            TabGridItem(
+                "Superior comic book writer",
+                "#3, 2019",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
+            ),
+            TabGridItem(
+                "Batman: Rebirth",
+                "#4, 2011",
+                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
+            )
+        )
+    )
+    val uploadList = MutableLiveData<MutableList<TabListItem>>().setDefault(
+        mutableListOf(
+            TabListItem(
+                "2019 The Amazing Spider-Man #2",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "2018 Star Wars #55",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "2019 Batman: Rebirth #26",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            ),
+            TabListItem(
+                "Superior comic book writer",
+                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
+            ),
+            TabListItem(
+                "Esteemed comic book author #1",
+                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
+            )
+        )
+    )
+
+    fun onChannelClicked(position: Int) {
+    }
+
+    fun onChannelFollowed(position: Int) {
+
+    }
+
+    fun onFavoriteClicked(position: Int) {
+
+    }
+
+    fun onUploadClicked(position: Int) {
+
+    }
+
+    fun onUploadDeleted(position: Int) = uploadsAdapter.removeItem(position)
 
     fun onPhotoChanged() {
         optionWindowClicked.value = true
@@ -94,53 +244,6 @@ class ProfileLogic : CoreLogic() {
     }
 
     fun onUsernameChanged() {
-        fragmentFavorites.items = listOf(
-            FavListItem(
-                "Star Wars",
-                "#55, 2008",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Esteemed comic book author",
-                "#214, 2017",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Superior comic book writer",
-                "#3, 2019",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Batman: Rebirth",
-                "#4, 2011",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
-            ),
-            FavListItem(
-                "The Amazing Spider-Man",
-                "#5, 2018",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Star Wars",
-                "#55, 2008",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Esteemed comic book author",
-                "#214, 2017",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Superior comic book writer",
-                "#3, 2019",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Batman: Rebirth",
-                "#4, 2011",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
-            )
-        )
         optionWindowClicked.value = true
         progress.alert(
             "Are you sure you want to change username?",

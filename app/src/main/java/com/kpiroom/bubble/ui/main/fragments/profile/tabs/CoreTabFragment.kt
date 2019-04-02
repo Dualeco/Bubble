@@ -1,21 +1,23 @@
 package com.kpiroom.bubble.ui.main.fragments.profile.tabs
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.dichotome.profilebar.stubs.TabListAdapter
-import com.dichotome.profilebar.stubs.TabListItem
 import com.dichotome.profilebar.ui.tabPager.TabFragment
-import com.kpiroom.bubble.R
+import com.kpiroom.bubble.util.recyclerview.TabCoreAdapter
+import com.kpiroom.bubble.util.recyclerview.TabCoreHolder
+import com.kpiroom.bubble.util.recyclerview.items.TabCoreItem
 
-abstract class TabListFragment(itemViewType: Int, isThumbnailCircular: Boolean) : TabFragment() {
-    var items: List<TabListItem>
+abstract class CoreTabFragment<I : TabCoreItem, VH : TabCoreHolder<I>>(
+    private val layoutId: Int
+) : TabFragment() {
+
+    abstract val adapter: TabCoreAdapter<I, VH>
+
+    var items: MutableList<I>
         get() = adapter.data
-        set(value) {
-            adapter.updateData(value)
-        }
+        set(value) = adapter.updateTo(value)
 
     var recyclerView: RecyclerView? = null
         set(value) {
@@ -23,9 +25,7 @@ abstract class TabListFragment(itemViewType: Int, isThumbnailCircular: Boolean) 
                 it.adapter = adapter
             }
         }
-    val adapter: TabListAdapter = TabListAdapter(listOf(), itemViewType, isThumbnailCircular)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        inflater.inflate(R.layout.profile_tab_favorites, container, false)
-
+        inflater.inflate(layoutId, container, false)
 }
