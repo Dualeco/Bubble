@@ -18,9 +18,7 @@ import com.kpiroom.bubble.ui.login.LoginActivity
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
 import com.kpiroom.bubble.util.livedata.observeTrue
-import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlin.math.log
 
 class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
@@ -47,7 +45,6 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logic.updateProfileImages()
 
         logic.loggedOut.observeTrue(this, Observer {
             context?.let {

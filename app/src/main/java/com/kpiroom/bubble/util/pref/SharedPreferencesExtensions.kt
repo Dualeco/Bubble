@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.util.pref
 
 import android.content.SharedPreferences
+import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.source.pref.UserPrefs
 
@@ -16,10 +17,8 @@ fun UserPrefs.setFromUser(uuid: String, user: User): Unit = user.let {
     this.uuid = uuid
     username = user.username
     joinedDate = user.joinedDate
-    isPhotoSet = user.photoSet
-    isWallpaperSet = user.wallpaperSet
-    photoName = user.photoName
-    wallpaperName = user.wallpaperName
+    photoDownloadUri = Uri.parse(user.photoDownloadUri)
+    wallpaperDownloadUri = Uri.parse(user.wallpaperDownloadUri)
 }
 
 fun SharedPreferences.clear(): Unit = edit()

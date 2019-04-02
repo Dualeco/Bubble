@@ -1,7 +1,7 @@
 package com.kpiroom.bubble.source.api.impl.firebase
 
+import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -11,7 +11,6 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_PHO
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_WALLPAPERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
-import com.kpiroom.bubble.util.files.deleteProfileWallpaper
 import com.kpiroom.bubble.util.files.getCurrentProfileImageName
 import com.kpiroom.bubble.util.pref.setFromUser
 import java.io.File
@@ -55,48 +54,41 @@ class FirebaseApi : ApiInterface {
     override suspend fun sendPasswordResetEmail(email: String): Unit = authUtil.sendPasswordResetEmail(email)
 
     //Storage
-    override suspend fun uploadFile(
+    override suspend fun uploadBitmap(
         dirRef: String,
-        uri: Uri,
+        bitmap: Bitmap,
         name: String
-    ): Unit = storageUtil.uploadFile(dirRef, uri, name)
+    ): Uri = storageUtil.uploadBitmap(dirRef, bitmap, name)
 
     override suspend fun uploadUserPhoto(
         uuid: String,
-        uri: Uri
-    ): Unit = dbUtil.run {
-        Source.userPrefs.apply {
-            isPhotoSet = true
-            uploadFile(PROFILE_PHOTOS, uri, photoName)
-
-            USER_KEYS(uuid).apply {
-                write(PHOTO_NAME, photoName)
-                write(PHOTO_SET, true)
-            }
+        bitmap: Bitmap
+    ): Uri = uploadBitmap(
+        PROFILE_PHOTOS,
+        bitmap,
+        getCurrentProfileImageName(uuid)
+    ).also {
+        USER_KEYS(uuid).apply {
+            dbUtil.write(PHOTO_DOWNLOAD_URI, it.toString())
         }
     }
 
     override suspend fun uploadUserWallpaper(
         uuid: String,
-        uri: Uri
-    ): Unit = dbUtil.run {
-        Source.userPrefs.apply {
-            isWallpaperSet = true
-            uploadFile(PROFILE_WALLPAPERS, uri, wallpaperName)
-
-            USER_KEYS(uuid).apply {
-                write(WALLPAPER_NAME, wallpaperName)
-                write(WALLPAPER_SET, true)
-            }
+        bitmap: Bitmap
+    ): Uri = uploadBitmap(
+        PROFILE_WALLPAPERS,
+        bitmap,
+        getCurrentProfileImageName(uuid)
+    ).also {
+        USER_KEYS(uuid).apply {
+            dbUtil.write(WALLPAPER_DOWNLOAD_URI, it.toString())
         }
     }
 
+    override suspend fun uploadFile(dirRef: String, uri: Uri, name: String?): Unit =
+        storageUtil.uploadFile(dirRef, uri, name)
+
     override suspend fun downloadFile(dirRef: String, destination: File): Unit =
         storageUtil.downloadFile(dirRef, destination)
-
-    override suspend fun downloadUserPhoto(photoName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_PHOTOS/$photoName", destination)
-
-    override suspend fun downloadUserWallpaper(wallpaperName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_WALLPAPERS/$wallpaperName", destination)
 }

@@ -5,28 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/default_wallpaper"
-        android:alpha="0.7"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <Button
-        android:id="@+id/button_tab_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorDim"
-        android:text="Upload a comic"
-        android:alpha="0.97"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="12sp"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/uploads_recycler"
         android:layout_width="0dp"
@@ -34,6 +12,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_tab_upload" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

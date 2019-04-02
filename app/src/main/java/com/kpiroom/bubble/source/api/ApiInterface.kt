@@ -1,5 +1,6 @@
 package com.kpiroom.bubble.source.api
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import java.io.File
@@ -31,25 +32,27 @@ interface ApiInterface {
     suspend fun sendPasswordResetEmail(email: String)
 
     //Storage
-    suspend fun uploadFile(
+    suspend fun uploadBitmap(
         dirRef: String,
-        uri: Uri,
+        bitmap: Bitmap,
         name: String
-    )
+    ): Uri
 
     suspend fun uploadUserPhoto(
         uuid: String,
-        uri: Uri
-    )
+        bitmap: Bitmap
+    ): Uri
 
     suspend fun uploadUserWallpaper(
         uuid: String,
-        uri: Uri
+        bitmap: Bitmap
+    ): Uri
+
+    suspend fun uploadFile(
+        dirRef: String,
+        uri: Uri,
+        name: String? = null
     )
 
     suspend fun downloadFile(dirRef: String, destination: File)
-
-    suspend fun downloadUserPhoto(photoName: String, destination: File)
-
-    suspend fun downloadUserWallpaper(wallpaperName: String, destination: File)
 }

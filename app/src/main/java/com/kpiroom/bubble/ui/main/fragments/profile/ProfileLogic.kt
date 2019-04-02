@@ -2,8 +2,6 @@ package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.dichotome.profilebar.stubs.FavListItem
-import com.dichotome.profileshared.extensions.addTo
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import com.kpiroom.bubble.R
@@ -13,22 +11,14 @@ import com.kpiroom.bubble.ui.main.fragments.profile.tabs.FavouritesTabFragment
 import com.kpiroom.bubble.ui.main.fragments.profile.tabs.SubscriptionsTabFragment
 import com.kpiroom.bubble.ui.main.fragments.profile.tabs.UploadsTabFragment
 import com.kpiroom.bubble.util.async.AsyncProcessor
-import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
-import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
+import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.files.getProfilePhotoUri
-import com.kpiroom.bubble.util.files.getProfileWallpaperUri
-import com.kpiroom.bubble.util.files.profilePhotoExists
-import com.kpiroom.bubble.util.files.profileWallpaperExists
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.*
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
-import java.io.File
 
 class ProfileLogic : CoreLogic() {
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
@@ -48,19 +38,22 @@ class ProfileLogic : CoreLogic() {
 
     val useCameraForPhoto = MutableLiveData<Boolean>()
 
+    lateinit var photoSourceUri: Uri
+    lateinit var wallpaperSourceUri: Uri
+
     var photoUri = MutableLiveData<Uri>().apply {
-        Source.userPrefs.apply {
-            if (isPhotoSet)
-                value = getProfilePhotoUri(photoName)
+        Source.userPrefs.photoDownloadUri.let {
+            if (!it.toString().isBlank())
+                value = it
         }
     }
 
     val photoChangeRequested = MutableLiveData<Boolean>()
 
     var wallpaperUri = MutableLiveData<Uri>().apply {
-        Source.userPrefs.apply {
-            if (isWallpaperSet)
-                value = getProfileWallpaperUri(wallpaperName)
+        Source.userPrefs.wallpaperDownloadUri.let {
+            if (!it.toString().isBlank())
+                value = it
         }
     }
 
@@ -94,58 +87,8 @@ class ProfileLogic : CoreLogic() {
     }
 
     fun onUsernameChanged() {
-        fragmentFavorites.items = listOf(
-            FavListItem(
-                "Star Wars",
-                "#55, 2008",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Esteemed comic book author",
-                "#214, 2017",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Superior comic book writer",
-                "#3, 2019",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Batman: Rebirth",
-                "#4, 2011",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
-            ),
-            FavListItem(
-                "The Amazing Spider-Man",
-                "#5, 2018",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Star Wars",
-                "#55, 2008",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Esteemed comic book author",
-                "#214, 2017",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            FavListItem(
-                "Superior comic book writer",
-                "#3, 2019",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            FavListItem(
-                "Batman: Rebirth",
-                "#4, 2011",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
-            )
-        )
         optionWindowClicked.value = true
-        progress.alert(
-            "Are you sure you want to change username?",
-            ::changeUsername
-        )
+        startUsernameChange()
     }
 
     fun onLoggedOut() {
@@ -154,11 +97,6 @@ class ProfileLogic : CoreLogic() {
             "Are you sure you want to log out?",
             ::logOut
         )
-    }
-
-    private fun changeUsername(accepted: Boolean) {
-        if (accepted) startUsernameChange()
-        progress.finish()
     }
 
     fun onUsernameChangeFinished(newUsername: String) {
@@ -219,69 +157,39 @@ class ProfileLogic : CoreLogic() {
     }
 
     private fun uploadPhoto(uri: Uri): Unit = requestAsync {
-        Source.apply {
-            api.uploadUserPhoto(
-                userPrefs.uuid,
-                getUpdatedProfilePhoto(uri)
-            )
+        extractBitmapFrom(uri)?.let { bitmap ->
+            Source.apply {
+                api.uploadUserPhoto(
+                    userPrefs.uuid,
+                    bitmap
+                ).also {
+                    userPrefs.photoDownloadUri = it
+                    photoUri.postValue(it)
+                }
+            }
         }
     }
 
     private fun uploadWallpaper(uri: Uri): Unit = requestAsync {
-        Source.apply {
-            api.uploadUserWallpaper(
-                userPrefs.uuid,
-                getUpdatedProfileWallpaper(uri)
-            )
-        }
-    }
-
-    private fun updatePhotoFile() = downloadAsync {
-        Source.apply {
-            userPrefs.apply {
-                if (!profilePhotoExists(photoName)) {
-                    api.downloadUserPhoto(
-                        photoName,
-                        File(DIR_PROFILE_PHOTOS, photoName)
-                    )
-                    photoUri.postValue(getProfilePhotoUri(photoName))
+        extractBitmapFrom(uri)?.let { bitmap ->
+            Source.apply {
+                api.uploadUserWallpaper(
+                    userPrefs.uuid,
+                    bitmap
+                ).also {
+                    userPrefs.wallpaperDownloadUri = it
+                    wallpaperUri.postValue(it)
                 }
             }
-        }
-    }
-
-    private fun updateWallpaperFile() = downloadAsync {
-        Source.apply {
-            userPrefs.apply {
-                if (!profileWallpaperExists(wallpaperName)) {
-                    api.downloadUserWallpaper(
-                        wallpaperName,
-                        File(DIR_PROFILE_WALLPAPERS, wallpaperName)
-                    )
-                    wallpaperUri.postValue(getProfileWallpaperUri(wallpaperName))
-                }
-            }
-        }
-    }
-
-    fun updateProfileImages() {
-        Source.userPrefs.apply {
-            if (isPhotoSet)
-                updatePhotoFile()
-
-            if (isWallpaperSet)
-                updateWallpaperFile()
         }
     }
 
     fun dispatchUri(uri: Uri, isProfilePhoto: Boolean): Unit =
-        if (isProfilePhoto) {
+        if (isProfilePhoto)
             uploadPhoto(uri)
-            photoUri.value = uri
-        } else {
+        else
             uploadWallpaper(uri)
-            wallpaperUri.value = uri
-        }
+
 
     private fun requestAsync(action: suspend () -> Unit) {
         progress.apply {
@@ -289,16 +197,6 @@ class ProfileLogic : CoreLogic() {
                 loadAsync()
                 action()
                 finishAsync()
-            } handleError {
-                alertAsync(it.message)
-            } runWith (bag)
-        }
-    }
-
-    private fun downloadAsync(action: suspend () -> Unit) {
-        progress.apply {
-            AsyncProcessor(Dispatchers.IO) {
-                action()
             } handleError {
                 alertAsync(it.message)
             } runWith (bag)
