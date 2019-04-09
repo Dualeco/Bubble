@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/graph_main"
-    app:startDestination="@id/navigation_dashboard">
+<navigation
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/graph_main"
+        app:startDestination="@id/navigation_dashboard">
 
-    <state_fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.kpiroom.bubble.ui.main.fragments.dashboard.DashboardFragment"
-        android:label="@string/dashboard_title"
-        tools:layout="@layout/fragment_dashboard" />
+    <fragment
+            android:id="@+id/navigation_dashboard"
+            android:name="com.kpiroom.bubble.ui.main.fragments.dashboard.DashboardFragment"
+            android:label="@string/dashboard_title"
+            tools:layout="@layout/fragment_dashboard"/>
 
-    <state_fragment
-        android:id="@+id/navigation_subscription"
-        android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsFragment"
-        android:label="@string/subscription_title"
-        tools:layout="@layout/fragment_subscription" />
+    <fragment
+            android:id="@+id/navigation_subscription"
+            android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsFragment"
+            android:label="@string/subscription_title"
+            tools:layout="@layout/fragment_subscription"/>
 
-    <state_fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.kpiroom.bubble.ui.main.fragments.profile.ProfileFragment"
-        android:label="@string/profile_title"
-        tools:layout="@layout/fragment_profile" />
+    <fragment
+            android:id="@+id/navigation_profile"
+            android:name="com.kpiroom.bubble.ui.main.fragments.profile.ProfileFragment"
+            android:label="@string/profile_title"
+            tools:layout="@layout/fragment_profile">
+        <action android:id="@+id/action_upload_comic"
+                app:destination="@id/upload_screen"/>
+    </fragment>
+    <fragment
+            android:id="@+id/upload_screen"
+            android:name="com.kpiroom.bubble.ui.uploadScreen.UploadScreenFragment"
+            android:label="UploadScreenFragment">
+    </fragment>
 
 </navigation>

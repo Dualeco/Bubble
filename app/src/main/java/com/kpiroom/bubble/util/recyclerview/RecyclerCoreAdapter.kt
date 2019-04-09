@@ -18,10 +18,12 @@ abstract class TabCoreHolder<I : TabCoreItem>(
 ) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 ) {
+    lateinit var id: String
     val nameTV = itemView.findViewById<TextView>(R.id.itemNameTV)
     val picView = itemView.findViewById<ImageView>(R.id.itemPic)
 
     fun bind(data: I) = data.run {
+        id = uuid
         nameTV?.text = name
         picView?.download(picUrl, RequestOptions().apply {
             if (isPicCircular) circleCrop()
@@ -31,7 +33,7 @@ abstract class TabCoreHolder<I : TabCoreItem>(
 }
 
 abstract class TabCoreAdapter<I : TabCoreItem, VH : TabCoreHolder<I>>(
-    var data: MutableList<I> = mutableListOf()
+    var data: List<I> = listOf()
 ) : RecyclerView.Adapter<VH>() {
 
     abstract val itemViewType: Int
@@ -44,7 +46,7 @@ abstract class TabCoreAdapter<I : TabCoreItem, VH : TabCoreHolder<I>>(
         }
     )
 
-    fun updateTo(newData: MutableList<I>): Unit = DiffUtil.calculateDiff(
+    fun updateTo(newData: List<I>): Unit = DiffUtil.calculateDiff(
         TabDiffUtilCallback(data, newData)
     ).run {
         data = newData

@@ -6,10 +6,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.COMICS
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.source.api.impl.firebase.livedata.FirebaseListLiveData
 import com.kpiroom.bubble.util.exceptions.db.DbCancelledException
 import com.kpiroom.bubble.util.exceptions.db.DbEmptyFieldException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -30,6 +33,10 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
             .addOnSuccessListener { continuation.resume(Unit) }
             .addOnFailureListener { continuation.resumeWithException(it) }
             .addOnCanceledListener { continuation.cancel() }
+    }
+
+    fun remove(path: String) {
+        firebaseDb.getReference(path).removeValue()
     }
 
     suspend fun <T : Any?> read(
@@ -87,7 +94,6 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
                         val children = snapshot.children.map {
                             it.getValue(childType) ?: throw DbEmptyFieldException()
                         }
-
                         continuation.resume(children)
                     } catch (exception: Exception) {
                         Log.d(TAG, "Read error [$ref]: $exception")
@@ -133,4 +139,31 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         write("$USERNAMES/$uuid", username)
         write(USER_KEYS(uuid).USERNAME, username)
     }
+
+    suspend fun removeComicData(uuid: String) {
+        getComicData(uuid)?.run {
+            remove("${USER_KEYS(authorId).UPLOADS}/$uuid")
+            remove("$COMICS/$uuid")
+        }
+    }
+
+    suspend fun getComicData(uuid: String): Comic? =
+        try {
+            read("$COMICS/$uuid", Comic::class.java)
+        } catch (ex: DbEmptyFieldException) {
+            null
+        }
+
+    suspend fun uploadComicData(uuid: String, comic: Comic) {
+        write("$COMICS/$uuid", comic)
+        write("${USER_KEYS(comic.authorId).UPLOADS}/$uuid", uuid)
+    }
+
+    fun <T : Any> getChildrenLiveData(path: String, type: Class<T>): FirebaseListLiveData<T> =
+        FirebaseListLiveData(firebaseDb.getReference(path), type)
+
+    fun getUploadsLiveData(uuid: String): FirebaseListLiveData<String> = getChildrenLiveData(
+        USER_KEYS(uuid).UPLOADS,
+        String::class.java
+    )
 }

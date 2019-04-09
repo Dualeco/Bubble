@@ -79,6 +79,7 @@
     <string name="profile_channels">Channels</string>
     <string name="profile_favorites">Favorites</string>
     <string name="profile_uploads">Uploads</string>
+    <string name="profile_upload_comic">Upload comic</string>
 
     <!--Common-->
     <string name="common_ok">OK</string>
@@ -97,5 +98,9 @@
 
     <!--Profile-->
     <string name="profile_title">Profile</string>
+
+    <!--Upload screen-->
+    <string name="upload_screen_upload_comic">Upload comic</string>
+    <string name="upload_screen_empty_fields">All fields must be filled in</string>
 
 </resources>

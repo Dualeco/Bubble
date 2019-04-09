@@ -28,7 +28,7 @@ buildscript {
     //Glide
 
     //ProfileBar
-    ext.profilebar_version = '1.5.8'
+    ext.profilebar_version = '1.6.1'
     ext.glide_version = '4.8.0'
 
     repositories {

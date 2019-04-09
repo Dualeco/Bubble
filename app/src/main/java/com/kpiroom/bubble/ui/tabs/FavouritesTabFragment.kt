@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.ui.main.fragments.profile.tabs
+package com.kpiroom.bubble.ui.tabs
 
 import android.os.Bundle
 import android.view.View

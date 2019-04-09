@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.ui.main.fragments.profile.tabs
+package com.kpiroom.bubble.ui.tabs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,7 +15,7 @@ abstract class CoreTabFragment<I : TabCoreItem, VH : TabCoreHolder<I>>(
 
     abstract val adapter: TabCoreAdapter<I, VH>
 
-    var items: MutableList<I>
+    var items: List<I>
         get() = adapter.data
         set(value) = adapter.updateTo(value)
 

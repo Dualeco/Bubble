@@ -12,6 +12,5 @@ data class ProgressState(
         const val LOADING = 0
         const val ALERT = 1
         const val FINISHED = 2
-        const val INPUT = 3
     }
 }

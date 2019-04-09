@@ -8,41 +8,33 @@
                 type="com.kpiroom.bubble.ui.main.fragments.profile.ProfileLogic"/>
 
     </data>
-
-    <com.kpiroom.bubble.util.view.ProgressLayout
-            app:progressState="@{logic.progress}"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/coordinator"
+        <com.dichotome.profilebar.ui.profileBar.ProfileBar
+                android:id="@+id/profileBar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="@dimen/profilebar_height"
+                app:barScrollFlags="@{logic.scrollFlags}"
+                app:title="@{logic.username}"
+                app:subtitle="@{logic.joinedOn}"
+                app:photoUri="@{logic.photoUri}"
+                app:wallpaperUri="@{logic.wallpaperUri}"
+                app:isTitleEditable="@{logic.isTitleEditable}"
+                app:onPhotoChange="@{logic::onPhotoChanged}"
+                app:onWallpaperChange="@{logic::onWallpaperChanged}"
+                app:onUsernameChange="@{logic::onUsernameChanged}"
+                app:onLogOut="@{logic::onLoggedOut}"
+                app:onUsernameChangeFinished="@{logic::onUsernameChangeFinished}"
+                app:onUsernameChangeCanceled="@{logic::onUsernameChangeCanceled}"/>
 
-            <com.dichotome.profilebar.ui.profileBar.ProfileBar
-                    android:id="@+id/profileBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/profilebar_height"
-                    app:barScrollFlags="@{logic.scrollFlags}"
-                    app:title="@{logic.username}"
-                    app:subtitle="@{logic.joinedOn}"
-                    app:photoUri="@{logic.photoUri}"
-                    app:wallpaperUri="@{logic.wallpaperUri}"
-                    app:isTitleEditable="@{logic.isTitleEditable}"
-                    app:onPhotoChange="@{logic::onPhotoChanged}"
-                    app:onWallpaperChange="@{logic::onWallpaperChanged}"
-                    app:onUsernameChange="@{logic::onUsernameChanged}"
-                    app:onLogOut="@{logic::onLoggedOut}"
-                    app:onUsernameChangeFinished="@{logic::onUsernameChangeFinished}"
-                    app:onUsernameChangeCanceled="@{logic::onUsernameChangeCanceled}"/>
+        <com.dichotome.profilebar.ui.tabPager.TabPager
+                android:id="@+id/profilePager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-            <com.dichotome.profilebar.ui.tabPager.TabPager
-                    android:id="@+id/profilePager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    </com.kpiroom.bubble.util.view.ProgressLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

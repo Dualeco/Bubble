@@ -1,7 +1,8 @@
 package com.kpiroom.bubble.util.recyclerview.items
 
 class TabGridItem(
+    uuid: String,
     name: String,
     val info: String,
     picUrl: String
-) : TabCoreItem(name, picUrl, false)
+) : TabCoreItem(uuid, name, picUrl, false)

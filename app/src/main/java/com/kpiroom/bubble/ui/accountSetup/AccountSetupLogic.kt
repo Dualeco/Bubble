@@ -138,10 +138,9 @@ class AccountSetupLogic : CoreLogic() {
                 api.uploadUserData(
                     id,
                     User(
+                        uuid,
                         username,
-                        joinedDate,
-                        isPhotoSet,
-                        isWallpaperSet
+                        joinedDate
                     )
                 )
             }

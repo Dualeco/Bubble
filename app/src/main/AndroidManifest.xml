@@ -32,13 +32,17 @@
                 android:windowSoftInputMode="stateHidden"/>
 
         <activity android:name=".ui.main.MainActivity"
-                  android:theme="@style/ActivityMain"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateHidden"/>
 
         <activity android:name=".ui.accountSetup.AccountSetupActivity"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".ui.uploadScreen.UploadScreenActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateHidden"/>
+
         <provider
                 android:authorities="com.kpiroom.bubble.fileprovider"
                 android:name="androidx.core.content.FileProvider"

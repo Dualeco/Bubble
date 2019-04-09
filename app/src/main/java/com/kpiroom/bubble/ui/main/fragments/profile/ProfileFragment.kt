@@ -1,12 +1,15 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.dichotome.profilebar.ui.tabPager.TabPagerAdapter
@@ -15,14 +18,15 @@ import com.kpiroom.bubble.databinding.FragmentProfileBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.login.LoginActivity
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.FavouritesTabFragment
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.SubscriptionsTabFragment
-import com.kpiroom.bubble.ui.main.fragments.profile.tabs.UploadsTabFragment
+import com.kpiroom.bubble.ui.main.MainActivity
+import com.kpiroom.bubble.ui.tabs.FavouritesTabFragment
+import com.kpiroom.bubble.ui.tabs.SubscriptionsTabFragment
+import com.kpiroom.bubble.ui.tabs.UploadsTabFragment
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
-import com.kpiroom.bubble.util.livedata.observeNotNull
-import com.kpiroom.bubble.util.livedata.observeTrue
+import com.kpiroom.bubble.util.livedata.*
+import com.kpiroom.bubble.util.progressState.ProgressState
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
@@ -34,27 +38,25 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
     private lateinit var fragmentFavorites: FavouritesTabFragment
     private lateinit var fragmentUploads: UploadsTabFragment
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
+    private lateinit var parentProgressState: MediatorLiveData<ProgressState>
 
-        if (resultCode == Activity.RESULT_OK)
-            if (requestCode == AccountSetupActivity.REQUEST_PHOTO)
-                logic.apply {
-                    val uri = if (usingCamera)
-                        photoCaptureUri
-                    else
-                        intent?.data
-
-                    uri?.let {
-                        val isProfilePhoto = photoChangeRequested.value == true
-                        dispatchUri(it, isProfilePhoto)
-                    }
-                }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        parentProgressState = (activity as MainActivity).provideLogic().progress
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        parentProgressState.addSource(logic.progress)
+
         logic.updateProfileImages()
+
+        logic.uploadsLiveData.observeResource(this) { list, _ ->
+            list?.forEach {
+                Log.d(TAG, it)
+            }
+        }
 
         fragmentChannels = SubscriptionsTabFragment.newInstance(
             logic.channelsAdapter,
@@ -114,6 +116,24 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         )
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        if (resultCode == Activity.RESULT_OK)
+            if (requestCode == AccountSetupActivity.REQUEST_PHOTO)
+                logic.apply {
+                    val uri = if (usingCamera)
+                        photoCaptureUri
+                    else
+                        intent?.data
+
+                    uri?.let {
+                        val isProfilePhoto = photoChangeRequested.value == true
+                        dispatchUri(it, isProfilePhoto)
+                    }
+                }
+    }
+
     private fun addPhoto(useCamera: Boolean) {
         context?.also {
             photoCaptureUri =
@@ -130,6 +150,11 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         logic.isTitleEditable.value = false
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        parentProgressState.removeSource(logic.progress)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         logic.progress.value = null
@@ -141,4 +166,8 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
         LayoutBuilder(inflater, container, R.layout.fragment_profile) {
             logic = this@ProfileFragment.logic
         }
+
+    companion object {
+        private val TAG = "ProfileFragment"
+    }
 }

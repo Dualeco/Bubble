@@ -16,8 +16,6 @@ fun UserPrefs.setFromUser(uuid: String, user: User): Unit = user.let {
     this.uuid = uuid
     username = user.username
     joinedDate = user.joinedDate
-    isPhotoSet = user.photoSet
-    isWallpaperSet = user.wallpaperSet
     photoName = user.photoName
     wallpaperName = user.wallpaperName
 }

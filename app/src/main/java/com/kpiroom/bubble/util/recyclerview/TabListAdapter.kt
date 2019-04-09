@@ -11,8 +11,8 @@ import java.lang.ref.WeakReference
 class TabListAdapter(
     data: MutableList<TabListItem>,
     override val itemViewType: Int,
-    val onViewClick: ((Int) -> Unit)? = null,
-    val onActionClick: ((Int) -> Unit)? = null
+    val onViewClick: ((String) -> Unit)? = null,
+    val onActionClick: ((String) -> Unit)? = null
 ) : TabCoreAdapter<TabListItem, TabListHolder>(data) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TabListHolder(parent, itemViewType)
 
@@ -37,23 +37,23 @@ class TabListHolder(
 ) : TabCoreHolder<TabListItem>(parent, viewType) {
     val actionButton = itemView.findViewById<ImageButton>(R.id.action_button)
 
-    var holderClickListener: WeakReference<((Int) -> Unit)?> = WeakReference(null)
-    var actionClickListener: WeakReference<((Int) -> Unit)?> = WeakReference(null)
+    var holderClickListener: WeakReference<((String) -> Unit)?> = WeakReference(null)
+    var actionClickListener: WeakReference<((String) -> Unit)?> = WeakReference(null)
 
     fun bind(
         data: TabListItem,
-        onHolderClick: ((Int) -> Unit)?,
-        onActionClick: ((Int) -> Unit)?
+        onHolderClick: ((String) -> Unit)?,
+        onActionClick: ((String) -> Unit)?
     ) {
         super.bind(data)
         holderClickListener = WeakReference(onHolderClick).apply {
             itemView.setOnClickListener {
-                get()?.invoke(adapterPosition)
+                get()?.invoke(id)
             }
         }
         actionClickListener = WeakReference(onActionClick).apply {
             actionButton?.setOnClickListener {
-                get()?.invoke(adapterPosition)
+                get()?.invoke(id)
             }
         }
     }

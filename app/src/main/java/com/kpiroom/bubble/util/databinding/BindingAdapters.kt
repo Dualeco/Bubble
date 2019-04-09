@@ -1,6 +1,8 @@
 package com.kpiroom.bubble.util.databinding
 
+import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -34,13 +36,17 @@ fun isImeActionDone(editText: EditText, isActionDone: Boolean) {
 @BindingAdapter("app:uri")
 fun setUri(imageView: ImageView, uri: Uri?) {
     uri?.let {
-        val options = RequestOptions().apply {
-            if (imageView is CircularImageView)
-                circleCrop()
-        }
         Glide.with(BubbleApp.app)
             .load(uri)
-            .apply(options)
+            .into(imageView)
+    }
+}
+
+@BindingAdapter("app:bitmap")
+fun setBitmap(imageView: ImageView, bitmap: Bitmap?) {
+    bitmap?.let {
+        Glide.with(BubbleApp.app)
+            .load(it)
             .into(imageView)
     }
 }

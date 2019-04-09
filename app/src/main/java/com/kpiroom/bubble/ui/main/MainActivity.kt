@@ -3,12 +3,15 @@ package com.kpiroom.bubble.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityMainBinding
 import com.kpiroom.bubble.ui.core.CoreActivity
+import com.kpiroom.bubble.util.livedata.addSource
+import com.kpiroom.bubble.util.progressState.ProgressState
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : CoreActivity<MainLogic, ActivityMainBinding>() {

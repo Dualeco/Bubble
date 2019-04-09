@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.net.Uri
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -10,7 +11,6 @@ import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
-import com.kpiroom.bubble.util.events.ClickThrottler
 import com.kpiroom.bubble.util.files.getProfilePhotoUri
 import com.kpiroom.bubble.util.files.getProfileWallpaperUri
 import com.kpiroom.bubble.util.files.profilePhotoExists
@@ -27,10 +27,16 @@ import com.kpiroom.bubble.util.recyclerview.items.TabGridItem
 import com.kpiroom.bubble.util.recyclerview.items.TabListItem
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
 
 class ProfileLogic : CoreLogic() {
-    private val clickThottler = ClickThrottler(350)
+
+    val uploadsLiveData = Source.run {
+        api.getUploadsLiveData(userPrefs.uuid)
+    }
 
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
     val scrollFlagsOff = 0
@@ -91,131 +97,52 @@ class ProfileLogic : CoreLogic() {
     val loggedOut = MutableLiveData<Boolean>()
 
     val channelList = MutableLiveData<MutableList<TabListItem>>().setDefault(
-        mutableListOf(
-            TabListItem(
-                "2019 The Amazing Spider-Man #2",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "2018 Star Wars #55",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "2019 Batman: Rebirth #26",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            )
-        )
+        mutableListOf()
     )
     val favoriteList = MutableLiveData<MutableList<TabGridItem>>().setDefault(
         mutableListOf(
-            TabGridItem(
-                "The Amazing Spider-Man",
-                "#5, 2018",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            TabGridItem(
-                "Star Wars",
-                "#55, 2008",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            TabGridItem(
-                "Esteemed comic book author",
-                "#214, 2017",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            ),
-            TabGridItem(
-                "Superior comic book writer",
-                "#3, 2019",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/star-wars--55-cover-art-by-david-marquez.png?1384968217"
-            ),
-            TabGridItem(
-                "Batman: Rebirth",
-                "#4, 2011",
-                "https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccovers2017/large/batman26-mikeljanin.png?1384968217"
-            )
         )
     )
-    val uploadList = MutableLiveData<MutableList<TabListItem>>().setDefault(
-        mutableListOf(
-            TabListItem(
-                "2019 The Amazing Spider-Man #2",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "2018 Star Wars #55",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "2019 Batman: Rebirth #26",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            ),
-            TabListItem(
-                "Superior comic book writer",
-                "https://cdn3.iconfinder.com/data/icons/superheroes-line/256/avengers-superhero-sign-logo-512.png"
-            ),
-            TabListItem(
-                "Esteemed comic book author #1",
-                "https://banner2.kisspng.com/20180405/hde/kisspng-superman-logo-batman-spider-man-computer-icons-superheroes-5ac5ebd3bcd9d8.2131948915229204037735.jpg"
-            )
-        )
-    )
-
-    fun onChannelClicked(position: Int) {
+    val uploadList = MediatorLiveData<List<TabListItem>>().apply {
+        addSource(uploadsLiveData) { res ->
+            res.data?.let { list ->
+                AsyncProcessor {
+                    mapAsync(list) { Source.api.getComicData(it) }
+                        .sortedByDescending { it.uploadTimeMs }
+                        .map { TabListItem(it.uuid, it.title, it.thumbnailUrl) }
+                        .also { postValue(it) }
+                } handleError {
+                    progress.alertAsync(it.message)
+                } runWith (bag)
+            }
+        }
     }
 
-    fun onChannelFollowed(position: Int) {
+    private suspend fun <T : Any, R : Any> mapAsync(
+        source: List<T>,
+        load: suspend (T) -> R?
+    ): List<R> =
+        suspendCancellableCoroutine { continuation ->
+            val count = AtomicInteger(0)
+
+            mutableListOf<R>().let { result ->
+                source.forEach { item ->
+                    AsyncProcessor {
+                        load(item)?.let {
+                            result.add(it)
+                        }
+                        if (count.incrementAndGet() == source.size)
+                            continuation.resume(result)
+
+                    } runWith (bag)
+                }
+            }
+        }
+
+    fun onChannelClicked(uuid: String) {
+    }
+
+    fun onChannelFollowed(uuid: String) {
 
     }
 
@@ -223,11 +150,15 @@ class ProfileLogic : CoreLogic() {
 
     }
 
-    fun onUploadClicked(position: Int) {
+    fun onUploadClicked(uuid: String) {
 
     }
 
-    fun onUploadDeleted(position: Int) = uploadsAdapter.removeItem(position)
+    fun onUploadDeleted(uuid: String) = clickThrottler.next {
+        backgroundAsync {
+            Source.api.removeComic(uuid)
+        }
+    }
 
     fun onPhotoChanged() {
         optionWindowClicked.value = true
@@ -339,7 +270,7 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    private fun updatePhotoFile() = downloadAsync {
+    private fun updatePhotoFile() = backgroundAsync {
         Source.apply {
             userPrefs.apply {
                 if (!profilePhotoExists(photoName)) {
@@ -353,7 +284,7 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    private fun updateWallpaperFile() = downloadAsync {
+    private fun updateWallpaperFile() = backgroundAsync {
         Source.apply {
             userPrefs.apply {
                 if (!profileWallpaperExists(wallpaperName)) {
@@ -398,7 +329,7 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    private fun downloadAsync(action: suspend () -> Unit) {
+    private fun backgroundAsync(action: suspend () -> Unit) {
         progress.apply {
             AsyncProcessor(Dispatchers.IO) {
                 action()
