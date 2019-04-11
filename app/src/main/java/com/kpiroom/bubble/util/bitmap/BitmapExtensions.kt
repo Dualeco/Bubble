@@ -16,8 +16,8 @@ val Bitmap.squareBitmap: Bitmap
     }
 
 fun Bitmap.getCompressed(
-    format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 50
+    quality: Int = 50,
+    format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG
 ) = ByteArrayOutputStream().let {
     compress(format, quality, it)
     BitmapFactory.decodeStream(ByteArrayInputStream(it.toByteArray()))

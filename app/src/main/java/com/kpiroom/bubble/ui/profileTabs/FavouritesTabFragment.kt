@@ -1,20 +1,21 @@
-package com.kpiroom.bubble.ui.tabs
+package com.kpiroom.bubble.ui.profileTabs
 
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.util.recyclerview.TabGridAdapter
-import com.kpiroom.bubble.util.recyclerview.TabGridHolder
-import com.kpiroom.bubble.util.recyclerview.items.TabGridItem
+import com.kpiroom.bubble.databinding.TabItemFavoritesBinding
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
+import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesAdapter
+import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesHolder
 import kotlinx.android.synthetic.main.profile_tab_favorites.*
 
-class FavouritesTabFragment(favoritesAdapter: TabGridAdapter) :
-    CoreTabFragment<TabGridItem, TabGridHolder>(R.layout.profile_tab_favorites) {
+class FavouritesTabFragment(favoritesAdapter: FavoritesAdapter) :
+    CoreTabFragment<Comic, FavoritesHolder>(R.layout.profile_tab_favorites) {
 
     companion object {
         fun newInstance(
-            adapter: TabGridAdapter,
+            adapter: FavoritesAdapter,
             tabTitle: String
         ) = FavouritesTabFragment(adapter).apply {
             title = tabTitle

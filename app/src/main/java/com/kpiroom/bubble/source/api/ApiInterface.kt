@@ -75,7 +75,9 @@ interface ApiInterface {
 
     suspend fun uploadComicThumbnail(uuid: String, bitmap: Bitmap): Uri
 
-    fun getUploadsLiveData(uuid: String): FirebaseListLiveData<String>
+    suspend fun uploadComicPreview(uuid: String, bitmap: Bitmap): Uri
+
+    fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String>
 
     fun <T : Any> getChildrenLiveData(
         path: String,
@@ -83,5 +85,6 @@ interface ApiInterface {
         orderByPath: String
     ): FirebaseListLiveData<T>
 
-    suspend fun removeComic(uuid: String)
+    fun removeComic(comic: Comic)
+    fun getAllUploadsLiveData(): FirebaseListLiveData<Comic>
 }

@@ -5,10 +5,12 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
-import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
+import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
 import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
 import com.kpiroom.bubble.util.files.getProfilePhotoUri
@@ -21,10 +23,9 @@ import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.*
-import com.kpiroom.bubble.util.recyclerview.TabGridAdapter
-import com.kpiroom.bubble.util.recyclerview.TabListAdapter
-import com.kpiroom.bubble.util.recyclerview.items.TabGridItem
-import com.kpiroom.bubble.util.recyclerview.items.TabListItem
+import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesAdapter
+import com.kpiroom.bubble.util.recyclerview.tabs.SubscriptionAdapter
+import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -32,20 +33,20 @@ import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 
-class ProfileLogic : CoreLogic() {
+class ProfileLogic : ProgressFragmentLogic() {
+
+    override val progress = MutableLiveData<ProgressState>()
 
     val uploadsLiveData = Source.run {
-        api.getUploadsLiveData(userPrefs.uuid)
+        api.getUserUploadsLiveData(userPrefs.uuid)
     }
-
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+
     val scrollFlagsOff = 0
 
     val restoreFocus = MutableLiveData<Boolean>()
 
     val scrollFlags = MutableLiveData<Int>().setDefault(scrollFlagsOn)
-
-    val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>().setDefault(Source.userPrefs.username)
 
@@ -71,22 +72,19 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    val channelsAdapter: TabListAdapter = TabListAdapter(
-        mutableListOf(),
-        R.layout.tab_item_channels,
+    val channelsAdapter: SubscriptionAdapter = SubscriptionAdapter(
+        listOf(),
         ::onChannelClicked,
         ::onChannelFollowed
     )
 
-    val favoritesAdapter: TabGridAdapter = TabGridAdapter(
-        mutableListOf(),
-        R.layout.tab_item_favorites,
+    val favoritesAdapter: FavoritesAdapter = FavoritesAdapter(
+        listOf(),
         ::onFavoriteClicked
     )
 
-    val uploadsAdapter: TabListAdapter = TabListAdapter(
-        mutableListOf(),
-        R.layout.tab_item_uploads,
+    val uploadsAdapter: UploadsAdapter = UploadsAdapter(
+        listOf(),
         ::onUploadClicked,
         ::onUploadDeleted
     )
@@ -96,20 +94,19 @@ class ProfileLogic : CoreLogic() {
     val optionWindowClicked = MutableLiveData<Boolean>()
     val loggedOut = MutableLiveData<Boolean>()
 
-    val channelList = MutableLiveData<MutableList<TabListItem>>().setDefault(
+    val channelList = MutableLiveData<MutableList<User>>().setDefault(
         mutableListOf()
     )
-    val favoriteList = MutableLiveData<MutableList<TabGridItem>>().setDefault(
+    val favoriteList = MutableLiveData<MutableList<Comic>>().setDefault(
         mutableListOf(
         )
     )
-    val uploadList = MediatorLiveData<List<TabListItem>>().apply {
+    val uploadList = MediatorLiveData<List<Comic>>().apply {
         addSource(uploadsLiveData) { res ->
             res.data?.let { list ->
                 AsyncProcessor {
-                    mapAsync(list) { Source.api.getComicData(it) }
+                    list.mapAsync(bag) { Source.api.getComicData(it) }
                         .sortedByDescending { it.uploadTimeMs }
-                        .map { TabListItem(it.uuid, it.title, it.thumbnailUrl) }
                         .also { postValue(it) }
                 } handleError {
                     progress.alertAsync(it.message)
@@ -118,46 +115,23 @@ class ProfileLogic : CoreLogic() {
         }
     }
 
-    private suspend fun <T : Any, R : Any> mapAsync(
-        source: List<T>,
-        load: suspend (T) -> R?
-    ): List<R> =
-        suspendCancellableCoroutine { continuation ->
-            val count = AtomicInteger(0)
-
-            mutableListOf<R>().let { result ->
-                source.forEach { item ->
-                    AsyncProcessor {
-                        load(item)?.let {
-                            result.add(it)
-                        }
-                        if (count.incrementAndGet() == source.size)
-                            continuation.resume(result)
-
-                    } runWith (bag)
-                }
-            }
-        }
-
-    fun onChannelClicked(uuid: String) {
+    fun onChannelClicked(user: User) {
     }
 
-    fun onChannelFollowed(uuid: String) {
+    fun onChannelFollowed(user: User) {
 
     }
 
-    fun onFavoriteClicked(position: Int) {
+    fun onFavoriteClicked(comic: Comic) {
 
     }
 
-    fun onUploadClicked(uuid: String) {
+    fun onUploadClicked(comic: Comic) {
 
     }
 
-    fun onUploadDeleted(uuid: String) = clickThrottler.next {
-        backgroundAsync {
-            Source.api.removeComic(uuid)
-        }
+    fun onUploadDeleted(comic: Comic) = clickThrottler.next {
+        Source.api.removeComic(comic)
     }
 
     fun onPhotoChanged() {

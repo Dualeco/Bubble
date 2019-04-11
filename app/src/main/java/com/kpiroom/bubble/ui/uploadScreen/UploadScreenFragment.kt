@@ -1,36 +1,23 @@
 package com.kpiroom.bubble.ui.uploadScreen
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.databinding.ActivityUploadScreenBinding
-import com.kpiroom.bubble.ui.core.CoreFragment
-import com.kpiroom.bubble.ui.main.MainActivity
-import com.kpiroom.bubble.ui.tabs.UploadsTabFragment.Companion.UPLOAD_URI
-import com.kpiroom.bubble.util.livedata.addSource
+import com.kpiroom.bubble.databinding.FragmentUploadScreenBinding
+import com.kpiroom.bubble.ui.progress.ProgressFragment
+import com.kpiroom.bubble.ui.profileTabs.UploadsTabFragment.Companion.UPLOAD_URI
 import com.kpiroom.bubble.util.livedata.observeTrue
-import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.view.hideKeyboard
 
-class UploadScreenFragment : CoreFragment<UploadScreenLogic, ActivityUploadScreenBinding>() {
-
-    private lateinit var parentProgressState: MediatorLiveData<ProgressState>
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentProgressState = (activity as MainActivity).provideLogic().progress
-    }
+class UploadScreenFragment : ProgressFragment<UploadScreenLogic, FragmentUploadScreenBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        parentProgressState.addSource(logic.progress)
 
         arguments?.getString(UPLOAD_URI)?.let {
             logic.renderPreview(Uri.parse(it))
@@ -46,7 +33,7 @@ class UploadScreenFragment : CoreFragment<UploadScreenLogic, ActivityUploadScree
     }
 
     override fun provideLayout(inflater: LayoutInflater, container: ViewGroup?) =
-        LayoutBuilder(inflater, container, R.layout.activity_upload_screen) {
+        LayoutBuilder(inflater, container, R.layout.fragment_upload_screen) {
             logic = this@UploadScreenFragment.logic
         }
 

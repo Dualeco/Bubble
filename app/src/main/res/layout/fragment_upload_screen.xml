@@ -98,7 +98,7 @@
                             android:layout_marginTop="8dp"
                             app:layout_constraintTop_toTopOf="parent"
                             app:counterEnabled="true"
-                            app:counterMaxLength="40">
+                            app:counterMaxLength="60">
 
                         <EditText
                                 android:text="@={logic.title}"
@@ -115,7 +115,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toBottomOf="@id/upload_title_layout">
+                            app:layout_constraintTop_toBottomOf="@id/upload_title_layout"
+                            app:counterEnabled="true"
+                            app:counterMaxLength="300">
 
                         <EditText
                                 android:text="@={logic.description}"

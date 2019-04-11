@@ -10,11 +10,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ActivityMainBinding
 import com.kpiroom.bubble.ui.core.CoreActivity
+import com.kpiroom.bubble.ui.progress.ProgressActivity
 import com.kpiroom.bubble.util.livedata.addSource
 import com.kpiroom.bubble.util.progressState.ProgressState
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : CoreActivity<MainLogic, ActivityMainBinding>() {
+class MainActivity : ProgressActivity<MainLogic, ActivityMainBinding>() {
     companion object {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }

@@ -1,28 +1,28 @@
-package com.kpiroom.bubble.ui.tabs
+package com.kpiroom.bubble.ui.profileTabs
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.util.recyclerview.TabListAdapter
-import com.kpiroom.bubble.util.recyclerview.TabListHolder
-import com.kpiroom.bubble.util.recyclerview.items.TabListItem
+import com.kpiroom.bubble.databinding.TabItemUploadsBinding
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
+import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
+import com.kpiroom.bubble.util.recyclerview.tabs.UploadsHolder
 import kotlinx.android.synthetic.main.profile_tab_uploads.*
 
-class UploadsTabFragment(uploadsAdapter: TabListAdapter) :
-    CoreTabFragment<TabListItem, TabListHolder>(R.layout.profile_tab_uploads) {
+class UploadsTabFragment(uploadsAdapter: UploadsAdapter) :
+    CoreTabFragment<Comic, UploadsHolder>(R.layout.profile_tab_uploads) {
     companion object {
         val UPLOAD_URI = "uploadUri"
         private val REQUEST_UPLOAD = 0
         private val CONTENT_TYPE = "application/pdf"
 
         fun newInstance(
-            adapter: TabListAdapter,
+            adapter: UploadsAdapter,
             tabTitle: String
         ) = UploadsTabFragment(adapter).apply {
             title = tabTitle

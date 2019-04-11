@@ -1,5 +1,6 @@
 package com.kpiroom.bubble.ui.core
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,8 @@ abstract class CoreFragment<V : CoreLogic, B : ViewDataBinding> : Fragment() {
     protected lateinit var logic: V
     protected lateinit var binding: B
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         logic = provideLogic()
     }
 

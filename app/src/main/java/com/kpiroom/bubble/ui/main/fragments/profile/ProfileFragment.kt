@@ -1,7 +1,6 @@
 package com.kpiroom.bubble.ui.main.fragments.profile
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,27 +8,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.dichotome.profilebar.ui.tabPager.TabPagerAdapter
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.FragmentProfileBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
-import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.login.LoginActivity
-import com.kpiroom.bubble.ui.main.MainActivity
-import com.kpiroom.bubble.ui.tabs.FavouritesTabFragment
-import com.kpiroom.bubble.ui.tabs.SubscriptionsTabFragment
-import com.kpiroom.bubble.ui.tabs.UploadsTabFragment
+import com.kpiroom.bubble.ui.progress.ProgressFragment
+import com.kpiroom.bubble.ui.profileTabs.FavouritesTabFragment
+import com.kpiroom.bubble.ui.profileTabs.SubscriptionsTabFragment
+import com.kpiroom.bubble.ui.profileTabs.UploadsTabFragment
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
 import com.kpiroom.bubble.util.livedata.*
-import com.kpiroom.bubble.util.progressState.ProgressState
 import kotlinx.android.synthetic.main.fragment_profile.*
 
-class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
+class ProfileFragment : ProgressFragment<ProfileLogic, FragmentProfileBinding>() {
 
     private var photoCaptureUri: Uri? = null
     private var usingCamera = false
@@ -38,17 +34,8 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
     private lateinit var fragmentFavorites: FavouritesTabFragment
     private lateinit var fragmentUploads: UploadsTabFragment
 
-    private lateinit var parentProgressState: MediatorLiveData<ProgressState>
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentProgressState = (activity as MainActivity).provideLogic().progress
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        parentProgressState.addSource(logic.progress)
 
         logic.updateProfileImages()
 
@@ -148,11 +135,6 @@ class ProfileFragment : CoreFragment<ProfileLogic, FragmentProfileBinding>() {
     override fun onPause() {
         super.onPause()
         logic.isTitleEditable.value = false
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        parentProgressState.removeSource(logic.progress)
     }
 
     override fun onDestroyView() {

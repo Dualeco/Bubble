@@ -140,11 +140,9 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
         write(USER_KEYS(uuid).USERNAME, username)
     }
 
-    suspend fun removeComicData(uuid: String) {
-        getComicData(uuid)?.run {
-            remove("${USER_KEYS(authorId).UPLOADS}/$uuid")
-            remove("$COMICS/$uuid")
-        }
+    fun removeComicData(comic: Comic) = comic.run {
+        remove("${USER_KEYS(authorId).UPLOADS}/$uuid")
+        remove("$COMICS/$uuid")
     }
 
     suspend fun getComicData(uuid: String): Comic? =
@@ -162,8 +160,13 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     fun <T : Any> getChildrenLiveData(path: String, type: Class<T>): FirebaseListLiveData<T> =
         FirebaseListLiveData(firebaseDb.getReference(path), type)
 
-    fun getUploadsLiveData(uuid: String): FirebaseListLiveData<String> = getChildrenLiveData(
+    fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String> = getChildrenLiveData(
         USER_KEYS(uuid).UPLOADS,
         String::class.java
+    )
+
+    fun getAllUploadsLiveData(): FirebaseListLiveData<FirebaseStructure.Comic> = getChildrenLiveData(
+        COMICS,
+        Comic::class.java
     )
 }

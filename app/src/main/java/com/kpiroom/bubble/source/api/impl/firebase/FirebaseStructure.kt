@@ -8,6 +8,7 @@ object FirebaseStructure {
     private const val META_KEY = "meta"
     const val USERS = "users"
     const val COMICS = "comics"
+    const val PREVIEWS = "previews"
     const val THUMBNAILS = "thumbnails"
     const val USERNAMES = "usernames"
     const val IS_CONNECTED = ".info/connected"
@@ -23,24 +24,30 @@ object FirebaseStructure {
         val SERVER_TIME = "/$META_KEY/$SERVER_TIME_KEY"
     }
 
+    abstract class Comparable(
+        val id: String,
+        val name: String
+    )
+
     data class User(
         val uuid: String = "",
         val username: String = "",
         val joinedDate: String = "",
         val photoName: String = "",
         val wallpaperName: String = ""
-    )
+    ) : Comparable(uuid, username)
 
     data class Comic(
         val uuid: String = "",
         val title: String = "",
         val thumbnailUrl: String = "",
+        val previewUrl: String = "",
         val description: String = "",
         val authorId: String = "",
         val uploadTimeMs: Long = 0L,
         val downloads: Int = 0,
         val stars: Int = 0
-    )
+    ) : Comparable(uuid, title)
 
     class USER_KEYS(uuid: String) {
         val LOCATION = "$USERS/$uuid"

@@ -11,6 +11,7 @@ import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.bitmap.getCompressed
 import com.kpiroom.bubble.util.constants.drw
@@ -22,14 +23,15 @@ import com.kpiroom.bubble.util.progressState.livedata.finishAsync
 import com.kpiroom.bubble.util.progressState.livedata.loadAsync
 import kotlinx.coroutines.Dispatchers
 
-class UploadScreenLogic : CoreLogic() {
+class UploadScreenLogic : ProgressFragmentLogic() {
 
     companion object {
         private const val RENDER_MODE = "r"
     }
 
-    val progress = MutableLiveData<ProgressState>()
+    override val progress = MutableLiveData<ProgressState>()
     val bitmapPreview = MutableLiveData<Bitmap>()
+    lateinit var bitmapThumbnail: Bitmap
 
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
@@ -52,6 +54,9 @@ class UploadScreenLogic : CoreLogic() {
                         render(bitmap, null, null, RENDER_MODE_FOR_DISPLAY)
                         close()
                     }
+                bitmapThumbnail = bitmap.run {
+                    Bitmap.createScaledBitmap(this, width / 8, height / 8, false).getCompressed()
+                }
                 bitmapPreview.postValue(bitmap.getCompressed())
                 finishAsync()
             } handleError {
@@ -66,7 +71,7 @@ class UploadScreenLogic : CoreLogic() {
         val title = title.value
         val description = description.value
 
-        val thumbnail = bitmapPreview.value ?: return
+        val preview = bitmapPreview.value ?: return
 
         if (title.isNullOrBlank() || description.isNullOrBlank())
             progress.alert(str(R.string.upload_screen_empty_fields))
@@ -85,7 +90,8 @@ class UploadScreenLogic : CoreLogic() {
                                 Comic(
                                     comicId,
                                     title,
-                                    uploadComicThumbnail(comicId, thumbnail).toString(),
+                                    uploadComicThumbnail(comicId, bitmapThumbnail).toString(),
+                                    uploadComicPreview(comicId, preview).toString(),
                                     description,
                                     userPrefs.uuid,
                                     uploadTimeMs

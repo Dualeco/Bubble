@@ -9,15 +9,9 @@
 
     </data>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:text="Dashboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allComicsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 </layout>

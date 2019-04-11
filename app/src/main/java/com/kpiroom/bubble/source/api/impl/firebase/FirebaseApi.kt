@@ -13,6 +13,7 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_WAL
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PREVIEWS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.THUMBNAILS
 import com.kpiroom.bubble.source.api.impl.firebase.livedata.FirebaseListLiveData
 import com.kpiroom.bubble.util.pref.setFromUser
@@ -54,7 +55,9 @@ class FirebaseApi : ApiInterface {
         orderByPath: String
     ): FirebaseListLiveData<T> = dbUtil.getChildrenLiveData(path, type)
 
-    override fun getUploadsLiveData(uuid: String): FirebaseListLiveData<String> = dbUtil.getUploadsLiveData(uuid)
+    override fun getAllUploadsLiveData(): FirebaseListLiveData<Comic> = dbUtil.getAllUploadsLiveData()
+
+    override fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String> = dbUtil.getUserUploadsLiveData(uuid)
 
     //Auth
     override suspend fun signUp(email: String, password: String): String? = authUtil.signUp(email, password)
@@ -115,6 +118,11 @@ class FirebaseApi : ApiInterface {
         bitmap: Bitmap
     ): Uri = uploadBitmap(THUMBNAILS, bitmap, uuid)
 
+    override suspend fun uploadComicPreview(
+        uuid: String,
+        bitmap: Bitmap
+    ): Uri = uploadBitmap(PREVIEWS, bitmap, uuid)
+
     override suspend fun downloadComic(
         comicUuid: String,
         destination: File
@@ -137,11 +145,11 @@ class FirebaseApi : ApiInterface {
 
     fun removeComicFile(uuid: String) = storageUtil.deleteFile("$COMICS/$uuid")
 
-    override suspend fun removeComic(uuid: String) {
-        dbUtil.removeComicData(uuid)
+    override fun removeComic(comic: Comic) {
+        dbUtil.removeComicData(comic)
         storageUtil.apply {
-            removeComicThumbnail(uuid)
-            removeComicFile(uuid)
+            removeComicThumbnail(comic.uuid)
+            removeComicFile(comic.uuid)
         }
     }
 }
