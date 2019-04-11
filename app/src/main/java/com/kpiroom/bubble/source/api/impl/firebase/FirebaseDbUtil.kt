@@ -6,7 +6,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_UUIDS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
@@ -105,7 +105,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun getUsername(uuid: String): String? =
         try {
-            read("$USERNAMES/$uuid", String::class.java)
+            read(USER_KEYS(uuid).USERNAME, String::class.java)
         } catch (ex: DbEmptyFieldException) {
             null
         }
@@ -119,18 +119,14 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun uploadUserData(uuid: String, user: User) {
         write("$USERS/$uuid", user)
-        write("$USERNAMES/$uuid", user.username)
+        write("$USER_UUIDS/$uuid", uuid)
     }
 
-    suspend fun usernameExists(username: String): Boolean = try {
-        readChildren(USERNAMES, String::class.java)
-            .contains(username)
+    suspend fun getUserUuidList(): List<String> = try {
+        readChildren(USER_UUIDS, String::class.java)
     } catch (ex: DbEmptyFieldException) {
-        false
+        listOf()
     }
 
-    suspend fun changeUsername(uuid: String, username: String) {
-        write("$USERNAMES/$uuid", username)
-        write(USER_KEYS(uuid).USERNAME, username)
-    }
+    suspend fun changeUsername(uuid: String, username: String) = write(USER_KEYS(uuid).USERNAME, username)
 }

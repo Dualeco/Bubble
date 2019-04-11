@@ -3,6 +3,7 @@ package com.kpiroom.bubble.source.api
 import android.graphics.Bitmap
 import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.util.async.AsyncBag
 import java.io.File
 
 interface ApiInterface {
@@ -12,7 +13,7 @@ interface ApiInterface {
 
     suspend fun setServerVersion(version: String)
 
-    suspend fun usernameExists(username: String): Boolean
+    suspend fun getUserUuidList(): List<String>
 
     suspend fun getUsername(uuid: String): String?
 
@@ -55,4 +56,5 @@ interface ApiInterface {
     )
 
     suspend fun downloadFile(dirRef: String, destination: File)
+    suspend fun usernameExists(bag: AsyncBag, username: String): Boolean
 }

@@ -5,7 +5,7 @@ object FirebaseStructure {
     private const val VERSION_KEY = "version"
     private const val META_KEY = "meta"
     const val USERS = "users"
-    const val USERNAMES = "usernames"
+    const val USER_UUIDS = "user_uuids"
     const val IS_CONNECTED = ".info/connected"
     const val PROFILE_PHOTOS = "profile_photos"
     const val PROFILE_WALLPAPERS = "profile_wallpapers"
@@ -22,15 +22,15 @@ object FirebaseStructure {
     data class User(
         val username: String = "",
         val joinedDate: String = "",
-        val photoDownloadUri: String = "",
-        val wallpaperDownloadUri: String = ""
+        val photoUrl: String = "",
+        val wallpaperUrl: String = ""
     )
 
     class USER_KEYS(uuid: String) {
         val LOCATION = "$USERS/$uuid"
         val USERNAME = "$LOCATION/username"
         val JOINED_DATE = "$LOCATION/joinedDate"
-        val PHOTO_DOWNLOAD_URI = "$LOCATION/photoDownloadUri"
-        val WALLPAPER_DOWNLOAD_URI = "$LOCATION/wallpaperDownloadUri"
+        val PHOTO_URL = "$LOCATION/photoUrl"
+        val WALLPAPER_URL = "$LOCATION/wallpaperUrl"
     }
 }

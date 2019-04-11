@@ -11,6 +11,8 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_PHO
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_WALLPAPERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.util.async.AsyncBag
+import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.files.getCurrentProfileImageName
 import com.kpiroom.bubble.util.pref.setFromUser
 import java.io.File
@@ -29,7 +31,7 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun setServerVersion(version: String): Unit = dbUtil.write(FirebaseStructure.VERSION, version)
 
-    override suspend fun usernameExists(username: String): Boolean = dbUtil.usernameExists(username)
+    override suspend fun getUserUuidList(): List<String> = dbUtil.getUserUuidList()
 
     override suspend fun getUsername(uuid: String): String? = dbUtil.getUsername(uuid)
 
@@ -69,7 +71,7 @@ class FirebaseApi : ApiInterface {
         getCurrentProfileImageName(uuid)
     ).also {
         USER_KEYS(uuid).apply {
-            dbUtil.write(PHOTO_DOWNLOAD_URI, it.toString())
+            dbUtil.write(PHOTO_URL, it.toString())
         }
     }
 
@@ -82,7 +84,7 @@ class FirebaseApi : ApiInterface {
         getCurrentProfileImageName(uuid)
     ).also {
         USER_KEYS(uuid).apply {
-            dbUtil.write(WALLPAPER_DOWNLOAD_URI, it.toString())
+            dbUtil.write(WALLPAPER_URL, it.toString())
         }
     }
 
@@ -91,4 +93,12 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun downloadFile(dirRef: String, destination: File): Unit =
         storageUtil.downloadFile(dirRef, destination)
+
+    override suspend fun usernameExists(bag: AsyncBag, username: String): Boolean =
+        Source.api.run {
+            getUserUuidList().mapAsync(bag) { uuid ->
+                getUsername(uuid)
+            }.contains(username)
+        }
+
 }

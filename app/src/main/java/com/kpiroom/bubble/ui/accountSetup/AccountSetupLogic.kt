@@ -18,7 +18,7 @@ import com.kpiroom.bubble.util.progressState.livedata.alert
 import com.kpiroom.bubble.util.progressState.livedata.alertAsync
 import com.kpiroom.bubble.util.progressState.livedata.finishAsync
 import com.kpiroom.bubble.util.progressState.livedata.loadAsync
-import com.kpiroom.bubble.util.usernameValidation.validateUsername
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,7 +82,7 @@ class AccountSetupLogic : CoreLogic() {
         progress.apply {
             AsyncProcessor {
                 loadAsync()
-                validateUsername(username.value)
+                validateUsernameAsync(bag, username.value)
                 finishAsync()
 
                 if (!isPhotoSet || !isWallpaperSet)

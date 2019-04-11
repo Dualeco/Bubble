@@ -17,7 +17,7 @@ import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.progressState.livedata.*
-import com.kpiroom.bubble.util.usernameValidation.validateUsername
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 
 class ProfileLogic : CoreLogic() {
@@ -105,7 +105,7 @@ class ProfileLogic : CoreLogic() {
                 if (newUsername != userPrefs.username)
                     AsyncProcessor {
                         loadAsync()
-                        validateUsername(newUsername)
+                        validateUsernameAsync(bag, newUsername)
 
                         api.changeUsername(userPrefs.uuid, newUsername)
                         finishAsync()

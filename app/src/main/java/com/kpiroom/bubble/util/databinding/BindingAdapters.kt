@@ -7,8 +7,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp
 
 @BindingAdapter("android:layout_height")
