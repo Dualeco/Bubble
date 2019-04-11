@@ -18,7 +18,7 @@ fun UserPrefs.setFromUser(uuid: String, user: User): Unit = user.let {
     username = user.username
     joinedDate = user.joinedDate
     photoDownloadUri = Uri.parse(user.photoUrl)
-    wallpaperDownloadUri = Uri.parse(user.photoUrl)
+    wallpaperDownloadUri = Uri.parse(user.wallpaperUrl)
 }
 
 fun SharedPreferences.clear(): Unit = edit()

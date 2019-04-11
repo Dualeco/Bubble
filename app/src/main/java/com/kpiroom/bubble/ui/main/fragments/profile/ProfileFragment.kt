@@ -38,8 +38,6 @@ class ProfileFragment : ProgressFragment<ProfileLogic, FragmentProfileBinding>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logic.updateProfileImages()
-
         logic.uploadsLiveData.observeResource(this) { list, _ ->
             list?.forEach {
                 Log.d(TAG, it)

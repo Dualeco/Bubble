@@ -12,12 +12,12 @@ import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
+import com.kpiroom.bubble.util.livedata.progressState.alert
+import com.kpiroom.bubble.util.livedata.progressState.alertAsync
+import com.kpiroom.bubble.util.livedata.progressState.finishAsync
+import com.kpiroom.bubble.util.livedata.progressState.loadAsync
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.alert
-import com.kpiroom.bubble.util.progressState.livedata.alertAsync
-import com.kpiroom.bubble.util.progressState.livedata.finishAsync
-import com.kpiroom.bubble.util.progressState.livedata.loadAsync
 import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
@@ -133,15 +133,14 @@ class AccountSetupLogic : CoreLogic() {
 
     private suspend fun uploadProfile() = Source.apply {
         userPrefs.apply {
-            uuid.let { id ->
-                api.uploadUserData(
-                    id,
-                    User(
-                        username,
-                        joinedDate
-                    )
+            api.uploadUserData(
+                uuid,
+                User(
+                    uuid,
+                    username,
+                    joinedDate
                 )
-            }
+            )
         }
         uploadUserImages()
     }

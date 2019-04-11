@@ -46,7 +46,7 @@ interface ApiInterface {
 
     suspend fun uploadUserWallpaper(uuid: String, bitmap: Bitmap): Uri
 
-    suspend fun uploadFile(dirRef: String, uri: Uri, name: String? = null)
+    suspend fun uploadFile(dirRef: String, uri: Uri, name: String? = null): Uri
 
     suspend fun uploadComic(uuid: String, uri: Uri): Uri
 
@@ -55,10 +55,6 @@ interface ApiInterface {
     suspend fun downloadFile(dirRef: String, destination: File)
 
     suspend fun usernameExists(bag: AsyncBag, username: String): Boolean
-
-    suspend fun downloadUserPhoto(photoName: String, destination: File)
-
-    suspend fun downloadUserWallpaper(wallpaperName: String, destination: File)
 
     suspend fun uploadComicThumbnail(uuid: String, bitmap: Bitmap): Uri
 
@@ -69,5 +65,6 @@ interface ApiInterface {
     fun <T : Any> getChildrenLiveData(path: String, type: Class<T>, orderByPath: String): FirebaseListLiveData<T>
 
     fun removeComic(comic: Comic)
+
     fun getAllUploadsLiveData(): FirebaseListLiveData<Comic>
 }

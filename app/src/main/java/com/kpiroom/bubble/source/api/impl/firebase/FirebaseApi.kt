@@ -124,7 +124,7 @@ class FirebaseApi : ApiInterface {
         destination: File
     ): Unit = downloadFile("$COMICS/$comicUuid", destination)
 
-    override suspend fun uploadFile(dirRef: String, uri: Uri, name: String?): Unit =
+    override suspend fun uploadFile(dirRef: String, uri: Uri, name: String?): Uri =
         storageUtil.uploadFile(dirRef, uri, name)
 
     override suspend fun downloadFile(dirRef: String, destination: File): Unit =
