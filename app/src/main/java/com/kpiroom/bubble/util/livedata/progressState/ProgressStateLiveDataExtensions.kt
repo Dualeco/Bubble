@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.util.progressState.livedata
+package com.kpiroom.bubble.util.livedata.progressState
 
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.util.progressState.ProgressState

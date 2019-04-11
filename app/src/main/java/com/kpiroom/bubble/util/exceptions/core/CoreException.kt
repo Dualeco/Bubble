@@ -1,9 +1,7 @@
 package com.kpiroom.bubble.util.exceptions.core
 
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.progressState.livedata.alertAsync
 import java.io.PrintWriter
 import java.io.StringWriter
 

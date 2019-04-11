@@ -3,15 +3,13 @@ package com.kpiroom.bubble.ui.main.fragments.dashboard
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.source.Source
-import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.alertAsync
-import com.kpiroom.bubble.util.progressState.livedata.finishAsync
-import com.kpiroom.bubble.util.progressState.livedata.load
-import com.kpiroom.bubble.util.progressState.livedata.loadAsync
+import com.kpiroom.bubble.util.livedata.progressState.alertAsync
+import com.kpiroom.bubble.util.livedata.progressState.finishAsync
+import com.kpiroom.bubble.util.livedata.progressState.load
 import com.kpiroom.bubble.util.recyclerview.AllComicsAdapter
 import com.kpiroom.bubble.util.recyclerview.model.NamedComic
 

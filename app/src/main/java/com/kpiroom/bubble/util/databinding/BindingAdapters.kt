@@ -2,7 +2,6 @@ package com.kpiroom.bubble.util.databinding
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -10,13 +9,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.dichotome.profileshared.views.CircularImageView
 import com.kpiroom.bubble.os.BubbleApp
-import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.ProgressState.Companion.ALERT
-import com.kpiroom.bubble.util.progressState.ProgressState.Companion.FINISHED
-import com.kpiroom.bubble.util.progressState.ProgressState.Companion.LOADING
-import com.kpiroom.bubble.util.view.ProgressLayout
 
 @BindingAdapter("android:layout_height")
 fun setLayoutHeight(view: View, newHeight: Float) {
@@ -37,7 +30,8 @@ fun isImeActionDone(editText: EditText, isActionDone: Boolean) {
 fun setUri(imageView: ImageView, uri: Uri?) {
     uri?.let {
         Glide.with(BubbleApp.app)
-            .load(uri)
+            .load(it)
+            .apply(RequestOptions().placeholder(imageView.drawable))
             .into(imageView)
     }
 }
@@ -47,6 +41,7 @@ fun setBitmap(imageView: ImageView, bitmap: Bitmap?) {
     bitmap?.let {
         Glide.with(BubbleApp.app)
             .load(it)
+            .apply(RequestOptions().placeholder(imageView.drawable))
             .into(imageView)
     }
 }

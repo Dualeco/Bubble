@@ -15,10 +15,10 @@ import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.alert
-import com.kpiroom.bubble.util.progressState.livedata.alertAsync
-import com.kpiroom.bubble.util.progressState.livedata.finishAsync
-import com.kpiroom.bubble.util.progressState.livedata.loadAsync
+import com.kpiroom.bubble.util.livedata.progressState.alert
+import com.kpiroom.bubble.util.livedata.progressState.alertAsync
+import com.kpiroom.bubble.util.livedata.progressState.finishAsync
+import com.kpiroom.bubble.util.livedata.progressState.loadAsync
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat

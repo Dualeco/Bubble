@@ -6,7 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.util.livedata.addSource
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.finish
+import com.kpiroom.bubble.util.livedata.progressState.finish
 
 abstract class ProgressFragment<L : ProgressFragmentLogic, B : ViewDataBinding> : CoreFragment<L, B>() {
 

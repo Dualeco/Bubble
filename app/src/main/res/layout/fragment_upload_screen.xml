@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
->
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -42,25 +41,13 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
 
-                    <ImageView
-                            android:id="@+id/upload_pic_stub"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="12dp"
-                            android:adjustViewBounds="true"
-                            android:src="@drawable/default_cover"
-                            app:layout_constraintBottom_toTopOf="@id/upload_tv"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.4"/>
-
                     <com.dichotome.profilephoto.ui.ZoomingImageView
                             android:id="@+id/upload_pic"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="12dp"
                             android:adjustViewBounds="true"
+                            android:src="@drawable/default_cover"
                             app:bitmap="@{logic.bitmapPreview}"
                             app:layout_constraintBottom_toTopOf="@id/upload_tv"
                             app:layout_constraintEnd_toEndOf="parent"
