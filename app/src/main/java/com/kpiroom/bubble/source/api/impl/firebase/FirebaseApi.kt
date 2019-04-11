@@ -12,6 +12,9 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_PHO
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PROFILE_WALLPAPERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.util.async.AsyncBag
+import com.kpiroom.bubble.util.collectionsAsync.mapAsync
+import com.kpiroom.bubble.util.files.getCurrentProfileImageName
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.PREVIEWS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.THUMBNAILS
@@ -33,7 +36,7 @@ class FirebaseApi : ApiInterface {
 
     override suspend fun setServerVersion(version: String): Unit = dbUtil.write(FirebaseStructure.VERSION, version)
 
-    override suspend fun usernameExists(username: String): Boolean = dbUtil.usernameExists(username)
+    override suspend fun getUserUuidList(): List<String> = dbUtil.getUserUuidList()
 
     override suspend fun getUsername(uuid: String): String? = dbUtil.getUsername(uuid)
 
@@ -57,7 +60,8 @@ class FirebaseApi : ApiInterface {
 
     override fun getAllUploadsLiveData(): FirebaseListLiveData<Comic> = dbUtil.getAllUploadsLiveData()
 
-    override fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String> = dbUtil.getUserUploadsLiveData(uuid)
+    override fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String> =
+        dbUtil.getUserUploadsLiveData(uuid)
 
     //Auth
     override suspend fun signUp(email: String, password: String): String? = authUtil.signUp(email, password)
@@ -74,37 +78,29 @@ class FirebaseApi : ApiInterface {
         name: String
     ): Uri = storageUtil.uploadBitmap(dirRef, bitmap, name)
 
-    override suspend fun uploadFile(
-        dirRef: String,
-        uri: Uri,
-        name: String
-    ): Uri = storageUtil.uploadFile(dirRef, uri, name)
-
     override suspend fun uploadUserPhoto(
         uuid: String,
-        uri: Uri
-    ): Unit = dbUtil.run {
-        Source.userPrefs.apply {
-            isPhotoSet = true
-            uploadFile(PROFILE_PHOTOS, uri, photoName)
-
-            USER_KEYS(uuid).apply {
-                write(PHOTO_NAME, photoName)
-            }
+        bitmap: Bitmap
+    ): Uri = uploadBitmap(
+        PROFILE_PHOTOS,
+        bitmap,
+        getCurrentProfileImageName(uuid)
+    ).also {
+        USER_KEYS(uuid).apply {
+            dbUtil.write(PHOTO_URL, it.toString())
         }
     }
 
     override suspend fun uploadUserWallpaper(
         uuid: String,
-        uri: Uri
-    ): Unit = dbUtil.run {
-        Source.userPrefs.apply {
-            isWallpaperSet = true
-            uploadFile(PROFILE_WALLPAPERS, uri, wallpaperName)
-
-            USER_KEYS(uuid).apply {
-                write(WALLPAPER_NAME, wallpaperName)
-            }
+        bitmap: Bitmap
+    ): Uri = uploadBitmap(
+        PROFILE_WALLPAPERS,
+        bitmap,
+        getCurrentProfileImageName(uuid)
+    ).also {
+        USER_KEYS(uuid).apply {
+            dbUtil.write(WALLPAPER_URL, it.toString())
         }
     }
 
@@ -128,14 +124,18 @@ class FirebaseApi : ApiInterface {
         destination: File
     ): Unit = downloadFile("$COMICS/$comicUuid", destination)
 
+    override suspend fun uploadFile(dirRef: String, uri: Uri, name: String?): Uri =
+        storageUtil.uploadFile(dirRef, uri, name)
+
     override suspend fun downloadFile(dirRef: String, destination: File): Unit =
         storageUtil.downloadFile(dirRef, destination)
 
-    override suspend fun downloadUserPhoto(photoName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_PHOTOS/$photoName", destination)
-
-    override suspend fun downloadUserWallpaper(wallpaperName: String, destination: File): Unit =
-        storageUtil.downloadFile("$PROFILE_WALLPAPERS/$wallpaperName", destination)
+    override suspend fun usernameExists(bag: AsyncBag, username: String): Boolean =
+        Source.api.run {
+            getUserUuidList().mapAsync(bag) { uuid ->
+                getUsername(uuid)
+            }.contains(username)
+        }
 
     override suspend fun getComicData(uuid: String): Comic? = dbUtil.getComicData(uuid)
 

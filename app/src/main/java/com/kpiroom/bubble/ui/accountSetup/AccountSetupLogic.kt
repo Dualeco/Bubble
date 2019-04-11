@@ -8,18 +8,17 @@ import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
+import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
-import com.kpiroom.bubble.util.livedata.setDefault
-import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.livedata.progressState.alert
 import com.kpiroom.bubble.util.livedata.progressState.alertAsync
 import com.kpiroom.bubble.util.livedata.progressState.finishAsync
 import com.kpiroom.bubble.util.livedata.progressState.loadAsync
-import com.kpiroom.bubble.util.usernameValidation.validateUsername
+import com.kpiroom.bubble.util.livedata.setDefault
+import com.kpiroom.bubble.util.progressState.ProgressState
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,7 +82,7 @@ class AccountSetupLogic : CoreLogic() {
         progress.apply {
             AsyncProcessor {
                 loadAsync()
-                validateUsername(username.value)
+                validateUsernameAsync(bag, username.value)
                 finishAsync()
 
                 if (!isPhotoSet || !isWallpaperSet)
@@ -134,16 +133,14 @@ class AccountSetupLogic : CoreLogic() {
 
     private suspend fun uploadProfile() = Source.apply {
         userPrefs.apply {
-            uuid.let { id ->
-                api.uploadUserData(
-                    id,
-                    User(
-                        uuid,
-                        username,
-                        joinedDate
-                    )
+            api.uploadUserData(
+                uuid,
+                User(
+                    uuid,
+                    username,
+                    joinedDate
                 )
-            }
+            )
         }
         uploadUserImages()
     }
@@ -154,9 +151,13 @@ class AccountSetupLogic : CoreLogic() {
 
         userPrefs.apply {
             if (isPhotoSet)
-                api.uploadUserPhoto(uuid, getUpdatedProfilePhoto(photoUri))
+                extractBitmapFrom(photoUri)?.let { bitmap ->
+                    photoDownloadUri = api.uploadUserPhoto(uuid, bitmap)
+                }
             if (isWallpaperSet)
-                api.uploadUserWallpaper(uuid, getUpdatedProfileWallpaper(wallpaperUri))
+                extractBitmapFrom(wallpaperUri)?.let { bitmap ->
+                    wallpaperDownloadUri = api.uploadUserWallpaper(uuid, bitmap)
+                }
         }
     }
 
@@ -164,8 +165,6 @@ class AccountSetupLogic : CoreLogic() {
         Source.userPrefs.let {
             it.username = username.value ?: ""
             it.joinedDate = currentDateString
-            it.isPhotoSet = isPhotoSet
-            it.isWallpaperSet = isWallpaperSet
         }
     }
 

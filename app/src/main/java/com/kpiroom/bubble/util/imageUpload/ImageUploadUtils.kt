@@ -81,22 +81,3 @@ fun createCameraPictureUri(context: Context): Uri? = getFileUri(
     context,
     File(DIR_CAMERA, timeStamp)
 )
-
-
-fun getUpdatedProfilePhoto(uri: Uri): Uri = Source.userPrefs.run {
-    deleteProfilePhoto(photoName)
-
-    getCurrentProfileImageName(uuid).let { name ->
-        photoName = name
-        createProfilePhoto(uri, name)
-    }
-}
-
-fun getUpdatedProfileWallpaper(uri: Uri): Uri = Source.userPrefs.run {
-    deleteProfileWallpaper(wallpaperName)
-
-    getCurrentProfileImageName(uuid).let { name ->
-        wallpaperName = name
-        createProfileWallpaper(uri, name)
-    }
-}

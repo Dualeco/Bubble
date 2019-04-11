@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.source.pref
 
 import android.content.SharedPreferences
+import android.net.Uri
 import android.preference.PreferenceManager
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.util.pref.addBoolean
@@ -12,10 +13,8 @@ class UserPrefs {
         private const val UUID = "uuid"
         private const val USERNAME = "username"
         private const val JOINED_DATE = "joinedOn"
-        private const val IS_PHOTO_SET = "isPhotoSet"
-        private const val IS_WALLPAPER_SET = "isWallpaperSet"
-        private const val PHOTO_NAME = "photoName"
-        private const val WALLPAPER_NAME = "wallpaperName"
+        private const val PHOTO_NAME = "photoDownloadUri"
+        private const val WALLPAPER_NAME = "wallpaperDownloadUri"
     }
 
     private val prefs = PreferenceManager.getDefaultSharedPreferences(app)
@@ -31,20 +30,13 @@ class UserPrefs {
         get() = prefs.getString(JOINED_DATE, "")
         set(value) = prefs.addString(JOINED_DATE, value)
 
-    var isPhotoSet: Boolean
-        get() = prefs.getBoolean(IS_PHOTO_SET, false)
-        set(value) = prefs.addBoolean(IS_PHOTO_SET, value)
+    var photoDownloadUri: Uri
+        get() = Uri.parse(prefs.getString(PHOTO_NAME, ""))
+        set(value) = prefs.addString(PHOTO_NAME, value.toString())
 
-    var isWallpaperSet: Boolean
-        get() = prefs.getBoolean(IS_WALLPAPER_SET, false)
-        set(value) = prefs.addBoolean(IS_WALLPAPER_SET, value)
+    var wallpaperDownloadUri: Uri
+        get() = Uri.parse(prefs.getString(WALLPAPER_NAME, ""))
+        set(value) = prefs.addString(WALLPAPER_NAME, value.toString())
 
-    var photoName: String
-        get() = prefs.getString(PHOTO_NAME, "")
-        set(value) = prefs.addString(PHOTO_NAME, value)
-
-    var wallpaperName: String
-        get() = prefs.getString(WALLPAPER_NAME, "")
-        set(value) = prefs.addString(WALLPAPER_NAME, value)
-
-    fun clear(): Unit = prefs.clear()}
+    fun clear(): Unit = prefs.clear()
+}

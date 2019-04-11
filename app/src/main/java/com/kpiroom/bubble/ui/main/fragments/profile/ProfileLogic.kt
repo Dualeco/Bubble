@@ -10,25 +10,19 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
+import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.collectionsAsync.mapAsync
-import com.kpiroom.bubble.util.constants.DIR_PROFILE_PHOTOS
-import com.kpiroom.bubble.util.constants.DIR_PROFILE_WALLPAPERS
-import com.kpiroom.bubble.util.files.getProfilePhotoUri
-import com.kpiroom.bubble.util.files.getProfileWallpaperUri
-import com.kpiroom.bubble.util.files.profilePhotoExists
-import com.kpiroom.bubble.util.files.profileWallpaperExists
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
-import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
+import com.kpiroom.bubble.util.constants.str
+import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
 import com.kpiroom.bubble.util.livedata.progressState.*
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.SubscriptionAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
-import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
-import java.io.File
 
 class ProfileLogic : ProgressFragmentLogic() {
 
@@ -54,18 +48,18 @@ class ProfileLogic : ProgressFragmentLogic() {
     val useCameraForPhoto = MutableLiveData<Boolean>()
 
     var photoUri = MutableLiveData<Uri>().apply {
-        Source.userPrefs.apply {
-            if (isPhotoSet)
-                value = getProfilePhotoUri(photoName)
+        Source.userPrefs.photoDownloadUri.let {
+            if (!it.toString().isBlank())
+                value = it
         }
     }
 
     val photoChangeRequested = MutableLiveData<Boolean>()
 
     var wallpaperUri = MutableLiveData<Uri>().apply {
-        Source.userPrefs.apply {
-            if (isWallpaperSet)
-                value = getProfileWallpaperUri(wallpaperName)
+        Source.userPrefs.wallpaperDownloadUri.let {
+            if (!it.toString().isBlank())
+                value = it
         }
     }
 
@@ -147,10 +141,7 @@ class ProfileLogic : ProgressFragmentLogic() {
 
     fun onUsernameChanged() {
         optionWindowClicked.value = true
-        progress.alert(
-            "Are you sure you want to change username?",
-            ::changeUsername
-        )
+        startUsernameChange()
     }
 
     fun onLoggedOut() {
@@ -161,18 +152,13 @@ class ProfileLogic : ProgressFragmentLogic() {
         )
     }
 
-    private fun changeUsername(accepted: Boolean) {
-        if (accepted) startUsernameChange()
-        progress.finish()
-    }
-
     fun onUsernameChangeFinished(newUsername: String) {
         progress.apply {
             Source.apply {
                 if (newUsername != userPrefs.username)
                     AsyncProcessor {
                         loadAsync()
-                        validateUsername(newUsername)
+                        validateUsernameAsync(bag, newUsername)
 
                         api.changeUsername(userPrefs.uuid, newUsername)
                         finishAsync()
@@ -224,69 +210,39 @@ class ProfileLogic : ProgressFragmentLogic() {
     }
 
     private fun uploadPhoto(uri: Uri): Unit = requestAsync {
-        Source.apply {
-            api.uploadUserPhoto(
-                userPrefs.uuid,
-                getUpdatedProfilePhoto(uri)
-            )
+        extractBitmapFrom(uri)?.let { bitmap ->
+            Source.apply {
+                api.uploadUserPhoto(
+                    userPrefs.uuid,
+                    bitmap
+                ).also {
+                    userPrefs.photoDownloadUri = it
+                    photoUri.postValue(it)
+                }
+            }
         }
     }
 
     private fun uploadWallpaper(uri: Uri): Unit = requestAsync {
-        Source.apply {
-            api.uploadUserWallpaper(
-                userPrefs.uuid,
-                getUpdatedProfileWallpaper(uri)
-            )
-        }
-    }
-
-    private fun updatePhotoFile() = backgroundAsync {
-        Source.apply {
-            userPrefs.apply {
-                if (!profilePhotoExists(photoName)) {
-                    api.downloadUserPhoto(
-                        photoName,
-                        File(DIR_PROFILE_PHOTOS, photoName)
-                    )
-                    photoUri.postValue(getProfilePhotoUri(photoName))
+        extractBitmapFrom(uri)?.let { bitmap ->
+            Source.apply {
+                api.uploadUserWallpaper(
+                    userPrefs.uuid,
+                    bitmap
+                ).also {
+                    userPrefs.wallpaperDownloadUri = it
+                    wallpaperUri.postValue(it)
                 }
             }
-        }
-    }
-
-    private fun updateWallpaperFile() = backgroundAsync {
-        Source.apply {
-            userPrefs.apply {
-                if (!profileWallpaperExists(wallpaperName)) {
-                    api.downloadUserWallpaper(
-                        wallpaperName,
-                        File(DIR_PROFILE_WALLPAPERS, wallpaperName)
-                    )
-                    wallpaperUri.postValue(getProfileWallpaperUri(wallpaperName))
-                }
-            }
-        }
-    }
-
-    fun updateProfileImages() {
-        Source.userPrefs.apply {
-            if (isPhotoSet)
-                updatePhotoFile()
-
-            if (isWallpaperSet)
-                updateWallpaperFile()
         }
     }
 
     fun dispatchUri(uri: Uri, isProfilePhoto: Boolean): Unit =
-        if (isProfilePhoto) {
+        if (isProfilePhoto)
             uploadPhoto(uri)
-            photoUri.value = uri
-        } else {
+        else
             uploadWallpaper(uri)
-            wallpaperUri.value = uri
-        }
+
 
     private fun requestAsync(action: suspend () -> Unit) {
         progress.apply {

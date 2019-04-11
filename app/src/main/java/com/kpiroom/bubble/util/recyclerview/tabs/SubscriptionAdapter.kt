@@ -43,7 +43,7 @@ class SubscriptionHolder(
     override fun bind(data: User) {
         itemData = data
         binding.itemName.text = data.name
-        binding.itemPic.download(data.photoName)
+        binding.itemPic.download(data.photoUrl)
     }
 
     init {
