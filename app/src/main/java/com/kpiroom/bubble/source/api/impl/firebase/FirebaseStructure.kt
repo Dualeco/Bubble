@@ -7,6 +7,7 @@ object FirebaseStructure {
     private const val VERSION_KEY = "version"
     private const val META_KEY = "meta"
     const val USERS = "users"
+    const val USER_UUIDS = "user_uuids"
     const val COMICS = "comics"
     const val PREVIEWS = "previews"
     const val THUMBNAILS = "thumbnails"
@@ -33,8 +34,8 @@ object FirebaseStructure {
         val uuid: String = "",
         val username: String = "",
         val joinedDate: String = "",
-        val photoName: String = "",
-        val wallpaperName: String = ""
+        val photoUrl: String = "",
+        val wallpaperUrl: String = ""
     ) : Comparable(uuid, username)
 
     data class Comic(
@@ -54,8 +55,8 @@ object FirebaseStructure {
         val UUID = "$LOCATION/uuid"
         val USERNAME = "$LOCATION/username"
         val JOINED_DATE = "$LOCATION/joinedDate"
-        val PHOTO_NAME = "$LOCATION/photoName"
-        val WALLPAPER_NAME = "$LOCATION/wallpaperName"
+        val PHOTO_URL = "$LOCATION/photoUrl"
+        val WALLPAPER_URL = "$LOCATION/wallpaperUrl"
         val UPLOADS = "$LOCATION/uploads"
         val FAVORITES = "$LOCATION/favorites"
         val SUBSCRIPTIONS = "$LOCATION/subscriptions"

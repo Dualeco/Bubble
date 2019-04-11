@@ -22,6 +22,7 @@ import com.kpiroom.bubble.ui.profileTabs.UploadsTabFragment
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
+import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.livedata.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 

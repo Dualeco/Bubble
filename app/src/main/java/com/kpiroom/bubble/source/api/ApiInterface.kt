@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.util.async.AsyncBag
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.livedata.FirebaseListLiveData
 import java.io.File
@@ -15,7 +16,7 @@ interface ApiInterface {
 
     suspend fun setServerVersion(version: String)
 
-    suspend fun usernameExists(username: String): Boolean
+    suspend fun getUserUuidList(): List<String>
 
     suspend fun getUsername(uuid: String): String?
 
@@ -39,39 +40,25 @@ interface ApiInterface {
     suspend fun sendPasswordResetEmail(email: String)
 
     //Storage
-    suspend fun uploadFile(
-        dirRef: String,
-        uri: Uri,
-        name: String
-    ): Uri
+    suspend fun uploadBitmap(dirRef: String, bitmap: Bitmap, name: String): Uri
 
-    suspend fun uploadUserPhoto(
-        uuid: String,
-        uri: Uri
-    )
+    suspend fun uploadUserPhoto(uuid: String, bitmap: Bitmap): Uri
 
-    suspend fun uploadUserWallpaper(
-        uuid: String,
-        uri: Uri
-    )
+    suspend fun uploadUserWallpaper(uuid: String, bitmap: Bitmap): Uri
 
-    suspend fun uploadComic(
-        uuid: String,
-        uri: Uri
-    ): Uri
+    suspend fun uploadFile(dirRef: String, uri: Uri, name: String? = null)
 
-    suspend fun downloadComic(
-        comicUuid: String,
-        destination: File
-    )
+    suspend fun uploadComic(uuid: String, uri: Uri): Uri
+
+    suspend fun downloadComic(comicUuid: String, destination: File)
 
     suspend fun downloadFile(dirRef: String, destination: File)
+
+    suspend fun usernameExists(bag: AsyncBag, username: String): Boolean
 
     suspend fun downloadUserPhoto(photoName: String, destination: File)
 
     suspend fun downloadUserWallpaper(wallpaperName: String, destination: File)
-
-    suspend fun uploadBitmap(dirRef: String, bitmap: Bitmap, name: String): Uri
 
     suspend fun uploadComicThumbnail(uuid: String, bitmap: Bitmap): Uri
 
@@ -79,11 +66,7 @@ interface ApiInterface {
 
     fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String>
 
-    fun <T : Any> getChildrenLiveData(
-        path: String,
-        type: Class<T>,
-        orderByPath: String
-    ): FirebaseListLiveData<T>
+    fun <T : Any> getChildrenLiveData(path: String, type: Class<T>, orderByPath: String): FirebaseListLiveData<T>
 
     fun removeComic(comic: Comic)
     fun getAllUploadsLiveData(): FirebaseListLiveData<Comic>

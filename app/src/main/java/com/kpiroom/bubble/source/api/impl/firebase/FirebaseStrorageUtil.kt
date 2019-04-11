@@ -89,21 +89,23 @@ class FirebaseStrorageUtil(val storage: FirebaseStorage) {
             }
     }
 
-    suspend fun downloadFile(dirRef: String, destination: File): Unit =
-        suspendCancellableCoroutine { continuation ->
-            val fileRef = storage.getReference(dirRef)
-            fileRef.getFile(destination)
-                .addOnSuccessListener {
-                    Log.d(TAG, "File downloaded successfully: $dirRef ${destination.toUri()}")
-                    continuation.resume(Unit)
-                }
-                .addOnFailureListener {
-                    Log.d(TAG, "File download failed: $dirRef ${destination.toUri()}")
-                    continuation.resumeWithException(it)
-                }
-                .addOnCanceledListener {
-                    Log.d(TAG, "File download cancelled: $destination")
-                    continuation.cancel()
-                }
-        }
+    suspend fun downloadFile(
+        dirRef: String,
+        destination: File
+    ): Unit = suspendCancellableCoroutine { continuation ->
+        val fileRef = storage.getReference(dirRef)
+        fileRef.getFile(destination)
+            .addOnSuccessListener {
+                Log.d(TAG, "File downloaded successfully: $dirRef ${destination.toUri()}")
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "File download failed: $dirRef ${destination.toUri()}")
+                continuation.resumeWithException(it)
+            }
+            .addOnCanceledListener {
+                Log.d(TAG, "File download cancelled: $destination")
+                continuation.cancel()
+            }
+    }
 }

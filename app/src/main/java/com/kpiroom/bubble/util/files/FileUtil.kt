@@ -16,21 +16,3 @@ fun getFileUri(context: Context, file: File): Uri = FileProvider.getUriForFile(
     FILE_PROVIDER,
     file
 )
-
-fun deleteFile(dir: File, fileName: String) {
-    if (fileName.isBlank()) return
-
-    File(dir, fileName).run {
-        if (exists())
-            delete()
-    }
-}
-
-fun deleteDir(dir: File) = dir.apply {
-    if (isDirectory)
-        deleteRecursively()
-}
-
-fun getFileExtension(uri: Uri): String = uri.toString().run {
-    substring(lastIndexOf("."))
-}

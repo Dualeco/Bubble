@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.COMICS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_UUIDS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
@@ -94,6 +95,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
                         val children = snapshot.children.map {
                             it.getValue(childType) ?: throw DbEmptyFieldException()
                         }
+
                         continuation.resume(children)
                     } catch (exception: Exception) {
                         Log.d(TAG, "Read error [$ref]: $exception")
@@ -111,7 +113,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun getUsername(uuid: String): String? =
         try {
-            read("$USERNAMES/$uuid", String::class.java)
+            read(USER_KEYS(uuid).USERNAME, String::class.java)
         } catch (ex: DbEmptyFieldException) {
             null
         }
@@ -125,20 +127,17 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun uploadUserData(uuid: String, user: User) {
         write("$USERS/$uuid", user)
-        write("$USERNAMES/$uuid", user.username)
+        write("$USER_UUIDS/$uuid", uuid)
     }
 
-    suspend fun usernameExists(username: String): Boolean = try {
-        readChildren(USERNAMES, String::class.java)
-            .contains(username)
+    suspend fun getUserUuidList(): List<String> = try {
+        readChildren(USER_UUIDS, String::class.java)
     } catch (ex: DbEmptyFieldException) {
-        false
+        listOf()
     }
 
-    suspend fun changeUsername(uuid: String, username: String) {
-        write("$USERNAMES/$uuid", username)
+    suspend fun changeUsername(uuid: String, username: String) =
         write(USER_KEYS(uuid).USERNAME, username)
-    }
 
     fun removeComicData(comic: Comic) = comic.run {
         remove("${USER_KEYS(authorId).UPLOADS}/$uuid")
