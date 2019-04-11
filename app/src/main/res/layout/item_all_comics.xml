@@ -13,7 +13,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="8dp"
-                android:id="@+id/comicItemPic"
+                android:id="@+id/itemThumbnail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
@@ -27,7 +27,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintWidth_default="spread"
-                android:id="@+id/comicItemTitle"
+                android:id="@+id/itemTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -36,45 +36,43 @@
                 android:textColor="@color/colorTextBlack"
                 android:fontFamily="sans-serif-medium"
                 app:layout_constraintStart_toEndOf="@id/guidelinePic"
-                app:layout_constraintTop_toTopOf="@id/comicItemPic"
+                app:layout_constraintTop_toTopOf="@id/itemThumbnail"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="8dp"
-                android:id="@+id/comicItemAuthor"
+                android:id="@+id/author_area"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintHeight_default="wrap"
                 app:layout_constraintStart_toEndOf="@id/guidelinePic"
-                app:layout_constraintBottom_toBottomOf="@id/comicItemPic"
+                app:layout_constraintBottom_toBottomOf="@id/itemThumbnail"
                 app:layout_constraintEnd_toEndOf="@id/guidelineAuthor">
 
             <TextView
-                    android:id="@+id/itemComicAuthorName"
+                    android:id="@+id/itemAuthorName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:textSize="16sp"
-                    android:text="Auththor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/itemComicUploadDate"
+                    app:layout_constraintBottom_toTopOf="@+id/itemUploadDate"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
                     android:layout_marginTop="4dp"
-                    android:id="@+id/itemComicUploadDate"
+                    android:id="@+id/itemUploadDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:text="12 Sep 2017"
                     android:textSize="12sp"
                     android:maxLines="1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/itemComicAuthorName"
+                    app:layout_constraintTop_toBottomOf="@+id/itemAuthorName"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -85,15 +83,14 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_cloud_download"
                 android:id="@+id/icon_downloaded"
-                app:layout_constraintTop_toTopOf="@id/comicItemAuthor"
-                app:layout_constraintBottom_toTopOf="@id/itemComicDownloadCount"
+                app:layout_constraintTop_toTopOf="@id/author_area"
+                app:layout_constraintBottom_toTopOf="@id/itemDownloadCount"
                 app:layout_constraintEnd_toStartOf="@id/icon_starred"
                 app:layout_constraintStart_toEndOf="@id/guidelineIcons"/>
 
         <TextView
+                android:id="@+id/itemDownloadCount"
                 app:layout_constraintTop_toBottomOf="@id/icon_downloaded"
-                android:id="@+id/itemComicDownloadCount"
-                android:text="1234"
                 android:gravity="center"
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="12sp"
@@ -102,15 +99,15 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="@id/icon_downloaded"
                 app:layout_constraintEnd_toEndOf="@id/icon_downloaded"
-                app:layout_constraintBottom_toBottomOf="@id/comicItemAuthor"/>
+                app:layout_constraintBottom_toBottomOf="@id/author_area"/>
 
         <ImageView
                 app:layout_constraintStart_toEndOf="@id/icon_downloaded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star"
-                app:layout_constraintTop_toTopOf="@+id/comicItemAuthor"
-                app:layout_constraintBottom_toTopOf="@id/itemComicStarCount"
+                app:layout_constraintTop_toTopOf="@+id/author_area"
+                app:layout_constraintBottom_toTopOf="@id/itemStarCount"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -118,15 +115,14 @@
 
         <TextView
                 app:layout_constraintTop_toBottomOf="@id/icon_starred"
-                android:id="@+id/itemComicStarCount"
-                android:text="1234"
+                android:id="@+id/itemStarCount"
                 android:gravity="center"
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@id/comicItemAuthor"
+                app:layout_constraintBottom_toBottomOf="@id/author_area"
                 app:layout_constraintStart_toStartOf="@id/icon_starred"
                 app:layout_constraintEnd_toEndOf="@id/icon_starred"/>
 
@@ -156,9 +152,9 @@
                 android:layout_height="0.5dp"
                 android:alpha="0.1"
                 android:background="@color/colorBlack"
-                app:layout_constraintStart_toStartOf="@id/comicItemAuthor"
+                app:layout_constraintStart_toStartOf="@id/author_area"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/comicItemTitle"
+                app:layout_constraintEnd_toEndOf="@id/itemTitle"
                 android:id="@+id/view"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

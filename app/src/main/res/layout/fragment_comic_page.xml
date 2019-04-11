@@ -3,7 +3,7 @@
     <data>
         <variable
                 name="logic"
-                type="com.kpiroom.bubble.ui.comic.ComicLogic"/>
+                type="com.kpiroom.bubble.ui.comicPage.ComicPageLogic"/>
     </data>
     <ScrollView
             app:layout_constraintTop_toTopOf="parent"

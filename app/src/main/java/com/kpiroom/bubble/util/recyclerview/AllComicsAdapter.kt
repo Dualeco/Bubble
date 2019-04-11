@@ -7,6 +7,7 @@ import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ItemAllComicsBinding
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.util.constants.str
+import com.kpiroom.bubble.util.date.msToDateStr
 import com.kpiroom.bubble.util.recyclerview.core.CoreAdapter
 import com.kpiroom.bubble.util.recyclerview.core.CoreHolder
 import com.kpiroom.bubble.util.recyclerview.model.NamedComic
@@ -42,18 +43,12 @@ class AllComicsHolder(
 
     override fun bind(data: NamedComic) = binding.run {
         itemData = data
-        comicItemTitle.text = data.title
-        comicItemPic.download(data.thumbnailUrl)
-        itemComicDownloadCount.text = data.downloads.toString()
-        itemComicStarCount.text = data.stars.toString()
-        itemComicAuthorName.text = data.authorName
-        itemComicUploadDate.text = data.uploadTimeMs.let { ms ->
-            SimpleDateFormat(str(R.string.date_format)).format(
-                Calendar.getInstance().apply {
-                    timeInMillis = ms
-                }.time
-            )
-        }
+        itemTitle.text = data.title
+        itemThumbnail.download(data.thumbnailUrl)
+        itemDownloadCount.text = data.downloads.toString()
+        itemStarCount.text = data.stars.toString()
+        itemAuthorName.text = data.authorName
+        itemUploadDate.text = msToDateStr(data.uploadTimeMs)
     }
 
     init {
