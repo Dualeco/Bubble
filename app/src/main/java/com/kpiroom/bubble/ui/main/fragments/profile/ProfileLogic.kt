@@ -20,18 +20,15 @@ import com.kpiroom.bubble.util.files.profileWallpaperExists
 import com.kpiroom.bubble.util.imageUpload.getUpdatedProfilePhoto
 import com.kpiroom.bubble.util.imageUpload.getUpdatedProfileWallpaper
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
+import com.kpiroom.bubble.util.livedata.progressState.*
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.*
 import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.SubscriptionAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
 import com.kpiroom.bubble.util.usernameValidation.validateUsername
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.coroutines.resume
 
 class ProfileLogic : ProgressFragmentLogic() {
 

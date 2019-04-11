@@ -12,10 +12,10 @@ import com.kpiroom.bubble.util.events.DelayedAction
 import com.kpiroom.bubble.util.livedata.setDefault
 import com.kpiroom.bubble.util.livedata.swapValues
 import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.progressState.livedata.alert
-import com.kpiroom.bubble.util.progressState.livedata.alertAsync
-import com.kpiroom.bubble.util.progressState.livedata.finishAsync
-import com.kpiroom.bubble.util.progressState.livedata.loadAsync
+import com.kpiroom.bubble.util.livedata.progressState.alert
+import com.kpiroom.bubble.util.livedata.progressState.alertAsync
+import com.kpiroom.bubble.util.livedata.progressState.finishAsync
+import com.kpiroom.bubble.util.livedata.progressState.loadAsync
 
 class LoginLogic : CoreLogic() {
 

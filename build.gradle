@@ -25,10 +25,8 @@ buildscript {
     //Navigation
     ext.navigation_version = '1.0.0-alpha11'
 
-    //Glide
-
     //ProfileBar
-    ext.profilebar_version = '1.6.1'
+    ext.profilebar_version = '1.6.3'
     ext.glide_version = '4.8.0'
 
     repositories {

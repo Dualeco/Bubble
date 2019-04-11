@@ -9,10 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.FragmentDashboardBinding
-import com.kpiroom.bubble.ui.core.CoreFragment
 import com.kpiroom.bubble.ui.progress.ProgressFragment
-import com.kpiroom.bubble.util.livedata.observeResource
-import com.kpiroom.bubble.util.progressState.livedata.load
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 class DashboardFragment : ProgressFragment<DashboardLogic, FragmentDashboardBinding>() {

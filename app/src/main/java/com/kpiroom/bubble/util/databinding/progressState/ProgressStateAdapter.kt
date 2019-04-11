@@ -1,4 +1,4 @@
-package com.kpiroom.bubble.util.progressState.databinding
+package com.kpiroom.bubble.util.databinding.progressState
 
 import androidx.databinding.BindingAdapter
 import com.kpiroom.bubble.util.progressState.ProgressState
