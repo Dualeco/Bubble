@@ -59,11 +59,26 @@ fun Activity.showKeyboard(view: View? = currentFocus) {
     }
 }
 
-fun View.setOnBackButtonClicked(condition: () -> Boolean, onClicked: () -> Unit) {
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
+
+}
+
+fun View.showKeyboard() {
+    requestFocus()
+    performClick()
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+
+}
+
+fun View.setOnBackButtonClicked(condition: (() -> Boolean)? = null, onClicked: () -> Unit) {
     isFocusableInTouchMode = true
     requestFocus()
     setOnKeyListener { _, keyCode, event ->
-        if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && condition()) {
+        if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && condition?.invoke() ?: true) {
             onClicked()
             true
         } else false

@@ -25,6 +25,7 @@ object ErrorHelper {
     fun resolve(throwable: Throwable): CoreException =
         CoreException(
             when (throwable) {
+                is CoreException -> throwable.errorId
                 is FirebaseAuthWeakPasswordException -> AUTH_WEAK_PASSWORD
                 is FirebaseAuthInvalidCredentialsException -> AUTH_INVALID_CREDENTIALS
                 is FirebaseAuthUserCollisionException -> AUTH_EMAIL_IN_USE
@@ -33,11 +34,10 @@ object ErrorHelper {
                 is DbConnectionException -> NETWORK_ERROR
                 is DbEmptyFieldException -> DB_EMPTY_FIELD
                 is DbCancelledException -> DB_CALL_CANCELLED
-                else -> {
-                    Log.d(TAG, "Unresolved error: $throwable")
-                    DEFAULT
-                }
+                else -> DEFAULT
             },
             throwable
-        )
+        ).also { exception ->
+            Log.e(TAG, "$exception\n")
+        }
 }

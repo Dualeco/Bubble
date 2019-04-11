@@ -6,12 +6,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.IS_CONNECTED
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERNAMES
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_UUIDS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USERS
+import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.USER_KEYS
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.util.exceptions.db.DbCancelledException
-import com.kpiroom.bubble.util.exceptions.db.DbConnectionException
 import com.kpiroom.bubble.util.exceptions.db.DbEmptyFieldException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -22,8 +21,6 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     companion object {
         private const val TAG = "FirebaseDbUtil"
     }
-
-    private suspend fun isConnected(): Boolean = read(IS_CONNECTED, Boolean::class.java, true)
 
     suspend fun <T : Any?> write(
         ref: String,
@@ -37,11 +34,8 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
 
     suspend fun <T : Any?> read(
         path: String,
-        type: Class<T>,
-        readOffline: Boolean = false
-    ): T = if (!(readOffline || isConnected()))
-        throw DbConnectionException()
-    else
+        type: Class<T>
+    ): T =
         suspendCancellableCoroutine { continuation ->
             val ref = firebaseDb.getReference(path)
             val listener = object : ValueEventListener {
@@ -75,9 +69,7 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
     suspend fun <T : Any?> readChildren(
         path: String,
         childType: Class<T>
-    ): List<T> = if (!isConnected())
-        throw DbConnectionException()
-    else
+    ): List<T> =
         suspendCancellableCoroutine { continuation ->
             val ref = firebaseDb.getReference(path)
             val listener = object : ValueEventListener {
@@ -111,6 +103,13 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
             ref.addListenerForSingleValueEvent(listener)
         }
 
+    suspend fun getUsername(uuid: String): String? =
+        try {
+            read(USER_KEYS(uuid).USERNAME, String::class.java)
+        } catch (ex: DbEmptyFieldException) {
+            null
+        }
+
     suspend fun getUserData(uuid: String): User? =
         try {
             read("$USERS/$uuid", User::class.java)
@@ -118,16 +117,16 @@ class FirebaseDbUtil(val firebaseDb: FirebaseDatabase) {
             null
         }
 
-
     suspend fun uploadUserData(uuid: String, user: User) {
         write("$USERS/$uuid", user)
-        write("$USERNAMES/$uuid", user.username)
+        write("$USER_UUIDS/$uuid", uuid)
     }
 
-    suspend fun usernameExists(username: String): Boolean = try {
-        readChildren(USERNAMES, String::class.java)
-            .contains(username)
+    suspend fun getUserUuidList(): List<String> = try {
+        readChildren(USER_UUIDS, String::class.java)
     } catch (ex: DbEmptyFieldException) {
-        false
+        listOf()
     }
+
+    suspend fun changeUsername(uuid: String, username: String) = write(USER_KEYS(uuid).USERNAME, username)
 }

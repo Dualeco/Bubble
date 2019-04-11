@@ -1,7 +1,10 @@
 package com.kpiroom.bubble.source.api
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
+import com.kpiroom.bubble.util.async.AsyncBag
+import java.io.File
 
 interface ApiInterface {
 
@@ -10,7 +13,13 @@ interface ApiInterface {
 
     suspend fun setServerVersion(version: String)
 
-    suspend fun usernameExists(username: String): Boolean
+    suspend fun getUserUuidList(): List<String>
+
+    suspend fun getUsername(uuid: String): String?
+
+    suspend fun changeUsername(uuid: String, username: String)
+
+    suspend fun updateUserPrefs(uuid: String)
 
     suspend fun getUserData(uuid: String): User?
 
@@ -24,13 +33,28 @@ interface ApiInterface {
     suspend fun sendPasswordResetEmail(email: String)
 
     //Storage
+    suspend fun uploadBitmap(
+        dirRef: String,
+        bitmap: Bitmap,
+        name: String
+    ): Uri
+
+    suspend fun uploadUserPhoto(
+        uuid: String,
+        bitmap: Bitmap
+    ): Uri
+
+    suspend fun uploadUserWallpaper(
+        uuid: String,
+        bitmap: Bitmap
+    ): Uri
+
     suspend fun uploadFile(
         dirRef: String,
         uri: Uri,
-        name: String
-    ): String
+        name: String? = null
+    )
 
-    suspend fun uploadUserPhoto(uuid: String, uri: Uri): String
-
-    suspend fun uploadUserWallpaper(uuid: String, uri: Uri): String
+    suspend fun downloadFile(dirRef: String, destination: File)
+    suspend fun usernameExists(bag: AsyncBag, username: String): Boolean
 }

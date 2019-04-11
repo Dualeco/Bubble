@@ -52,7 +52,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     private val dimmingView = View(context).apply {
-        setBackgroundColor(col(R.color.dimColor))
+        setBackgroundColor(col(R.color.colorDim))
         layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         alpha = 0F
@@ -62,7 +62,7 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
         isClickable = false
     }
 
-    private val alert = LayoutInflater.from(context).inflate(R.layout.layout_dialog, this, false).apply {
+    private val alert = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog, this, false).apply {
         layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
                 .apply {
@@ -83,7 +83,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun progress(message: String = str(R.string.common_loading)) {
-
         dimmingView.isClickable = true
 
         updateStaticBack(false)

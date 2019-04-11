@@ -8,9 +8,14 @@ import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.databinding.ProgressState
 import com.kpiroom.bubble.util.events.DelayedAction
-import com.kpiroom.bubble.util.livedata.*
+import com.kpiroom.bubble.util.livedata.setDefault
+import com.kpiroom.bubble.util.livedata.swapValues
+import com.kpiroom.bubble.util.progressState.ProgressState
+import com.kpiroom.bubble.util.progressState.livedata.alert
+import com.kpiroom.bubble.util.progressState.livedata.alertAsync
+import com.kpiroom.bubble.util.progressState.livedata.finishAsync
+import com.kpiroom.bubble.util.progressState.livedata.loadAsync
 
 class LoginLogic : CoreLogic() {
 
@@ -113,14 +118,16 @@ class LoginLogic : CoreLogic() {
 
     private suspend fun signIn(email: String, password: String) {
         Source.apply {
-            api.signIn(email, password)
-            if (userPrefs.username.isBlank())
-                accountSetupRequested.postValue(true)
-            else
-                loggedIn.postValue(true)
+            userPrefs.apply {
+                uuid = api.signIn(email, password) ?: ""
+                username = api.getUsername(uuid) ?: ""
+                if (username.isBlank())
+                    accountSetupRequested.postValue(true)
+                else
+                    loggedIn.postValue(true)
+            }
         }
     }
-
 
     suspend fun signUp(email: String, password: String) {
         Source.userPrefs.uuid = Source.api.signUp(email, password) ?: return

@@ -8,10 +8,17 @@ import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
+import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.constants.getResUri
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.databinding.ProgressState
-import com.kpiroom.bubble.util.livedata.*
+import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
+import com.kpiroom.bubble.util.livedata.setDefault
+import com.kpiroom.bubble.util.progressState.ProgressState
+import com.kpiroom.bubble.util.progressState.livedata.alert
+import com.kpiroom.bubble.util.progressState.livedata.alertAsync
+import com.kpiroom.bubble.util.progressState.livedata.finishAsync
+import com.kpiroom.bubble.util.progressState.livedata.loadAsync
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,7 +32,6 @@ class AccountSetupLogic : CoreLogic() {
     val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>()
-    private val usernameRegex = str(R.string.username_regex).toRegex()
     val clearUsernameFocus = MutableLiveData<Boolean>()
 
     private val dateFormat = str(R.string.date_format)
@@ -49,6 +55,8 @@ class AccountSetupLogic : CoreLogic() {
     private val isWallpaperSet
         get() = wallpaperUri.value != defaultWallpaperUri
 
+    val useCameraForPhoto = MutableLiveData<Boolean>()
+
     val backButtonClicked = MutableLiveData<Boolean>()
     fun onBackButton() {
         Source.userPrefs.clear()
@@ -59,49 +67,32 @@ class AccountSetupLogic : CoreLogic() {
         clearUsernameFocus.value = true
         photoChangeRequested.value = true
         wallpaperChangeRequested.value = false
+        showAlertChoosePhoto()
     }
 
     fun onWallpaperChanged() {
         clearUsernameFocus.value = true
         photoChangeRequested.value = false
         wallpaperChangeRequested.value = true
+        showAlertChoosePhoto()
     }
 
     fun onGetStarted() {
         clearUsernameFocus.value = true
         progress.apply {
-            username.value.let {
+            AsyncProcessor {
+                loadAsync()
+                validateUsernameAsync(bag, username.value)
+                finishAsync()
 
-                AsyncProcessor {
-                    progress.loadAsync()
-                    when {
-                        it.isNullOrBlank() ->
-                            alertAsync(str(R.string.setup_username_cannot_be_empty))
+                if (!isPhotoSet || !isWallpaperSet)
+                    alertAsync(
+                        warningPhotosUnchanged,
+                        ::isSetupFinishRequested
+                    )
+                else
+                    finishRequested.postValue(true)
 
-                        it.length < 6 ->
-                            alertAsync(str(R.string.setup_username_too_short))
-
-                        it.length > 16 ->
-                            alertAsync(str(R.string.setup_username_too_long))
-
-                        !it.matches(usernameRegex) ->
-                            alertAsync(str(R.string.setup_username_invalid))
-
-                        Source.api.usernameExists(it) ->
-                            alertAsync(str(R.string.setup_username_exists))
-
-                        !isPhotoSet || !isWallpaperSet ->
-                            progress.alertAsync(
-                                warningPhotosUnchanged,
-                                ::isSetupFinishRequested
-                            )
-
-                        else -> {
-                            finishRequested.postValue(true)
-                            progress.finishAsync()
-                        }
-                    }
-                }
             } handleError {
                 progress.alert(it.message)
             } runWith (bag)
@@ -147,9 +138,7 @@ class AccountSetupLogic : CoreLogic() {
                     id,
                     User(
                         username,
-                        joinedDate,
-                        isPhotoSet,
-                        isWallpaperSet
+                        joinedDate
                     )
                 )
             }
@@ -161,24 +150,22 @@ class AccountSetupLogic : CoreLogic() {
         val photoUri = photoUri.value ?: return@apply
         val wallpaperUri = wallpaperUri.value ?: return@apply
 
-        userPrefs.uuid.let { id ->
-            api.apply {
-                if (isPhotoSet)
-                    uploadUserPhoto(id, photoUri)
-
-                if (isWallpaperSet)
-                    uploadUserWallpaper(id, wallpaperUri)
-            }
+        userPrefs.apply {
+            if (isPhotoSet)
+                extractBitmapFrom(photoUri)?.let { bitmap ->
+                    photoDownloadUri = api.uploadUserPhoto(uuid, bitmap)
+                }
+            if (isWallpaperSet)
+                extractBitmapFrom(wallpaperUri)?.let { bitmap ->
+                    wallpaperDownloadUri = api.uploadUserWallpaper(uuid, bitmap)
+                }
         }
     }
 
     private fun saveUserData() {
-        val username = username.value ?: ""
         Source.userPrefs.let {
-            it.username = username
+            it.username = username.value ?: ""
             it.joinedDate = currentDateString
-            it.isPhotoSet = isPhotoSet
-            it.isWallpaperSet = isWallpaperSet
         }
     }
 
@@ -187,5 +174,15 @@ class AccountSetupLogic : CoreLogic() {
             photoUri.value = uri
         else
             wallpaperUri.value = uri
+    }
+
+    fun showAlertChoosePhoto(): Unit = showImageSelectionAlert(
+        progress,
+        wallpaperChangeRequested.value == true,
+        ::requestPhoto
+    )
+
+    private fun requestPhoto(useCamera: Boolean) {
+        useCameraForPhoto.postValue(useCamera)
     }
 }

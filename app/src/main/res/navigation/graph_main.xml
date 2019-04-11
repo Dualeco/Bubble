@@ -5,19 +5,19 @@
     android:id="@+id/graph_main"
     app:startDestination="@id/navigation_dashboard">
 
-    <fragment
+    <state_fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.kpiroom.bubble.ui.main.fragments.dashboard.DashboardFragment"
         android:label="@string/dashboard_title"
         tools:layout="@layout/fragment_dashboard" />
 
-    <fragment
+    <state_fragment
         android:id="@+id/navigation_subscription"
         android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsFragment"
         android:label="@string/subscription_title"
         tools:layout="@layout/fragment_subscription" />
 
-    <fragment
+    <state_fragment
         android:id="@+id/navigation_profile"
         android:name="com.kpiroom.bubble.ui.main.fragments.profile.ProfileFragment"
         android:label="@string/profile_title"
