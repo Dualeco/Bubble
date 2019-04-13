@@ -14,6 +14,7 @@ import com.kpiroom.bubble.databinding.ActivityAccountSetupBinding
 import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.ui.login.LoginActivity
 import com.kpiroom.bubble.ui.main.MainActivity
+import com.kpiroom.bubble.ui.progress.ProgressActivity
 import com.kpiroom.bubble.util.constants.dpToPx
 import com.kpiroom.bubble.util.imageUpload.createCameraPictureUri
 import com.kpiroom.bubble.util.imageUpload.startImageSelectionActivity
@@ -22,7 +23,7 @@ import com.kpiroom.bubble.util.view.AccountSetupOptionWindow
 import com.kpiroom.bubble.util.view.hideKeyboard
 import kotlinx.android.synthetic.main.activity_account_setup.*
 
-class AccountSetupActivity : CoreActivity<AccountSetupLogic, ActivityAccountSetupBinding>() {
+class AccountSetupActivity : ProgressActivity<AccountSetupLogic, ActivityAccountSetupBinding>() {
 
     private var photoCaptureUri: Uri? = null
     private var usingCamera = false

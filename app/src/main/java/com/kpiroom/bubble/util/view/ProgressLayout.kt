@@ -85,10 +85,10 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     fun progress(message: String = str(R.string.common_loading)) {
         dimmingView.isClickable = true
 
+        updateAlert(false)
         updateStaticBack(false)
         updateDimming(true)
         updateLoading(true, message)
-        updateAlert(false)
     }
 
     fun dismiss() {
@@ -108,9 +108,9 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     ) {
         dimmingView.isClickable = true
 
-        updateDimming(true)
         updateLoading(false)
         updateStaticBack(false)
+        updateDimming(true)
         updateAlert(true, message, callback, firstOption, secondOption)
     }
 
@@ -123,9 +123,6 @@ class ProgressLayout @JvmOverloads constructor(context: Context, attrs: Attribut
     ) {
         alert.apply {
             isAlertShown = show
-            isClickable = show
-            dimmingView.isClickable = show
-
             if (show) {
                 findViewById<TextView>(R.id.text).text = message
                 if (callback != null) {

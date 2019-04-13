@@ -11,9 +11,6 @@ import com.kpiroom.bubble.util.progressState.ProgressState
 import java.io.File
 
 class MainLogic : ProgressActivityLogic() {
-
-    override val progress = MediatorLiveData<ProgressState>()
-
     fun fetchUserData() {
         AsyncProcessor {
             Source.apply {

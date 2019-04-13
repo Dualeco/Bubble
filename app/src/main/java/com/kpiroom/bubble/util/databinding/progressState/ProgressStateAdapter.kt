@@ -7,6 +7,8 @@ import com.kpiroom.bubble.util.view.ProgressLayout
 @BindingAdapter("app:progressState")
 fun setProgressState(progressLayout: ProgressLayout, stateContainer: ProgressState?) {
 
+    progressLayout.requestFocus()
+
     fun onLoading(message: String?) {
         message?.let {
             progressLayout.progress(it)

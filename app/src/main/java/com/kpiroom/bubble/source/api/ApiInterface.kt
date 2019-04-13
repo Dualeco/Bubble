@@ -7,9 +7,20 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.util.async.AsyncBag
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.livedata.FirebaseListLiveData
+import com.kpiroom.bubble.source.api.impl.firebase.livedata.FirebaseMapLiveData
 import java.io.File
 
 interface ApiInterface {
+
+    //Livedata
+
+    fun getUserComicIds(uuid: String): FirebaseListLiveData<String>
+
+    fun getUserFavorites(uuid: String): FirebaseMapLiveData<Long>
+
+    fun <T : Any> getChildrenLiveData(path: String, type: Class<T>, orderByPath: String): FirebaseListLiveData<T>
+
+    fun getComics(): FirebaseListLiveData<Comic>
 
     //Database
     suspend fun getServerVersion(): String
@@ -31,6 +42,14 @@ interface ApiInterface {
     suspend fun getComicData(uuid: String): Comic?
 
     suspend fun uploadComicData(uuid: String, comic: Comic)
+
+    fun removeComic(comic: Comic)
+
+    suspend fun subscribeTo(userId: String, authorId: String): Any
+
+    suspend fun userIsSubscribedTo(userId: String, authorId: String): Boolean
+
+    suspend fun getUserSubscriptions(uuid: String): Map<String, Long>
 
     //Auth
     suspend fun signUp(email: String, password: String): String?
@@ -58,13 +77,18 @@ interface ApiInterface {
 
     suspend fun uploadComicThumbnail(uuid: String, bitmap: Bitmap): Uri
 
+    suspend fun uploadComicFavPreview(uuid: String, bitmap: Bitmap): Uri
+
     suspend fun uploadComicPreview(uuid: String, bitmap: Bitmap): Uri
 
-    fun getUserUploadsLiveData(uuid: String): FirebaseListLiveData<String>
+    fun unsubscribeFrom(userId: String, authorId: String)
 
-    fun <T : Any> getChildrenLiveData(path: String, type: Class<T>, orderByPath: String): FirebaseListLiveData<T>
+    suspend fun addToFavorites(userId: String, comicId: String)
 
-    fun removeComic(comic: Comic)
+    fun removeFromFavorites(userId: String, comicId: String)
 
-    fun getAllUploadsLiveData(): FirebaseListLiveData<Comic>
+    suspend fun getStarsForComic(comicId: String): Int
+
+    suspend fun isComicStarred(userId: String, comicId: String): Boolean
+    suspend fun uploadUserThumbnail(uuid: String, bitmap: Bitmap): Uri
 }

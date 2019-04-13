@@ -7,6 +7,8 @@
         <variable
                 name="logic"
                 type="com.kpiroom.bubble.ui.uploadScreen.UploadScreenLogic"/>
+
+        <import type="com.kpiroom.bubble.util.constants.ConstantsKt"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:background="@color/colorPrimary"
@@ -17,12 +19,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/startButton"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:fillViewport="true">
 
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:fitsSystemWindows="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/upload_preview"
@@ -31,24 +35,25 @@
                         android:background="@color/colorBlack">
 
                     <ImageView
+                            app:source="@{logic.bitmapPreview}"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             android:alpha="0.2"
                             android:scaleType="centerCrop"
-                            app:bitmap="@{logic.bitmapPreview}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
 
                     <com.dichotome.profilephoto.ui.ZoomingImageView
+                            app:source="@{logic.bitmapPreview}"
                             android:id="@+id/upload_pic"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_margin="12dp"
+                            android:layout_marginTop="@{logic.marginTop}"
+                            android:layout_marginBottom="12dp"
                             android:adjustViewBounds="true"
                             android:src="@drawable/default_cover"
-                            app:bitmap="@{logic.bitmapPreview}"
                             app:layout_constraintBottom_toTopOf="@id/upload_tv"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +70,7 @@
                             android:text="Please, describe your comic"
                             android:textSize="16dp"
                             android:textColor="@color/colorPrimary"
-                            app:layout_constraintTop_toBottomOf="@id/upload_pic_stub"
+                            app:layout_constraintTop_toBottomOf="@id/upload_pic"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -85,7 +90,7 @@
                             android:layout_marginTop="8dp"
                             app:layout_constraintTop_toTopOf="parent"
                             app:counterEnabled="true"
-                            app:counterMaxLength="60">
+                            app:counterMaxLength="50">
 
                         <EditText
                                 android:text="@={logic.title}"
@@ -93,7 +98,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Title"
-                                android:lines="1"/>
+                                android:maxLines="2"
+                                android:maxLength="50"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -111,7 +117,8 @@
                                 android:id="@+id/upload_description_input"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Description"/>
+                                android:hint="Description"
+                                android:maxLength="300"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>

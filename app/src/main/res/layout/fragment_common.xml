@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+                name="logic"
+                type="com.kpiroom.bubble.ui.main.fragments.common.CommonLogic"/>
+
+        <import type="com.kpiroom.bubble.util.constants.ConstantsKt"/>
+
+    </data>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+        <TextView
+                android:layout_gravity="center"
+                android:text="@string/common_empty_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <FrameLayout
+                android:id="@+id/commonProgress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary">
+
+            <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:clipToPadding="false"
+                android:paddingTop="@{ConstantsKt.STATUS_BAR_SIZE}"
+                android:visibility="invisible"
+                android:id="@+id/commonRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"/>
+
+    </FrameLayout>
+
+</layout>

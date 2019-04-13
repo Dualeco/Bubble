@@ -5,6 +5,7 @@
     <string name="photo_dir">profile_photos</string>
     <string name="wallpaper_dir">profile_wallpapers</string>
     <string name="camera_dir">camera</string>
+    <string name="comics_dir">comics</string>
 
     <!--Date format-->
     <string name="date_format">dd MMMM yyyy</string>
@@ -76,12 +77,19 @@
     <string name="splash_version">Version</string>
 
     <!--Profile-->
+    <!--Channels-->
     <string name="profile_channels">Channels</string>
-    <string name="profile_favorites">Favorites</string>
-    <string name="profile_uploads">Uploads</string>
-    <string name="profile_upload_comic">Upload comic</string>
 
-    <!--Common-->
+    <!--Favorites-->
+    <string name="profile_favorites">Favorites</string>
+    <string name="profile_favorites_empty_message">Comics marked as favorite will be displayed here</string>
+
+    <!--Uploads-->
+    <string name="profile_uploads">My uploads</string>
+    <string name="profile_upload_comic">Upload comic</string>
+    <string name="user_uploads_empty">This user has not uploaded any comics</string>
+
+    <!--Common messages-->
     <string name="common_ok">OK</string>
     <string name="common_none">None</string>
     <string name="common_yes">Yes</string>
@@ -89,18 +97,31 @@
     <string name="common_loading">Loading</string>
     <string name="common_no_internet">Network error occurred. Please, check your connection</string>
     <string name="common_error_message">Oops, something went wrong</string>
+    <string name="common_empty">Nothing here yet</string>
 
-    <!--Dashboard-->
-    <string name="dashboard_title">Dashboard</string>
+    <!--Common-->
+    <string name="common_title">Common</string>
+    <string name="common_empty_message">No comics have been uploaded yet</string>
 
-    <!--Subscription-->
-    <string name="subscription_title">Subscriptions</string>
+    <!--Subscriptions-->
+    <string name="subscriptions_title">Subscriptions</string>
+    <string name="subscriptions_empty_message">You have not subscribed to any channel yet</string>
+    <string name="channels_empty_message">No channels here yet</string>
 
     <!--Profile-->
     <string name="profile_title">Profile</string>
+    <string name="profile_log_out_alert">Are you sure you want to log out?</string>
 
     <!--Upload screen-->
     <string name="upload_screen_upload_comic">Upload comic</string>
     <string name="upload_screen_empty_fields">All fields must be filled in</string>
+
+    <!--Comic screen-->
+    <string name="comic_screem_read_comic">Read comic</string>
+    <string name="comic_screen_download_comic">Download Comic?</string>
+
+    <!--User screen-->
+    <string name="user_channels">Channels</string>
+    <string name="user_uploads">Uploads</string>
 
 </resources>

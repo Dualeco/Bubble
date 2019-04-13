@@ -5,32 +5,35 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
 import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
-import com.kpiroom.bubble.util.collectionsAsync.mapAsync
+import com.kpiroom.bubble.util.collections.*
 import com.kpiroom.bubble.util.constants.str
-import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.imageUpload.showImageSelectionAlert
+import com.kpiroom.bubble.util.livedata.addSourceNotNull
 import com.kpiroom.bubble.util.livedata.progressState.*
 import com.kpiroom.bubble.util.livedata.setDefault
-import com.kpiroom.bubble.util.progressState.ProgressState
-import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
+import com.kpiroom.bubble.util.recyclerview.model.ComicPage
 import com.kpiroom.bubble.util.recyclerview.tabs.FavoritesAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.SubscriptionAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
+import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 
 class ProfileLogic : ProgressFragmentLogic() {
 
-    override val progress = MutableLiveData<ProgressState>()
+    private val userUuid = Source.userPrefs.uuid
 
-    val uploadsLiveData = Source.run {
-        api.getUserUploadsLiveData(userPrefs.uuid)
-    }
+    val openedChannel = MutableLiveData<User>()
+    val openedComicPage = MutableLiveData<ComicPage>()
+
+    private var unfollowed = false
+
     val scrollFlagsOn = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 
     val scrollFlagsOff = 0
@@ -66,7 +69,7 @@ class ProfileLogic : ProgressFragmentLogic() {
     val channelsAdapter: SubscriptionAdapter = SubscriptionAdapter(
         listOf(),
         ::onChannelClicked,
-        ::onChannelFollowed
+        ::onChannelUnfollowed
     )
 
     val favoritesAdapter: FavoritesAdapter = FavoritesAdapter(
@@ -85,40 +88,81 @@ class ProfileLogic : ProgressFragmentLogic() {
     val optionWindowClicked = MutableLiveData<Boolean>()
     val loggedOut = MutableLiveData<Boolean>()
 
-    val channelList = MutableLiveData<MutableList<User>>().setDefault(
-        mutableListOf()
-    )
-    val favoriteList = MutableLiveData<MutableList<Comic>>().setDefault(
-        mutableListOf(
-        )
-    )
-    val uploadList = MediatorLiveData<List<Comic>>().apply {
-        addSource(uploadsLiveData) { res ->
-            res.data?.let { list ->
-                AsyncProcessor {
-                    list.mapAsync(bag) { Source.api.getComicData(it) }
-                        .sortedByDescending { it.uploadTimeMs }
-                        .also { postValue(it) }
-                } handleError {
-                    progress.alertAsync(it.message)
-                } runWith (bag)
+    private val comicIds = Source.run { api.getUserComicIds(userPrefs.uuid) }
+    val comicList = MediatorLiveData<List<Comic>>().apply {
+        addSourceNotNull(comicIds) { list ->
+            runAsync {
+                list.mapAsync(bag) { Source.api.getComicData(it) }
+                    .sortedByDescending { it.uploadTimeMs }
+                    .also { postValue(it) }
             }
         }
     }
 
-    fun onChannelClicked(user: User) {
+    private val favoriteIds = Source.run { api.getUserFavorites(userPrefs.uuid) }
+    val favoriteList = MediatorLiveData<List<Comic>>().apply {
+        addSourceNotNull(favoriteIds) { map ->
+            runAsync {
+                map.toTimeRecordList()
+                    .mapDataAsync(bag) { Source.api.getComicData(it) }
+                    .sortedByLatest()
+                    .entries()
+                    .also { postValue(it) }
+            }
+        }
     }
 
-    fun onChannelFollowed(user: User) {
+    val channelList = MutableLiveData<List<User>>()
 
+    fun getChannelList() {
+        runAsync {
+            Source.api.apply {
+                getUserSubscriptions(userUuid).toTimeRecordList()
+                    .mapDataAsync(bag) { getUserData(it) }
+                    .sortedByLatest()
+                    .entries()
+                    .also { channelList.postValue(it) }
+            }
+        }
+    }
+
+    fun onChannelClicked(user: User) = clickThrottler.next {
+        openedChannel.value = user
+    }
+
+    fun onChannelUnfollowed(user: User): Boolean = Source.api.run {
+        clickThrottler.next {
+            if (unfollowed) runAsync {
+                subscribeTo(Source.userPrefs.uuid, user.id)
+            }
+            else
+                unsubscribeFrom(Source.userPrefs.uuid, user.id)
+
+            unfollowed = !unfollowed
+        }
+        unfollowed
     }
 
     fun onFavoriteClicked(comic: Comic) {
-
+        runAsync {
+            openedComicPage.postValue(
+                ComicPage(
+                    comic,
+                    Source.api.getUserData(comic.authorId) ?: User()
+                )
+            )
+        }
     }
 
-    fun onUploadClicked(comic: Comic) {
-
+    fun onUploadClicked(comic: Comic) = clickThrottler.next {
+        runAsync {
+            openedComicPage.postValue(
+                ComicPage(
+                    comic,
+                    Source.api.getUserData(comic.authorId) ?: User()
+                )
+            )
+        }
     }
 
     fun onUploadDeleted(comic: Comic) = clickThrottler.next {
@@ -147,7 +191,7 @@ class ProfileLogic : ProgressFragmentLogic() {
     fun onLoggedOut() {
         optionWindowClicked.value = true
         progress.alert(
-            "Are you sure you want to log out?",
+            str(R.string.profile_log_out_alert),
             ::logOut
         )
     }
@@ -256,7 +300,7 @@ class ProfileLogic : ProgressFragmentLogic() {
         }
     }
 
-    private fun backgroundAsync(action: suspend () -> Unit) {
+    private fun runAsync(action: suspend () -> Unit) {
         progress.apply {
             AsyncProcessor(Dispatchers.IO) {
                 action()

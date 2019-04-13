@@ -5,5 +5,5 @@ import com.kpiroom.bubble.ui.core.CoreLogic
 import com.kpiroom.bubble.util.progressState.ProgressState
 
 abstract class ProgressActivityLogic : CoreLogic() {
-    abstract val progress: MediatorLiveData<ProgressState>
+    val progress = MediatorLiveData<ProgressState>()
 }

@@ -4,83 +4,198 @@
         <variable
                 name="logic"
                 type="com.kpiroom.bubble.ui.comicPage.ComicPageLogic"/>
+
+        <variable
+                name="comicPage"
+                type="com.kpiroom.bubble.util.recyclerview.model.ComicPage"/>
     </data>
+
     <ScrollView
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/startButton"
-            android:layout_marginBottom="16dp">
+            android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/upload_preview"
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorBlack">
+                    android:orientation="vertical">
 
-                <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:alpha="0.2"
-                        android:scaleType="centerCrop"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                <ImageView
-                        android:id="@+id/upload_pic_stub"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/default_cover"
-                        app:layout_constraintBottom_toTopOf="@id/upload_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.4"/>
-
-                <com.dichotome.profilephoto.ui.ZoomingImageView
-                        android:id="@+id/upload_pic"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:adjustViewBounds="true"
-                        app:layout_constraintBottom_toTopOf="@id/upload_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.4"/>
-
-                <TextView
-                        android:id="@+id/upload_tv"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/comic_preview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:text="Please, describe your comic"
-                        android:textSize="16dp"
-                        android:textColor="@color/colorPrimary"
-                        app:layout_constraintTop_toBottomOf="@id/upload_pic_stub"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:background="@color/colorBlack">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+                    <ImageView
+                            app:source="@{comicPage.previewUrl}"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:alpha="0.2"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                    <com.dichotome.profilephoto.ui.ZoomingImageView
+                            app:source="@{comicPage.previewUrl}"
+                            android:id="@+id/comic_pic"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@{logic.marginTop}"
+                            android:layout_marginBottom="44dp"
+                            android:src="@drawable/default_cover"
+                            android:adjustViewBounds="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.4"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"/>
+                <LinearLayout
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_marginTop="16dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorTextBlack"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:text="@{comicPage.name}"
+                            android:fontFamily="sans-serif-condensed-medium"
+                            android:textSize="20sp"
+                            android:layout_marginBottom="8dp"/>
+                    <View
+                            android:background="@color/colorGrey"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0.5dp"
+                            android:layout_marginBottom="4dp"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp">
+
+                        <androidx.constraintlayout.widget.Guideline
+                                android:orientation="vertical"
+                                android:id="@+id/comicAuthorGuideline"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:layout_constraintGuide_percent="0.65"/>
+
+                        <LinearLayout
+                                android:onClick="@{() -> logic.onAuthorClicked()}"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="@id/comicAuthorGuideline"
+                                android:id="@+id/comicAuthorArea"
+                                android:layout_width="0dp"
+                                android:gravity="start"
+                                android:layout_height="48dp"
+                                android:orientation="horizontal">
+
+                            <com.dichotome.profileshared.views.CircularImageView
+                                    android:src="@drawable/default_avatar"
+                                    app:source="@{comicPage.authorThumbnailUrl}"
+                                    android:id="@+id/itemPic"
+                                    android:scaleType="centerCrop"
+                                    android:layout_marginTop="4dp"
+                                    android:layout_marginBottom="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"/>
+
+                            <TextView
+                                    android:text="@{comicPage.authorName}"
+                                    android:lines="1"
+                                    android:ellipsize="end"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:textSize="16sp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center_vertical"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:onClick="@{() -> logic.onStarClicked()}"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                android:orientation="horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical">
+
+                            <ImageView
+                                    android:padding="4dp"
+                                    android:id="@+id/comicStarIcon"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:src="@drawable/ic_star"/>
+                            <TextView
+                                    android:id="@+id/comicStarCount"
+                                    android:text="@{`` + logic.starCount}"
+                                    android:fontFamily="sans-serif-condensed-medium"
+                                    android:maxLength="5"
+                                    android:ellipsize="end"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="8dp"/>
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                            android:textColor="@color/colorTextBlack"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Description:"
+                            android:textSize="16sp"
+                            android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{comicPage.description}"
+                            android:layout_marginBottom="12dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                    android:onClick="@{() -> logic.onDownloadClicked()}"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="vertical">
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
+                    android:layout_marginStart="64dp"
+                    android:layout_marginEnd="64dp"
+                    android:layout_height="48dp"
+                    app:layout_anchor="@id/comic_preview"
+                    app:layout_anchorGravity="bottom|center_horizontal"
+                    android:id="@+id/comicDownloadButton"
+                    android:background="@color/colorPrimaryRed"
+                    android:elevation="1dp"
+                    android:gravity="center"
+                    android:text="@string/comic_screem_read_comic"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"/>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </ScrollView>
 </layout>

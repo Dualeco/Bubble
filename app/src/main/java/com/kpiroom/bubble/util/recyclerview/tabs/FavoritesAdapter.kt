@@ -2,9 +2,11 @@ package com.kpiroom.bubble.util.recyclerview.tabs
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.dichotome.profilebar.util.extensions.download
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.TabItemFavoritesBinding
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
+import com.kpiroom.bubble.util.date.msToDateStr
 import com.kpiroom.bubble.util.recyclerview.core.CoreAdapter
 import com.kpiroom.bubble.util.recyclerview.core.CoreHolder
 import java.lang.ref.WeakReference
@@ -17,32 +19,37 @@ class FavoritesAdapter(
     override val viewType: Int = R.layout.tab_item_favorites
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesHolder =
-        FavoritesHolder(
-            TabItemFavoritesBinding.inflate(LayoutInflater.from(parent.context)),
-            WeakReference(onClick)
-        )
+        FavoritesHolder(TabItemFavoritesBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onViewRecycled(holder: FavoritesHolder) {
         super.onViewRecycled(holder)
         holder.apply {
-            onClickWeak.clear()
+            onClickWeak?.clear()
         }
     }
+
+    override fun onBindViewHolder(holder: FavoritesHolder, position: Int) =
+        holder.bind(data[position], WeakReference(onClick))
 }
 
-class FavoritesHolder(
-    val binding: TabItemFavoritesBinding,
-    val onClickWeak: WeakReference<(Comic) -> Unit>
-) : CoreHolder<Comic>(binding.root) {
+class FavoritesHolder(val binding: TabItemFavoritesBinding) : CoreHolder<Comic>(binding.root) {
 
-    override fun bind(data: Comic) {
+    var onClickWeak: WeakReference<(Comic) -> Unit>? = null
+
+    fun bind(data: Comic, onClick: WeakReference<(Comic) -> Unit>) {
         itemData = data
-        binding.itemName.text = data.title
+
+        onClickWeak = onClick
+        binding.apply {
+            itemName.text = data.name
+            itemInfoTV.text = msToDateStr(data.uploadTimeMs)
+            itemPic.download(if (data.favPreviewUrl.isBlank()) data.previewUrl else data.favPreviewUrl)
+        }
     }
 
     init {
         itemView.setOnClickListener {
-            onClickWeak.get()?.invoke(itemData)
+            onClickWeak?.get()?.invoke(itemData)
         }
     }
 }

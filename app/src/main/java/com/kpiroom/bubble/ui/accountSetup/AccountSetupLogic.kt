@@ -1,12 +1,13 @@
 package com.kpiroom.bubble.ui.accountSetup
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User
-import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.ui.progress.ProgressActivityLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.bitmap.extractBitmapFrom
 import com.kpiroom.bubble.util.constants.getResUri
@@ -17,19 +18,16 @@ import com.kpiroom.bubble.util.livedata.progressState.alertAsync
 import com.kpiroom.bubble.util.livedata.progressState.finishAsync
 import com.kpiroom.bubble.util.livedata.progressState.loadAsync
 import com.kpiroom.bubble.util.livedata.setDefault
-import com.kpiroom.bubble.util.progressState.ProgressState
 import com.kpiroom.bubble.util.usernameValidation.validateUsernameAsync
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AccountSetupLogic : CoreLogic() {
+class AccountSetupLogic : ProgressActivityLogic() {
 
     companion object {
         const val TAG = "AccountSetupLogic"
     }
-
-    val progress = MutableLiveData<ProgressState>()
 
     val username = MutableLiveData<String>()
     val clearUsernameFocus = MutableLiveData<Boolean>()
@@ -153,6 +151,9 @@ class AccountSetupLogic : CoreLogic() {
             if (isPhotoSet)
                 extractBitmapFrom(photoUri)?.let { bitmap ->
                     photoDownloadUri = api.uploadUserPhoto(uuid, bitmap)
+                    api.uploadUserThumbnail(uuid, bitmap.run {
+                        Bitmap.createScaledBitmap(this, width / 8, height / 8, false)
+                    })
                 }
             if (isWallpaperSet)
                 extractBitmapFrom(wallpaperUri)?.let { bitmap ->

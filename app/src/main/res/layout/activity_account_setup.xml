@@ -37,11 +37,11 @@
                         android:layout_height="@dimen/profilebar_height">
 
                     <ImageView
+                            app:source="@{logic.wallpaperUri}"
                             android:id="@+id/wallpaperPhoto"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            app:uri="@{logic.wallpaperUri}"/>
+                            android:scaleType="centerCrop"/>
 
                     <View
                             android:id="@+id/dim"
@@ -116,14 +116,14 @@
                                 android:scaleType="centerCrop"/>
 
                         <com.dichotome.profileshared.views.CircularImageView
+                                app:source="@{logic.photoUri}"
                                 android:id="@+id/photo"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:layout_margin="2dp"
                                 android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                app:uri="@{logic.photoUri}"/>
+                                android:scaleType="centerCrop"/>
 
                     </FrameLayout>
 

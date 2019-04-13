@@ -21,8 +21,6 @@ abstract class CoreAdapter<T : Comparable, VH : CoreHolder<T>>(
 
     override fun getItemCount(): Int = data.size
 
-    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(data[position])
-
     fun updateData(newData: List<T>) = DiffUtil.calculateDiff(
         TabDiffUtilCallback(data, newData)
     ).run {
@@ -34,5 +32,4 @@ abstract class CoreAdapter<T : Comparable, VH : CoreHolder<T>>(
 abstract class CoreHolder<T : Comparable>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     lateinit var itemData: T
-    abstract fun bind(data: T)
 }

@@ -6,6 +6,7 @@ import android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
 import android.net.Uri
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.MutableLiveData
+import com.dichotome.profileshared.constants.Constants
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp.Companion.app
 import com.kpiroom.bubble.source.Source
@@ -13,6 +14,8 @@ import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.ui.progress.ProgressFragmentLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.bitmap.getCompressed
+import com.kpiroom.bubble.util.constants.STATUS_BAR_SIZE
+import com.kpiroom.bubble.util.constants.dpToPx
 import com.kpiroom.bubble.util.constants.drw
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.progressState.ProgressState
@@ -28,8 +31,10 @@ class UploadScreenLogic : ProgressFragmentLogic() {
         private const val RENDER_MODE = "r"
     }
 
-    override val progress = MutableLiveData<ProgressState>()
+    val marginTop = STATUS_BAR_SIZE + dpToPx(12)
+
     val bitmapPreview = MutableLiveData<Bitmap>()
+    lateinit var bitmapFavPreview: Bitmap
     lateinit var bitmapThumbnail: Bitmap
 
     val title = MutableLiveData<String>()
@@ -53,10 +58,13 @@ class UploadScreenLogic : ProgressFragmentLogic() {
                         render(bitmap, null, null, RENDER_MODE_FOR_DISPLAY)
                         close()
                     }
-                bitmapThumbnail = bitmap.run {
-                    Bitmap.createScaledBitmap(this, width / 8, height / 8, false).getCompressed()
+                bitmapFavPreview = bitmap.run {
+                    Bitmap.createScaledBitmap(this, width / 3, height / 3, false)
                 }
-                bitmapPreview.postValue(bitmap.getCompressed())
+                bitmapThumbnail = bitmap.run {
+                    Bitmap.createScaledBitmap(this, width / 8, height / 8, false)
+                }
+                bitmapPreview.postValue(bitmap)
                 finishAsync()
             } handleError {
                 alertAsync(it.message)
@@ -90,6 +98,7 @@ class UploadScreenLogic : ProgressFragmentLogic() {
                                     comicId,
                                     title,
                                     uploadComicThumbnail(comicId, bitmapThumbnail).toString(),
+                                    uploadComicFavPreview(comicId, bitmapFavPreview).toString(),
                                     uploadComicPreview(comicId, preview).toString(),
                                     description,
                                     userPrefs.uuid,

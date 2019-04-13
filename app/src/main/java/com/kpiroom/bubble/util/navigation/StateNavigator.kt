@@ -23,7 +23,7 @@ class StateNavigator(
         navigatorExtras: Navigator.Extras?
     ): NavDestination? = with(manager.beginTransaction()) {
 
-        val tag = destination.id.toString()
+        val tag = destination.comparisonId.toString()
 
         val currentFragment = manager.primaryNavigationFragment
         currentFragment?.let {

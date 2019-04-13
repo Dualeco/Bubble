@@ -4,12 +4,12 @@
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_dashboard"
-        android:title="@string/dashboard_title"/>
+        android:title="@string/common_title"/>
 
     <item
         android:id="@+id/navigation_subscription"
         android:icon="@drawable/ic_subscription"
-        android:title="@string/subscription_title" />
+        android:title="@string/subscriptions_title" />
 
     <item
         android:id="@+id/navigation_profile"

@@ -18,7 +18,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign up successful for $email, id: $id")
+                Log.d(TAG, "Sign up successful for $email, comparisonId: $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {
@@ -38,7 +38,7 @@ class FirebaseAuthUtil(val auth: FirebaseAuth) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val id = result?.user?.uid
-                Log.d(TAG, "Sign in successful for $email, id: $id")
+                Log.d(TAG, "Sign in successful for $email, comparisonId: $id")
                 continuation.resume(id)
             }
             .addOnFailureListener {

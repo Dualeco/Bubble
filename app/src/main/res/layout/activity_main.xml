@@ -4,6 +4,8 @@
         <variable
                 name="logic"
                 type="com.kpiroom.bubble.ui.main.MainLogic"/>
+
+        <import type="com.kpiroom.bubble.util.constants.ConstantsKt"/>
     </data>
     <com.kpiroom.bubble.util.view.ProgressLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,5 +45,10 @@
                     app:itemTextColor="@color/background_navigation_item"
                     app:itemIconTint="@color/background_navigation_item"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="@{ConstantsKt.STATUS_BAR_SIZE, default=match_parent}"
+                android:background="@color/toolbarColor"/>
     </com.kpiroom.bubble.util.view.ProgressLayout>
 </layout>

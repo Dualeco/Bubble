@@ -8,28 +8,87 @@
 
     <fragment
             android:id="@+id/navigation_dashboard"
-            android:name="com.kpiroom.bubble.ui.main.fragments.dashboard.DashboardFragment"
-            android:label="@string/dashboard_title"
-            tools:layout="@layout/fragment_dashboard"/>
+            android:name="com.kpiroom.bubble.ui.main.fragments.common.CommonFragment"
+            android:label="@string/common_title"
+            tools:layout="@layout/fragment_common">
+
+        <action android:id="@+id/action_open_common_comic"
+                app:destination="@id/comicPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_subscription"
-            android:name="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsFragment"
-            android:label="@string/subscription_title"
-            tools:layout="@layout/fragment_subscription"/>
+            android:name="com.kpiroom.bubble.ui.main.fragments.subscriptions.SubscriptionsFragment"
+            android:label="@string/subscriptions_title"
+            tools:layout="@layout/fragment_subscription">
+
+        <action android:id="@+id/action_open_subscription_comic"
+                app:destination="@id/comicPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
+    </fragment>
 
     <fragment
             android:id="@+id/navigation_profile"
             android:name="com.kpiroom.bubble.ui.main.fragments.profile.ProfileFragment"
             android:label="@string/profile_title"
             tools:layout="@layout/fragment_profile">
+
         <action android:id="@+id/action_upload_comic"
-                app:destination="@id/upload_screen"/>
+                app:destination="@id/upload_screen"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
+
+        <action android:id="@+id/action_open_profile_comic"
+                app:destination="@id/comicPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" app:launchSingleTop="false"/>
+
+        <action android:id="@+id/action_open_subscription"
+                app:destination="@id/userPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
     </fragment>
     <fragment
             android:id="@+id/upload_screen"
             android:name="com.kpiroom.bubble.ui.uploadScreen.UploadScreenFragment"
             android:label="UploadScreenFragment">
     </fragment>
+    <fragment android:id="@+id/comicPageFragment"
+              android:name="com.kpiroom.bubble.ui.comicPage.ComicPageFragment"
+              android:label="ComicPageFragment">
+
+        <action android:id="@+id/action_open_comic_author"
+                app:destination="@id/userPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" />
+
+        <action android:id="@+id/action_open_own_page"
+                app:destination="@id/navigation_profile"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
+        <action android:id="@+id/action_read_comic"
+                app:destination="@id/pdfViewerActivity"/>
+    </fragment>
+    <fragment android:id="@+id/userPageFragment"
+              android:name="com.kpiroom.bubble.ui.userPage.UserPageFragment"
+              android:label="UserPageFragment">
+
+        <action android:id="@+id/action_open_user_subscription"
+                app:destination="@id/userPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"/>
+
+        <action android:id="@+id/action_open_user_upload"
+                app:destination="@id/comicPageFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+        />
+    </fragment>
+    <activity android:id="@+id/pdfViewerActivity"
+              android:name="com.kpiroom.bubble.ui.pdfViewer.PdfViewerActivity"
+              android:label="PdfViewerActivity"/>
 
 </navigation>

@@ -15,7 +15,7 @@ fun SharedPreferences.addBoolean(key: String, value: Boolean): Unit = edit()
 
 fun UserPrefs.setFromUser(uuid: String, user: User): Unit = user.let {
     this.uuid = uuid
-    username = user.username
+    username = user.name
     joinedDate = user.joinedDate
     photoDownloadUri = Uri.parse(user.photoUrl)
     wallpaperDownloadUri = Uri.parse(user.wallpaperUrl)

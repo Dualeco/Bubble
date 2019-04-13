@@ -17,7 +17,7 @@ fun LiveData<Boolean>.observeTrue(owner: LifecycleOwner, observer: Observer<Bool
     })
 }
 
-fun <T : Any> LiveData<T>.observeNotNull(owner: LifecycleOwner, observer: Observer<T>) {
+fun <T> LiveData<T>.observeNotNull(owner: LifecycleOwner, observer: Observer<T>) {
     observe(owner, Observer { data ->
         data?.let {
             observer.onChanged(it)
@@ -25,16 +25,16 @@ fun <T : Any> LiveData<T>.observeNotNull(owner: LifecycleOwner, observer: Observ
     })
 }
 
-fun <T : Any> MediatorLiveData<T>.addSource(source: LiveData<T>) {
+fun <T> MediatorLiveData<T>.addSource(source: LiveData<T>) {
     addSource(source) {
         value = it
     }
 }
 
-fun <T : Any> LiveData<Resource<T>>.observeResource(owner: LifecycleOwner, observer: (T?, Throwable?) -> Unit) {
-    observeNotNull(owner, Observer { res ->
-        res.apply {
-            observer(data, error)
+fun <T, S> MediatorLiveData<T>.addSourceNotNull(source: LiveData<S>, observer: (S) -> Unit) {
+    addSource(source) { data ->
+        data?.let {
+            observer(it)
         }
-    })
+    }
 }

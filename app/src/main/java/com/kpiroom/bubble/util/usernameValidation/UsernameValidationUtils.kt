@@ -3,7 +3,6 @@ package com.kpiroom.bubble.util.usernameValidation
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.util.async.AsyncBag
-import com.kpiroom.bubble.util.collectionsAsync.mapAsync
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.exceptions.core.CoreException
 import com.kpiroom.bubble.util.exceptions.core.CoreException.Companion.NONE

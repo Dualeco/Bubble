@@ -1,6 +1,7 @@
 package com.kpiroom.bubble.source.api.impl.firebase
 
-import java.util.*
+import android.os.Parcel
+import android.os.Parcelable
 
 object FirebaseStructure {
 
@@ -10,10 +11,11 @@ object FirebaseStructure {
     const val USER_UUIDS = "user_uuids"
     const val COMICS = "comics"
     const val PREVIEWS = "previews"
+    const val FAV_PREVIEWS = "fav_previews"
     const val THUMBNAILS = "thumbnails"
-    const val USERNAMES = "usernames"
     const val IS_CONNECTED = ".info/connected"
     const val PROFILE_PHOTOS = "profile_photos"
+    const val PROFILE_THUMBNAILS = "profile_thumbnails"
     const val PROFILE_WALLPAPERS = "profile_wallpapers"
 
     const val VERSION = "/$VERSION_KEY"
@@ -25,52 +27,89 @@ object FirebaseStructure {
         val SERVER_TIME = "/$META_KEY/$SERVER_TIME_KEY"
     }
 
-    abstract class Comparable(
-        val id: String,
+    interface Comparable {
+        val id: String
         val name: String
+    }
+
+    data class TimeRecord<T>(
+        val data: T,
+        val time: Long
     )
 
     data class User(
-        val uuid: String = "",
-        val username: String = "",
+        override val id: String = "",
+        override val name: String = "",
         val joinedDate: String = "",
         val photoUrl: String = "",
+        val thumbnailUrl: String = "",
         val wallpaperUrl: String = ""
-    ) : Comparable(uuid, username)
+    ) : Comparable, Parcelable {
+        constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString()
+        )
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(id)
+            parcel.writeString(name)
+            parcel.writeString(joinedDate)
+            parcel.writeString(photoUrl)
+            parcel.writeString(wallpaperUrl)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<User> {
+            override fun createFromParcel(parcel: Parcel): User {
+                return User(parcel)
+            }
+
+            override fun newArray(size: Int): Array<User?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 
     data class Comic(
-        val uuid: String = "",
-        val title: String = "",
+        override val id: String = "",
+        override val name: String = "",
         val thumbnailUrl: String = "",
+        val favPreviewUrl: String = "",
         val previewUrl: String = "",
         val description: String = "",
         val authorId: String = "",
-        val uploadTimeMs: Long = 0L,
-        val downloads: Int = 0,
-        val stars: Int = 0
-    ) : Comparable(uuid, title)
+        val uploadTimeMs: Long = 0L
+    ) : Comparable
 
     class USER_KEYS(uuid: String) {
         val LOCATION = "$USERS/$uuid"
-        val UUID = "$LOCATION/uuid"
-        val USERNAME = "$LOCATION/username"
+        val UUID = "$LOCATION/id"
+        val USERNAME = "$LOCATION/name"
         val JOINED_DATE = "$LOCATION/joinedDate"
         val PHOTO_URL = "$LOCATION/photoUrl"
+        val THUMBNAIL_URL = "$LOCATION/thumbnailUrl"
         val WALLPAPER_URL = "$LOCATION/wallpaperUrl"
         val UPLOADS = "$LOCATION/uploads"
         val FAVORITES = "$LOCATION/favorites"
         val SUBSCRIPTIONS = "$LOCATION/subscriptions"
+        val SUBSCRIBERS = "$LOCATION/subscribers"
     }
 
     class COMIC_KEYS(uuid: String) {
         val LOCATION = "$COMICS/$uuid"
-        val UUID = "$LOCATION/uuid"
-        val TITLE = "$LOCATION/title"
+        val UUID = "$LOCATION/id"
+        val TITLE = "$LOCATION/name"
         val THUMBNAIL_URL = "$LOCATION/thumbnailUrl"
         val DESCRIPTION = "$LOCATION/description"
         val AUTHOR_ID = "$LOCATION/authorId"
         val UPLOAD_TIME_MS = "$LOCATION/uploadTimeMs"
         val DOWNLOADS = "$LOCATION/downloads"
-        val STARS = "$LOCATION/stars"
+        val STARRED = "$LOCATION/starred"
     }
 }

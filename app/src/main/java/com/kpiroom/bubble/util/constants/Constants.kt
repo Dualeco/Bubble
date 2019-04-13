@@ -24,6 +24,7 @@ val CONTAINER_TOP_MARGIN = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITK
 
 val DIR_PICTURES: File = BubbleApp.app.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 val DIR_CAMERA: File = mkDir(DIR_PICTURES, str(R.string.camera_dir))
+val DIR_COMICS: File = mkDir(DIR_PICTURES, str(R.string.comics_dir))
 
 val FILE_PROVIDER = "com.kpiroom.bubble.fileprovider"
 

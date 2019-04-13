@@ -5,9 +5,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.kpiroom.bubble.util.livedata.Resource
 
-abstract class FirebaseLiveData<T>(private val ref: DatabaseReference) : LiveData<Resource<T>>() {
+abstract class FirebaseLiveData<T>(private val ref: DatabaseReference) : LiveData<T>() {
 
     abstract fun onDataChangeListener(dataSnapshot: DataSnapshot): T
 
@@ -17,12 +16,10 @@ abstract class FirebaseLiveData<T>(private val ref: DatabaseReference) : LiveDat
         super.onActive()
 
         listener = object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                value = Resource(null, error.toException())
-            }
+            override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                value = Resource(onDataChangeListener(snapshot))
+                value = onDataChangeListener(snapshot)
             }
         }
 

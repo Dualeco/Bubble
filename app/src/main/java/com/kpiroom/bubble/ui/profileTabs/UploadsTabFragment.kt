@@ -8,14 +8,14 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kpiroom.bubble.R
-import com.kpiroom.bubble.databinding.TabItemUploadsBinding
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
 import com.kpiroom.bubble.util.recyclerview.tabs.UploadsAdapter
 import com.kpiroom.bubble.util.recyclerview.tabs.UploadsHolder
-import kotlinx.android.synthetic.main.profile_tab_uploads.*
+import kotlinx.android.synthetic.main.fragment_comic_page.*
+import kotlinx.android.synthetic.main.profile_tab_own_uploads.*
 
-class UploadsTabFragment(uploadsAdapter: UploadsAdapter) :
-    CoreTabFragment<Comic, UploadsHolder>(R.layout.profile_tab_uploads) {
+class UploadsTabFragment(uploadsAdapter: UploadsAdapter, ownUploads: Boolean = true) :
+    CoreTabFragment<Comic, UploadsHolder>(if (ownUploads) R.layout.profile_tab_own_uploads else R.layout.profile_tab_user_uploads) {
     companion object {
         val UPLOAD_URI = "uploadUri"
         private val REQUEST_UPLOAD = 0
@@ -23,8 +23,9 @@ class UploadsTabFragment(uploadsAdapter: UploadsAdapter) :
 
         fun newInstance(
             adapter: UploadsAdapter,
-            tabTitle: String
-        ) = UploadsTabFragment(adapter).apply {
+            tabTitle: String,
+            ownUploads: Boolean = true
+        ) = UploadsTabFragment(adapter, ownUploads).apply {
             title = tabTitle
         }
     }
@@ -37,7 +38,7 @@ class UploadsTabFragment(uploadsAdapter: UploadsAdapter) :
             layoutManager = LinearLayoutManager(context)
         }
 
-        upload_fab.setOnClickListener {
+        upload_fab?.setOnClickListener {
             Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = CONTENT_TYPE
             }.also {

@@ -5,45 +5,44 @@ import android.view.ViewGroup
 import com.dichotome.profilebar.util.extensions.download
 import com.kpiroom.bubble.R
 import com.kpiroom.bubble.databinding.ItemAllComicsBinding
-import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comic
-import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.date.msToDateStr
 import com.kpiroom.bubble.util.recyclerview.core.CoreAdapter
 import com.kpiroom.bubble.util.recyclerview.core.CoreHolder
-import com.kpiroom.bubble.util.recyclerview.model.NamedComic
+import com.kpiroom.bubble.util.recyclerview.model.ComicPage
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
-import java.util.*
 
-class AllComicsAdapter(
-    data: List<NamedComic>,
-    val onClick: (NamedComic) -> Unit
-) : CoreAdapter<NamedComic, AllComicsHolder>(data) {
+class ComicPagesAdapter(
+    data: List<ComicPage>,
+    val onClick: (ComicPage) -> Unit
+) : CoreAdapter<ComicPage, AllComicsHolder>(data) {
 
     override val viewType: Int = R.layout.item_all_comics
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllComicsHolder =
         AllComicsHolder(
-            ItemAllComicsBinding.inflate(LayoutInflater.from(parent.context)),
-            WeakReference(onClick)
+            ItemAllComicsBinding.inflate(LayoutInflater.from(parent.context))
         )
 
     override fun onViewRecycled(holder: AllComicsHolder) {
         super.onViewRecycled(holder)
         holder.apply {
-            onClickWeak.clear()
+            onClickWeak?.clear()
         }
     }
+
+    override fun onBindViewHolder(holder: AllComicsHolder, position: Int) =
+        holder.bind(data[position], WeakReference(onClick))
 }
 
-class AllComicsHolder(
-    val binding: ItemAllComicsBinding,
-    val onClickWeak: WeakReference<(NamedComic) -> Unit>
-) : CoreHolder<NamedComic>(binding.root) {
+class AllComicsHolder(val binding: ItemAllComicsBinding) : CoreHolder<ComicPage>(binding.root) {
 
-    override fun bind(data: NamedComic) = binding.run {
+    var onClickWeak: WeakReference<(ComicPage) -> Unit>? = null
+
+    fun bind(data: ComicPage, onClick: WeakReference<(ComicPage) -> Unit>) = binding.run {
+        onClickWeak = onClick
+
         itemData = data
-        itemTitle.text = data.title
+        itemTitle.text = data.name
         itemThumbnail.download(data.thumbnailUrl)
         itemDownloadCount.text = data.downloads.toString()
         itemStarCount.text = data.stars.toString()
@@ -53,7 +52,7 @@ class AllComicsHolder(
 
     init {
         itemView.setOnClickListener {
-            onClickWeak.get()?.invoke(itemData)
+            onClickWeak?.get()?.invoke(itemData)
         }
     }
 }

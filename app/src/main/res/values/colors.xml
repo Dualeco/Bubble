@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryUnselected">#99FFFFFF</color>
+    <color name="colorPrimarySelected">#FFFCFC</color>
     <color name="colorPrimaryDark">#E6000000</color>
     <color name="colorAccent">#E00D0D</color>
     <color name="colorTextHintRed">#80950000</color>
@@ -15,6 +16,8 @@
     <color name="colorRedDark">#CC990701</color>
     <color name="rippleColor">#4DFFFFFF</color>
     <color name="shadowTransparent">#73727272</color>
+
+    <color name="colorIconShadow">#80000000</color>
 
     <!--EditText background-->
     <color name="edit_text_background_center">#E6EBE9E9</color>

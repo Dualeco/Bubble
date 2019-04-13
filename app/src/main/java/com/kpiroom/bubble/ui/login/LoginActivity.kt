@@ -19,6 +19,8 @@ import com.kpiroom.bubble.databinding.ActivityLoginBinding
 import com.kpiroom.bubble.ui.accountSetup.AccountSetupActivity
 import com.kpiroom.bubble.ui.core.CoreActivity
 import com.kpiroom.bubble.ui.main.MainActivity
+import com.kpiroom.bubble.ui.progress.ProgressActivity
+import com.kpiroom.bubble.ui.progress.ProgressActivityLogic
 import com.kpiroom.bubble.util.livedata.observeTrue
 import com.kpiroom.bubble.util.view.LoginAnimation
 import com.kpiroom.bubble.util.view.hideKeyboard
@@ -26,7 +28,7 @@ import com.kpiroom.bubble.util.view.isWithinView
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
-class LoginActivity : CoreActivity<LoginLogic, ActivityLoginBinding>() {
+class LoginActivity : ProgressActivity<LoginLogic, ActivityLoginBinding>() {
 
     private val toggleAuthAnimation = LinkedList<ValueAnimator>()
     private lateinit var scrollAnimator: ValueAnimator

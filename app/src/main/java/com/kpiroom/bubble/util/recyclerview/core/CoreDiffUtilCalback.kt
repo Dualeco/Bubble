@@ -1,5 +1,6 @@
 package com.kpiroom.bubble.util.recyclerview.core
 
+import android.util.Log
 import androidx.recyclerview.widget.DiffUtil
 import com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.Comparable
 

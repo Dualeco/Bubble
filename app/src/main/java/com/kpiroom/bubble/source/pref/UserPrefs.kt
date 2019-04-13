@@ -10,8 +10,8 @@ import com.kpiroom.bubble.util.pref.clear
 
 class UserPrefs {
     companion object {
-        private const val UUID = "uuid"
-        private const val USERNAME = "username"
+        private const val UUID = "id"
+        private const val USERNAME = "name"
         private const val JOINED_DATE = "joinedOn"
         private const val PHOTO_NAME = "photoDownloadUri"
         private const val WALLPAPER_NAME = "wallpaperDownloadUri"

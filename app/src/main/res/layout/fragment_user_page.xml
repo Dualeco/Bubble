@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+                name="logic"
+                type="com.kpiroom.bubble.ui.userPage.UserPageLogic"/>
+
+        <variable
+                name="user"
+                type="com.kpiroom.bubble.source.api.impl.firebase.FirebaseStructure.User" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <com.dichotome.profilebar.ui.profileBar.ProfileBar
+            android:id="@+id/profileBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/profilebar_height"
+            app:title="@{user.name}"
+            app:subtitle="@{user.joinedDate}"
+            app:photoSource="@{user.photoUrl}"
+            app:wallpaperSource="@{user.wallpaperUrl}"
+            app:isOwnProfile="@{false}"
+            app:setOnFollowed="@{() -> logic.onFollowed()}"/>
+
+    <com.dichotome.profilebar.ui.tabPager.TabPager
+            android:id="@+id/profilePager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -4,20 +4,44 @@
     <data>
 
         <variable
-            name="logic"
-            type="com.kpiroom.bubble.ui.main.fragments.subscription.SubscriptionsLogic"/>
+                name="logic"
+                type="com.kpiroom.bubble.ui.main.fragments.subscriptions.SubscriptionsLogic"/>
 
+        <import type="com.kpiroom.bubble.util.constants.ConstantsKt"/>
     </data>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
 
         <TextView
-            android:text="Subscription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                android:layout_gravity="center"
+                android:text="@string/subscriptions_empty_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-    </LinearLayout>
 
+        <FrameLayout
+                android:id="@+id/subscriptionsProgress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary">
+
+            <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:clipToPadding="false"
+                android:paddingTop="@{ConstantsKt.STATUS_BAR_SIZE}"
+                android:visibility="invisible"
+                android:id="@+id/subscriptionsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"/>
+    </FrameLayout>
 </layout>

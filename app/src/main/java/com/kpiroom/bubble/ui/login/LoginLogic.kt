@@ -6,6 +6,7 @@ import com.kpiroom.bubble.R
 import com.kpiroom.bubble.os.BubbleApp
 import com.kpiroom.bubble.source.Source
 import com.kpiroom.bubble.ui.core.CoreLogic
+import com.kpiroom.bubble.ui.progress.ProgressActivityLogic
 import com.kpiroom.bubble.util.async.AsyncProcessor
 import com.kpiroom.bubble.util.constants.str
 import com.kpiroom.bubble.util.events.DelayedAction
@@ -17,7 +18,7 @@ import com.kpiroom.bubble.util.livedata.progressState.alertAsync
 import com.kpiroom.bubble.util.livedata.progressState.finishAsync
 import com.kpiroom.bubble.util.livedata.progressState.loadAsync
 
-class LoginLogic : CoreLogic() {
+class LoginLogic : ProgressActivityLogic() {
 
     companion object {
         val TAG = "LoginLogic"
@@ -35,7 +36,6 @@ class LoginLogic : CoreLogic() {
     val isNewAccount = MutableLiveData<Boolean>()
 
     val delayedAction = MutableLiveData<DelayedAction>()
-    val progress = MutableLiveData<ProgressState>()
 
     fun onAuthClicked() {
         clickThrottler.next {

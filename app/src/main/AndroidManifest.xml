@@ -32,6 +32,7 @@
                 android:windowSoftInputMode="stateHidden"/>
 
         <activity android:name=".ui.main.MainActivity"
+                  android:theme="@style/AppTheme.Translucent"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateHidden"/>
 
@@ -42,6 +43,9 @@
         <activity android:name=".ui.uploadScreen.UploadScreenActivity"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".ui.pdfViewer.PdfViewerActivity"
+                  android:theme="@style/AppTheme.Translucent"/>
 
         <provider
                 android:authorities="com.kpiroom.bubble.fileprovider"
