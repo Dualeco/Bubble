@@ -77,6 +77,7 @@ class UserPageLogic() : ProgressFragmentLogic() {
     }
 
     fun onFollowed() = clickThrottler.next {
+        isSubscribed.value = !(isSubscribed.value ?: false)
         runAsync {
             Source.apply {
                 if (isSubscribed.value == true)
@@ -84,7 +85,6 @@ class UserPageLogic() : ProgressFragmentLogic() {
                 else
                     api.subscribeTo(userPrefs.uuid, user.id)
             }
-            isSubscribed.postValue(!(isSubscribed.value ?: false))
         }
     }
 

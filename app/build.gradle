@@ -66,7 +66,6 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
 
     //ProfileBar
-    implementation "com.github.DichotoMe.ProfileBar:profilePhoto:$profilebar_version"
     implementation "com.github.DichotoMe.ProfileBar:profilebar:$profilebar_version"
     implementation "com.github.DichotoMe.ProfileBar:profilebarBinding:$profilebar_version"
     implementation "com.github.DichotoMe.ProfileBar:profileShared:$profilebar_version"
