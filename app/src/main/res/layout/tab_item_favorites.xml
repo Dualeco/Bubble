@@ -12,7 +12,7 @@
                   android:paddingEnd="4dp"
                   android:paddingBottom="8dp">
 
-        <com.dichotome.profileshared.views.RoundedImageView
+        <com.dichotome.roundedimageview.RoundedImageView
                 android:adjustViewBounds="true"
                 android:src="@drawable/default_cover"
                 android:id="@+id/itemPic"

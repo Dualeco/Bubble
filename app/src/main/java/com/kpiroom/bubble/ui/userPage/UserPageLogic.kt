@@ -81,9 +81,10 @@ class UserPageLogic() : ProgressFragmentLogic() {
         runAsync {
             Source.apply {
                 if (isSubscribed.value == true)
-                    api.unsubscribeFrom(userPrefs.uuid, user.id)
-                else
                     api.subscribeTo(userPrefs.uuid, user.id)
+                else
+                    api.unsubscribeFrom(userPrefs.uuid, user.id)
+
             }
         }
     }

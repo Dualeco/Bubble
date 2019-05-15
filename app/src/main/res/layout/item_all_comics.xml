@@ -8,7 +8,7 @@
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackground">
 
-        <com.dichotome.profileshared.views.RoundedImageView
+        <com.dichotome.roundedimageview.RoundedImageView
                 app:cornerRadius="4dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="2dp"
@@ -79,6 +79,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
+                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_cloud_download"
@@ -89,6 +90,7 @@
                 app:layout_constraintStart_toEndOf="@id/guidelineIcons"/>
 
         <TextView
+                android:visibility="invisible"
                 android:id="@+id/itemDownloadCount"
                 app:layout_constraintTop_toBottomOf="@id/icon_downloaded"
                 android:gravity="center"
@@ -102,6 +104,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/author_area"/>
 
         <ImageView
+                android:visibility="invisible"
                 app:layout_constraintStart_toEndOf="@id/icon_downloaded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -114,6 +117,7 @@
                 android:id="@+id/icon_starred"/>
 
         <TextView
+                android:visibility="invisible"
                 app:layout_constraintTop_toBottomOf="@id/icon_starred"
                 android:id="@+id/itemStarCount"
                 android:gravity="center"

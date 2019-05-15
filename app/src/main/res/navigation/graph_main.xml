@@ -85,7 +85,7 @@
                 app:destination="@id/comicPageFragment"
                 app:enterAnim="@anim/nav_default_enter_anim"
                 app:exitAnim="@anim/nav_default_exit_anim"
-        />
+                app:popUpTo="@+id/comicPageFragment" app:popUpToInclusive="true"/>
     </fragment>
     <activity android:id="@+id/pdfViewerActivity"
               android:name="com.kpiroom.bubble.ui.pdfViewer.PdfViewerActivity"

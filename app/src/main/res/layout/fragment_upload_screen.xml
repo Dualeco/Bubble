@@ -39,7 +39,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                <com.dichotome.profilephoto.ui.ZoomingImageView
+                <com.dichotome.zoomingimageview.ZoomingImageView
                         app:source="@{logic.bitmapPreview}"
                         android:id="@+id/upload_pic"
                         android:layout_width="0dp"

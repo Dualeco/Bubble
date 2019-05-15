@@ -70,6 +70,15 @@ dependencies {
     implementation "com.github.DichotoMe.ProfileBar:profilebarBinding:$profilebar_version"
     implementation "com.github.DichotoMe.ProfileBar:profileShared:$profilebar_version"
 
+    //ZoomingImageView
+    implementation "com.github.DichotoMe.ZoomingImageView:zoomingimageview:$zooming_image"
+
+    //CircularImageView
+    implementation "com.github.DichotoMe:CircularImageView:$circular_image"
+
+    //RoundedImageView
+    implementation "com.github.DichotoMe:RoundedImageView:$rounded_image"
+
     //Pdf viewer
     implementation "com.github.barteksc:android-pdf-viewer:$pdf_viewer_version"
 }

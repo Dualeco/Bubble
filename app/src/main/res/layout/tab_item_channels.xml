@@ -19,7 +19,7 @@
                 android:layout_marginStart="16sp"
                 android:layout_marginEnd="16sp">
 
-            <com.dichotome.profileshared.views.CircularImageView
+            <com.kpiroom.bubble.util.view.CircularImageView
                     android:src="@drawable/default_avatar"
                     android:id="@+id/itemPic"
                     android:scaleType="centerCrop"

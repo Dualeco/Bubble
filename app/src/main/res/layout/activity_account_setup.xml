@@ -115,7 +115,7 @@
                                 android:src="@drawable/profile_photo_stroke"
                                 android:scaleType="centerCrop"/>
 
-                        <com.dichotome.profileshared.views.CircularImageView
+                        <com.kpiroom.bubble.util.view.CircularImageView
                                 app:source="@{logic.photoUri}"
                                 android:id="@+id/photo"
                                 android:layout_width="match_parent"

@@ -41,7 +41,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
 
-                    <com.dichotome.profilephoto.ui.ZoomingImageView
+                    <com.dichotome.zoomingimageview.ZoomingImageView
                             app:source="@{comicPage.previewUrl}"
                             android:id="@+id/comic_pic"
                             android:layout_width="0dp"
@@ -107,7 +107,7 @@
                                 android:layout_height="48dp"
                                 android:orientation="horizontal">
 
-                            <com.dichotome.profileshared.views.CircularImageView
+                            <com.kpiroom.bubble.util.view.CircularImageView
                                     android:src="@drawable/default_avatar"
                                     app:source="@{comicPage.authorThumbnailUrl}"
                                     android:id="@+id/itemPic"
