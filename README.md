@@ -1,5 +1,5 @@
-<center><b>Bubble</b></center>
-<center>Your convenient comic-sharing platform</center>
+<div align="center"><b>Bubble</b></div>
+<div align="center">Your convenient comic-sharing platform</div>
 
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
